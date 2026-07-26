@@ -1137,7 +1137,7 @@ typedef long	Mtx_t[4][4];
 typedef union {
     Mtx_t		m;
     long long int	force_structure_alignment;
-} Mtx;
+} UltraMtx;
 
 /*
  * Viewport

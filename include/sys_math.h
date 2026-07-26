@@ -2,7 +2,7 @@
 #define SYS_MATH_H
 
 #include "types.h"
-#include "MSL_C/math.h"
+#include "math.h"
 #include "libc64/qrand.h"
 #include "m_lib.h"
 

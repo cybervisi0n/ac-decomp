@@ -32,6 +32,10 @@
 /**********************************************************************
  * General data types for R4300
  */
+
+#ifdef LIBPORPOISE_PORT
+#include <dolphin/types.h>
+#else
 #if defined(_LANGUAGE_C) || defined(_LANGUAGE_C_PLUS_PLUS)
 
 typedef unsigned char       u8;     /* unsigned  8-bit */
@@ -69,6 +73,7 @@ typedef unsigned long   size_t;
 #endif
 
 #endif  /* _LANGUAGE_C */
+#endif
 
 #ifndef TRUE
 #define TRUE    1

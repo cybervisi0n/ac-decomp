@@ -1,7 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "MSL_C/w_math.h"
+#include "math.h"
 #include <dolphin/types.h>
 #include "macros.h"
 
@@ -20,35 +20,10 @@
 #define FRAMERATE_SELECT(f60, f50) (f60)
 #endif
 
-typedef signed char s8;
-typedef signed short s16;
-typedef signed long s32;
-typedef signed long long s64;
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned long u32;
 #ifndef _SIZE_T_DEF
 #define _SIZE_T_DEF
 typedef unsigned long size_t;
 #endif
-typedef unsigned long long u64;
-typedef unsigned int uint;
-
-typedef volatile u8 vu8;
-typedef volatile u16 vu16;
-typedef volatile u32 vu32;
-typedef volatile u64 vu64;
-typedef volatile s8 vs8;
-typedef volatile s16 vs16;
-typedef volatile s32 vs32;
-typedef volatile s64 vs64;
-
-typedef float f32;
-typedef double f64;
-typedef volatile f32 vf32;
-typedef volatile f64 vf64;
-
-typedef int BOOL;
 
 // Pointer to unknown, to be determined at a later date.
 typedef void* unkptr;
@@ -165,9 +140,11 @@ typedef u32 unknown;
 #define BSS_ORDER_ITEM(v)
 #endif
 
+#ifdef GAMECUBE
 #ifndef __cplusplus
 // Some definitions rely on wchar_t being defined
 typedef unsigned short wchar_t;
+#endif
 #endif
 
 // #if DEBUG
