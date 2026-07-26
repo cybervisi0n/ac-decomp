@@ -64,7 +64,7 @@ void fbdemo_triforce_draw(fbdemo_triforce* this, Gfx** gfxP) {
   gSPPerspNormalize(gfx++, this->normal);
   gSPMatrix(gfx++, &this->lookatmtx, G_MTX_MUL | G_MTX_PROJECTION);
   t = gfxalloc(&gfx, 0x40);
-  guScale((Mtx*)t, 0.019f, 0.019f, 1.0f);
+  guScale((UltraMtx*)t, 0.019f, 0.019f, 1.0f);
 
   gSPMatrix(gfx++, t, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

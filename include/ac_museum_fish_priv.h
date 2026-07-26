@@ -66,7 +66,7 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
 
 typedef struct fish_keyframe_s {
     cKF_SkeletonInfo_R_c keyframe; // offset 0, size 0x70
-    Mtx mtx[2][9];
+    UltraMtx mtx[2][9];
     s_xyz work[6];
     s_xyz morph[6];
     s_xyz _538;
@@ -78,7 +78,7 @@ typedef struct fish_keyframe_s {
 
 typedef struct hasu_s {
     /* 0x000 */ cKF_SkeletonInfo_R_c keyframe; // offset 0, size 0x70
-    /* 0x070 */ Mtx mtx[2][9];
+    /* 0x070 */ UltraMtx mtx[2][9];
     /* 0x4F0 */ s_xyz work[9];
     /* 0x526 */ s_xyz morph[9];
     /* 0x55C */ f32 _55C;

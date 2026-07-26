@@ -50,7 +50,7 @@ const char* emu64::segchk(u32 segment) {
     static char str[64];
     char buf[30];
     const char str0[] = "anime_4_txt+%4u";
-    const char str1[] = "anime_6_model+sizeof(Mtx)*%2u";
+    const char str1[] = "anime_6_model+sizeof(UltraMtx)*%2u";
 
     u32 partial_addr = seg2k0(segment);
     u32 addr = convert_partial_address(partial_addr);
@@ -96,7 +96,7 @@ const char* emu64::segchk(u32 segment) {
         } else {
             if (segment > anime_6_model && segment < (anime_6_model + ANIME_6_MODEL_SIZE)) {
                 int comb = segment - anime_6_model;
-                snprintf(buf, sizeof(buf) - 1, str1, comb / (int)sizeof(Mtx));
+                snprintf(buf, sizeof(buf) - 1, str1, comb / (int)sizeof(UltraMtx));
                 s = buf;
             } else {
                 s = nullptr;

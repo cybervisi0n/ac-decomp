@@ -10,7 +10,7 @@
 
 typedef void* OSMesg;
 
-typedef struct OSMesgQueue_s {
+typedef struct UltraOSMesgQueue_s {
     /* 0x00 */ OSThread* mtqueue;
     /* 0x04 */ OSThread* fullqueue;
     /* 0x08 */ volatile int validCount;

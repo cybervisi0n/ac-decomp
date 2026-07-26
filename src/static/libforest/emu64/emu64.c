@@ -4264,10 +4264,10 @@ void emu64::dl_G_MTX() {
         Mtx44 mtx44; /* float-based matrix */
 
         /* Convert our s16.u16 matrix into a f32 matrix. */
-        N64Mtx_to_DOLMtx((Mtx*)mtx, mtx34);
+        N64Mtx_to_DOLMtx((UltraMtx*)mtx, mtx34);
 
         if ((mtx_gfx->type & G_MTX_PROJECTION) != G_MTX_MODELVIEW) { /* Projection */
-            N64Mtx_to_DOLMtx((Mtx*)mtx, mtx44);
+            N64Mtx_to_DOLMtx((UltraMtx*)mtx, mtx44);
             if ((mtx_gfx->type & G_MTX_LOAD) != G_MTX_MUL) {
                 if ((u16)(*mtx)[1][3] == 0) { /* If the last entry is 0, this should be a perspective projection.
                                                  Otherwise, it's likely an orthographic projection. */

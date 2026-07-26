@@ -116,7 +116,7 @@ static int fNNB_DrawAfter(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointNum, 
 void fNNB_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     cKF_SkeletonInfo_R_c* keyf;
-    Mtx* mtx;
+    UltraMtx* mtx;
     int fctr;
     s16 ctr;
 

@@ -312,7 +312,7 @@ extern void banti_move(GAME_PLAY* play) {
 static int banti_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                              u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     Gfx** gfx_pp;
-    Mtx* mtx;
+    UltraMtx* mtx;
     Banti_callback_c* callback_data = (Banti_callback_c*)arg;
 
     gfx_pp = callback_data->gfx_pp;
@@ -387,14 +387,14 @@ static void banti_draw_hiduke_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, 
 
     GRAPH* g = game->graph;
     xyz_t* set_pos = &set_pos_table[pos_idx];
-    Mtx* m;
+    UltraMtx* m;
     int joint;
     Banti_callback_c callback_data;
 
     Matrix_push();
     Matrix_translate(set_pos->x, set_pos->y, set_pos->z, MTX_MULT);
 
-    m = (Mtx*)GRAPH_ALLOC_TYPE(g, Mtx, anim->keyframe.skeleton->num_shown_joints);
+    m = (UltraMtx*)GRAPH_ALLOC_TYPE(g, UltraMtx, anim->keyframe.skeleton->num_shown_joints);
     callback_data.mtx = m;
 
     if (m != NULL) {
@@ -448,7 +448,7 @@ static void banti_draw_jikan_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, i
 
     GRAPH* g = game->graph;
     xyz_t* set_pos = &set_pos_table[pos_idx];
-    Mtx* m;
+    UltraMtx* m;
     int joint;
     Banti_callback_c callback_data;
 
@@ -465,7 +465,7 @@ static void banti_draw_jikan_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, i
         }
     }
 
-    m = (Mtx*)GRAPH_ALLOC_TYPE(g, Mtx, anim->keyframe.skeleton->num_shown_joints);
+    m = (UltraMtx*)GRAPH_ALLOC_TYPE(g, UltraMtx, anim->keyframe.skeleton->num_shown_joints);
     callback_data.mtx = m;
 
     if (m != NULL) {
@@ -539,7 +539,7 @@ extern void banti_draw(GAME_PLAY* play) {
     if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELDTYPE_FG && mEv_CheckFirstIntro() != TRUE && banti.alpha > 0.01f) {
         GRAPH* g = play->game.graph;
         int poly_render = FALSE;
-        Mtx* m = (Mtx*)GRAPH_ALLOC_TYPE(g, Mtx, 1);
+        UltraMtx* m = (UltraMtx*)GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
 
         /* TODO: submenu mode enums */
         if (play->submenu.process_status != mSM_PROCESS_WAIT && play->submenu.mode > 2) {

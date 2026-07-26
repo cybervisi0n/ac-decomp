@@ -923,7 +923,7 @@ static void mHD_draw_original(Submenu* submenu, GRAPH* graph, f32* pos) {
 static void mHD_hand_shape_draw(Submenu* submenu, GAME* game, int shadow_flag) {
     mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
     GRAPH* graph = game->graph;
-    Mtx* mtx = (Mtx*)GRAPH_ALLOC_TYPE(graph, Mtx, hand_ovl->info.keyframe.skeleton->num_shown_joints);
+    UltraMtx* mtx = (UltraMtx*)GRAPH_ALLOC_TYPE(graph, UltraMtx, hand_ovl->info.keyframe.skeleton->num_shown_joints);
 
     if (mtx != NULL) {
         if (shadow_flag) {

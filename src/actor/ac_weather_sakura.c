@@ -170,7 +170,7 @@ void aWeatherSakura_draw(aWeather_Priv* priv, GAME* game) {
 
     xyz_t base = { 0.05f, 0.05f, 0.05f };
 
-    Mtx* work;
+    UltraMtx* work;
     f32 scale;
     f32 min;
     xyz_t pos;
@@ -185,7 +185,7 @@ void aWeatherSakura_draw(aWeather_Priv* priv, GAME* game) {
     if ((screen_pos.x >= 0.0f) && (screen_pos.x < SCREEN_WIDTH_F) && (screen_pos.y >= 0.0f) &&
         (screen_pos.y < SCREEN_HEIGHT_F)) {
 
-        work = GRAPH_ALLOC_TYPE(game->graph, Mtx, 1);
+        work = GRAPH_ALLOC_TYPE(game->graph, UltraMtx, 1);
 
         OPEN_DISP(game->graph);
 

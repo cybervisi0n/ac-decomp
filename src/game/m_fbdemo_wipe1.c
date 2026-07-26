@@ -69,7 +69,7 @@ void fbdemo_wipe1_move(fbdemo_wipe1* this, int rate) {
 
 void fbdemo_wipe1_draw(fbdemo_wipe1* this, Gfx** gfxP) {
   Gfx* gfx = *gfxP;
-  Mtx* modelView;
+  UltraMtx* modelView;
   int pad[4];
   Gfx* texScroll;
 

@@ -136,7 +136,7 @@ extern u16 hnw_face[];
 
 static void Ac_Sample_Actor_draw_normal(SAMPLE_ACTOR* actor, GAME_PLAY* play) {
     cKF_SkeletonInfo_R_c* keyframe = &actor->keyframe;
-    Mtx* m = GRAPH_ALLOC_TYPE(play->game.graph, Mtx, keyframe->skeleton->num_shown_joints);
+    UltraMtx* m = GRAPH_ALLOC_TYPE(play->game.graph, UltraMtx, keyframe->skeleton->num_shown_joints);
 
     if (m != NULL) {
         GRAPH* g;

@@ -186,7 +186,7 @@ float fastcast_float(register short* s) {
 #define number(n) ARRAY_COUNT(n)
 
 void guMtxNormalize(GC_Mtx mtx);
-void N64Mtx_to_DOLMtx(const Mtx* n64, MtxP gc);
+void N64Mtx_to_DOLMtx(const UltraMtx* n64, MtxP gc);
 
 typedef union {
     GXColor color;

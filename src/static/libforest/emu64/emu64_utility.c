@@ -162,8 +162,8 @@ void guMtxNormalize(GC_Mtx mtx) {
     }
 }
 
-/* TODO: Mtx -> N64Mtx, GC_Mtx -> Mtx */
-void N64Mtx_to_DOLMtx(const Mtx* n64, MtxP gc) {
+/* TODO: UltraMtx -> N64Mtx, GC_Mtx -> UltraMtx */
+void N64Mtx_to_DOLMtx(const UltraMtx* n64, MtxP gc) {
     s16* fixed = ((s16*)n64) + 0;
     u16* frac = ((u16*)n64) + 16;
     int i;

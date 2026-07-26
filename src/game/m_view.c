@@ -152,7 +152,7 @@ extern int stretchViewInit(View* view) {
   return 0;
 }
 
-static int do_stretch_view(View* view, Mtx* mtx) {
+static int do_stretch_view(View* view, UltraMtx* mtx) {
   f32 step = view->stretch.step;
 
   if (step == 0.0f) {
@@ -217,7 +217,7 @@ extern int showView(View* view, int flag_mask) {
 extern int showPerspectiveView(View* view) {
   GRAPH* g = view->graph;
   Vp* vp;
-  Mtx* mtx;
+  UltraMtx* mtx;
 
   OPEN_DISP(g);
 
@@ -238,7 +238,7 @@ extern int showPerspectiveView(View* view) {
   gSPViewport(NOW_BG_XLU_DISP++, vp);
 
   /* update perspective matrix */
-  mtx = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+  mtx = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
   view->p_projection = mtx;
   guPerspective(
     mtx,
@@ -272,7 +272,7 @@ extern int showPerspectiveView(View* view) {
   gSPMatrix(NOW_BG_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
 
   /* update look-at (viewing) matrix */
-  mtx = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+  mtx = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
   view->p_viewing = mtx;
   guLookAt(
     mtx,
@@ -302,7 +302,7 @@ extern int showPerspectiveView(View* view) {
 extern int showOrthoView(View* view) {
   GRAPH* g = view->graph;
   Vp* vp;
-  Mtx* mtx;
+  UltraMtx* mtx;
 
   OPEN_DISP(g);
 
@@ -324,7 +324,7 @@ extern int showOrthoView(View* view) {
   gSPViewport(NOW_BG_XLU_DISP++, vp);
 
   /* update orthographic proj matrix */
-  mtx = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+  mtx = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
   view->p_projection = mtx;
 
   guOrtho(
@@ -380,7 +380,7 @@ extern int showView1(View* view, int flag_mask, Gfx** gfx_p) {
   }
   
   if (flag_mask & VIEW_UPDATE_ORTHOGRAPHIC) {
-    Mtx* m = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+    UltraMtx* m = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
 
     view->p_projection = m;
     guOrtho(
@@ -396,7 +396,7 @@ extern int showView1(View* view, int flag_mask, Gfx** gfx_p) {
     gSPMatrix(gfx++, m, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
   }
   else if (flag_mask & (VIEW_UPDATE_SCISSOR | VIEW_UPDATE_PERSPECTIVE)) {
-    Mtx* m = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+    UltraMtx* m = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
 
     view->p_projection = m;
     guPerspective(
@@ -414,7 +414,7 @@ extern int showView1(View* view, int flag_mask, Gfx** gfx_p) {
   }
 
   if (flag_mask & VIEW_UPDATE_LOOKAT) {
-    Mtx* m = GRAPH_ALLOC_TYPE(g, Mtx, 1);
+    UltraMtx* m = GRAPH_ALLOC_TYPE(g, UltraMtx, 1);
 
     view->p_viewing = m;
     guLookAt(

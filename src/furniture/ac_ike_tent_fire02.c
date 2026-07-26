@@ -74,7 +74,7 @@ static Gfx* fITF02_GetTwoTileGfx(int x0, int y0, int x1, int y1, GAME* game) {
 static void fITF02_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
-    Mtx* mtx = ftr_actor->skeleton_mtx[game->frame_counter & 1];
+    UltraMtx* mtx = ftr_actor->skeleton_mtx[game->frame_counter & 1];
     u32 ctr_ofs = ftr_actor->ctr_type == aFTR_CTR_TYPE_GAME_PLAY ? play->game_frame : game->frame_counter;
     Gfx* scroll_gfx = fITF02_GetTwoTileGfx(0, -ctr_ofs * 3, -ctr_ofs * 2, 0, game);
 

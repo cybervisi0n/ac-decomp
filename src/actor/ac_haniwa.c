@@ -92,7 +92,7 @@ static void aHNW_actor_draw(ACTOR* actor, GAME* game) {
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
     cKF_SkeletonInfo_R_c* keyframe = &haniwa->common_actor_class.anime.keyframe;
     GRAPH* g = game->graph;
-    Mtx* m = GRAPH_ALLOC_TYPE(g, Mtx, keyframe->skeleton->num_shown_joints);
+    UltraMtx* m = GRAPH_ALLOC_TYPE(g, UltraMtx, keyframe->skeleton->num_shown_joints);
 
     if (m != NULL) {
         int house_idx = haniwa->house_idx;

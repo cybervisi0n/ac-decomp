@@ -249,7 +249,7 @@ static Gfx* aTnt_MakeWindowPrimDisplayList(ACTOR* actor, GAME* game) {
 extern Gfx obj_s_tent_model[];
 
 static void aTnt_actor_draw(ACTOR* actor, GAME* game) {
-    Mtx* m = _Matrix_to_Mtx_new(game->graph);
+    UltraMtx* m = _Matrix_to_Mtx_new(game->graph);
     Gfx* gfx = aTnt_MakeWindowPrimDisplayList(actor, game);
 
     if (gfx != NULL) {

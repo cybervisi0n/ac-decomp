@@ -1,3 +1,4 @@
 animalcrossing_srcs = files(
-    'audio.c'
+    'audio.c',
+    'c_keyframe.c'
 )

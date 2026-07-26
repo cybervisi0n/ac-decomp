@@ -173,7 +173,7 @@ void aWeatherRain_draw(aWeather_Priv* priv, GAME* game) {
     xyz_t pos;
     s16 angle;
     GRAPH* graph;
-    Mtx* work;
+    UltraMtx* work;
 
     angle = weather->current_yAngle;
     disp = 8 - priv->timer;
@@ -197,7 +197,7 @@ void aWeatherRain_draw(aWeather_Priv* priv, GAME* game) {
 
         CLOSE_DISP(graph);
     } else if (priv->work[0] == 0) {
-        work = GRAPH_ALLOC_TYPE(game->graph, Mtx, 1);
+        work = GRAPH_ALLOC_TYPE(game->graph, UltraMtx, 1);
 
         OPEN_DISP(play->game.graph);
 

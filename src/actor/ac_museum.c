@@ -276,7 +276,7 @@ static void aMsm_actor_draw(ACTOR* actor, GAME* game) {
 
     STRUCTURE_ACTOR* museum;
     GRAPH* graph;
-    Mtx* mtx;
+    UltraMtx* mtx;
     u16* pal;
     Gfx** disp;
     f32 color;

@@ -73,7 +73,7 @@ static f32 eEL_CalcAdjust(s16 now, s16 start, s16 end, f32 start_val, f32 end_va
 
 static void eEL_AutoMatrixXlu(GAME* game, xyz_t* pos, xyz_t* scale) {
     GAME_PLAY* play = (GAME_PLAY*)game;
-    Mtx* mtx = (Mtx*)GRAPH_ALLOC_TYPE(game->graph, Mtx, 1);
+    UltraMtx* mtx = (UltraMtx*)GRAPH_ALLOC_TYPE(game->graph, UltraMtx, 1);
     f32 adj_scale;
 
     OPEN_DISP(game->graph);

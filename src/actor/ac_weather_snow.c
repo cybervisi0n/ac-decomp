@@ -170,7 +170,7 @@ void aWeatherSnow_draw(aWeather_Priv* priv, GAME* game) {
 
     xyz_t pos;
     xyz_t screen_pos;
-    Mtx* work;
+    UltraMtx* work;
     f32 scale;
     f32 min;
 
@@ -183,7 +183,7 @@ void aWeatherSnow_draw(aWeather_Priv* priv, GAME* game) {
     if ((0.0f <= screen_pos.x) && (screen_pos.x < SCREEN_WIDTH_F) && (0.0f <= screen_pos.y) &&
         (screen_pos.y < SCREEN_HEIGHT_F)) {
 
-        work = GRAPH_ALLOC_TYPE(game->graph, Mtx, 1);
+        work = GRAPH_ALLOC_TYPE(game->graph, UltraMtx, 1);
 
         min = pos.y - (40.0f + player->actor_class.world.position.y);
 

@@ -1752,12 +1752,12 @@ typedef union {
 
 #ifdef	F3DEX_GBI_2
 # define	gSPMatrix(pkt, m, p)	\
-		gDma2p((pkt),G_MTX,(m),sizeof(Mtx),(p)^G_MTX_PUSH,0)
+		gDma2p((pkt),G_MTX,(m),sizeof(UltraMtx),(p)^G_MTX_PUSH,0)
 # define	gsSPMatrix(m, p)	\
-		gsDma2p(     G_MTX,(m),sizeof(Mtx),(p)^G_MTX_PUSH,0)
+		gsDma2p(     G_MTX,(m),sizeof(UltraMtx),(p)^G_MTX_PUSH,0)
 #else	/* F3DEX_GBI_2 */
-# define	gSPMatrix(pkt, m, p)	gDma1p(pkt, G_MTX, m, sizeof(Mtx), p)
-# define	gsSPMatrix(m, p)	gsDma1p(G_MTX, m, sizeof(Mtx), p)
+# define	gSPMatrix(pkt, m, p)	gDma1p(pkt, G_MTX, m, sizeof(UltraMtx), p)
+# define	gsSPMatrix(m, p)	gsDma1p(G_MTX, m, sizeof(UltraMtx), p)
 #endif	/* F3DEX_GBI_2 */
 
 #if	defined(F3DEX_GBI_2)
@@ -2252,11 +2252,11 @@ typedef union {
  */
 #ifdef	F3DEX_GBI_2
 #define	gSPForceMatrix(pkt, mptr)					\
-{	gDma2p((pkt),G_MOVEMEM,(mptr),sizeof(Mtx),G_MV_MATRIX,0);	\
+{	gDma2p((pkt),G_MOVEMEM,(mptr),sizeof(UltraMtx),G_MV_MATRIX,0);	\
 	gMoveWd((pkt), G_MW_FORCEMTX,0,0x00010000);			\
 }
 #define	gsSPForceMatrix(mptr)						\
-	gsDma2p(G_MOVEMEM,(mptr),sizeof(Mtx),G_MV_MATRIX,0),		\
+	gsDma2p(G_MOVEMEM,(mptr),sizeof(UltraMtx),G_MV_MATRIX,0),		\
 	gsMoveWd(G_MW_FORCEMTX,0,0x00010000)
 	
 #else	/* F3DEX_GBI_2 */
