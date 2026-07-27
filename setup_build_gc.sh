@@ -1,4 +1,5 @@
 #!/bin/bash
+./setup_dtk_tools.sh
 python3 tools/download_tool.py compilers compilers --tag 20251118
 rm -rf compilers/X360
 if [[ "$(uname -s)" =~ ^MSYS_NT.* ]]; then

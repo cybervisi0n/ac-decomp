@@ -21,11 +21,14 @@ orig/*/*
 # Build files
 build/
 build_linux/
+build_win64/
+msys2/
 .ninja_*
 build.ninja
 build_gc/
 .fontconfig_cache/
 compilers/
+dtk-tools/
 
 # Meson subprojects
 subprojects/libPorpoise/
@@ -45,3 +48,6 @@ compile_commands.json
 
 # For saving work files into (like IDB)
 temp/
+
+# Meson files
+subprojects/.wraplock

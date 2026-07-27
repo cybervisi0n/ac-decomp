@@ -20,9 +20,11 @@
 #define FRAMERATE_SELECT(f60, f50) (f60)
 #endif
 
+#ifndef LIBPORPOISE_BUILD_WIN64
 #ifndef _SIZE_T_DEF
 #define _SIZE_T_DEF
 typedef unsigned long size_t;
+#endif
 #endif
 
 // Pointer to unknown, to be determined at a later date.
