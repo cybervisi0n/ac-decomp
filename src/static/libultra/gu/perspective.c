@@ -1,5 +1,9 @@
 #include "libultra/gu.h"
+#ifdef GAMECUBE
 #include "MSL_C/math.h"
+#else
+#include "math.h"
+#endif
 
 void guPerspectiveF(float mf[4][4], u16 *perspNorm, float fovy, float aspect, float near, float far, float scale)
 {

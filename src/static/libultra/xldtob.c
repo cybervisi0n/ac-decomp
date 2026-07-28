@@ -1,7 +1,12 @@
 #include "libultra/xprintf.h"
 
+#ifdef GAMECUBE
 #include "_mem.h"       /* memcpy */
 #include "compiler/gcc/stdlib.h" /* ldiv & ldiv_t */
+#else
+#include <stdlib.h>
+#include <string.h>
+#endif
 
 #define BUFF_LEN 0x20
 

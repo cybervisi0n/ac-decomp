@@ -34,7 +34,11 @@ u8 SoftResetEnable;
 #endif
 static int frame; // TODO: this is actually declared in graph_task_set00
 
+#ifdef GAMECUBE
 #define CONSTRUCT_THA_GA(tha_ga, name, name2) (THA_GA_ct((tha_ga), sys_dynamic.##name, ##name2##_SIZE * sizeof(Gfx)))
+#else
+#define CONSTRUCT_THA_GA(tha_ga, name, name2) (THA_GA_ct((tha_ga), sys_dynamic.name, name2##_SIZE * sizeof(Gfx)))
+#endif
 
 static void graph_setup_double_buffer(GRAPH* this) {
     bzero(&sys_dynamic, sizeof(dynamic_t));

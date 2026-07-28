@@ -8,5 +8,9 @@ do
     COMMAND=$COMMAND"${!i} "
 done
 
+if [[ "$(uname -s)" =~ ^MSYS_NT.* ]]; then
+	COMMAND="${COMMAND//\\//}"
+fi
+
 eval $COMMAND
-cd $(BUILDDIR)
+cd $BUILDDIR

@@ -6,9 +6,11 @@
 extern OSTime __osTimeOffset;
 s32 osAppNMIBuffer[16];
 
+#ifdef GAMECUBE
 void bcopy(void* __src, void* __dst, size_t __n) {
     memmove(__dst, __src, __n);
 }
+#endif
 
 int bcmp(void* __s1, void* __s2, size_t __n) {
     return memcmp(__s1, __s2, __n);
@@ -19,10 +21,13 @@ void bzero(void* __s, size_t __n) {
 }
 
 void osSyncPrintf(const char* format, ...) {
+    #ifdef GAMECUBE
+    //todo
     va_list arg;
     va_start(arg, format);
     OSVReport(format, arg);
     va_end(arg);
+    #endif
 
 }
 void osWritebackDCache(void* buf, u32 len) {

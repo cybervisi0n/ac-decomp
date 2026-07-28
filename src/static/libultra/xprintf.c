@@ -2,6 +2,10 @@
 
 #include "libultra/xprintf.h"
 
+#ifndef GAMECUBE
+#include <stdarg.h>
+#endif
+
 #define isdigit(x) ((x >= '0' && x <= '9'))
 #define LDSIGN(x) (((unsigned short *)&(x))[0] & 0x8000)
 

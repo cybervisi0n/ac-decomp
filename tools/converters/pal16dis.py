@@ -26,3 +26,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+def pal16dis(src_path, dest_path):
+    convert_binary_to_vtx_c_source(src_path, dest_path)

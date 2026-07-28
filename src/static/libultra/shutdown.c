@@ -26,6 +26,8 @@ void osShutdownStart(int val) {
     PADRecalibrate(0xF0000000);
     Na_Reset();
 
+    #ifdef GAMECUBE
+    //todo
     gthread = GXGetCurrentGXThread();
     enable = OSDisableInterrupts();
     cthread = OSGetCurrentThread();
@@ -34,6 +36,7 @@ void osShutdownStart(int val) {
         OSCancelThread(gthread);
         GXSetCurrentGXThread();
     }
+    #endif
     GXFlush();
     GXAbortFrame();
     GXDrawDone();

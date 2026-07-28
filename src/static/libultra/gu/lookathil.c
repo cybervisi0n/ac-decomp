@@ -1,5 +1,9 @@
 #include "libultra/gu.h"
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
+#else
+#include "math.h"
+#endif
 
 void guLookAtHiliteF(float mf[4][4], LookAt *l, Hilite *h, 
 		float xEye, float yEye, float zEye,

@@ -1,5 +1,10 @@
+#ifdef GAMECUBE
 #include "compiler/gcc/stdlib.h" /* lldiv & lldiv_t */
 #include "_mem.h" /* memcpy */
+#else
+#include <stdlib.h>
+#include <string.h>
+#endif
 #include "libultra/xprintf.h"
 
 #define BUFF_LEN 0x18

@@ -12,6 +12,11 @@
 extern "C" {
 #endif
 
+#ifndef F_PI
+#define PI 3.14159265358979323846
+#define F_PI ((f32)PI)
+#endif
+
 #define SHT_MINV (1.0f / SHT_MAX)
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x) * (x))

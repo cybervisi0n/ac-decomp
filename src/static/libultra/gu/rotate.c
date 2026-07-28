@@ -1,5 +1,9 @@
 #include "libultra/gu.h"
+#ifdef GAMECUBE
 #include "MSL_C/math.h"
+#else
+#include "math.h"
+#endif
 
 void guRotateF(float mf[4][4], float a, float x, float y, float z)
 {
