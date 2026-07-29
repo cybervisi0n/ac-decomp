@@ -1,6 +1,6 @@
 Famicom_srcs = files(
     'famicom_nesinfo.cpp',
-    #'famicom.cpp'
+    'famicom.cpp'
 )
 
 Famicom_lib = static_library('Famicom',

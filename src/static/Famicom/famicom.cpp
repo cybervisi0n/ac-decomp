@@ -475,7 +475,11 @@ static s32 memcard_mount(int chan, void* workArea) {
         else {
             // Mounting the memory card.
             OSReport("メモリーカードをマウントする\n");
+            #ifdef GAMECUBE
             result = CARDMount(chan, workArea, nullptr);
+            #else
+            result = CARDMount(chan, static_cast<CARDMemoryCard*>(workArea), nullptr);
+            #endif
             
             if (result == CARD_RESULT_READY || result == CARD_RESULT_BROKEN || result == CARD_RESULT_ENCODING) {
                 // The memory card has been mounted.
@@ -644,7 +648,10 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
             ResTIMG* banner_data = (ResTIMG*)banner;
             if (banner_data != nullptr) {
                 u8 banner_fmt;
+                #ifdef GAMECUBE
+                //TODO
                 SetupResBanner(banner_data, dst, 0x1800, &size, &banner_fmt);
+                #endif
                 JKRFileLoader::removeResource(banner_data, nullptr);
                 dst += size;
                 famicomCommon.memcard_game_header.flags1.banner_fmt = banner_fmt;
@@ -733,7 +740,10 @@ static void SetupInternalCommentImage(u8* data) {
         famicomCommon.memcard_game_header.icon_flags = 0;
     }
 
+    #ifdef GAMECUBE
+    //TODO: Memory
     famicomCommon.memcard_game_header.comment_img_size = (u32)data - (u32)data_p;
+    #endif
 }
 
 static s32 memcard_data_save(
@@ -1116,7 +1126,12 @@ static s32 memcard_data_load(
 
         // Reading successful!
         OSReport("読み込み成功！！\n");
+        #ifdef GAMECUBE
+        //TODO: Memory
         FamicomSaveDataHeader* read_save_header = (FamicomSaveDataHeader*)((u32)buf + status.offsetData);
+        #else
+        FamicomSaveDataHeader* read_save_header = nullptr;
+        #endif
         
         if (famicom_save_data_check(read_save_header, -1, comment_img) == 0) {
             // The data is normal!
@@ -1591,7 +1606,10 @@ extern void famicom_mount_archive() {
         famicom_arc = (JKRArchive*)JC__JKRMountArchive("famicom.arc", JKRArchive::MOUNT_COMP, JC__JKRGetSystemHeap(), JKRArchive::MOUNT_DIRECTION_HEAD);
         
         if (famicom_arc == nullptr) {
+            #ifdef GAMECUBE
+            //TODO: dont have this API
             OSDVDFatalError();
+            #endif
         }
 
         famicom_arc_mounting = false;
@@ -1846,9 +1864,12 @@ static int SetupResBanner(const ResTIMG* img, u8* dst, size_t max_size, size_t* 
         banner_type = CARD_STAT_BANNER_NONE;
     }
 
+    #ifdef GAMECUBE
+    //TODO: Memory
     if (size != nullptr) {
         *size = (u32)data_p - (u32)dst;
     }
+    #endif
 
     if (type != nullptr) {
         *type = banner_type;
@@ -1906,9 +1927,12 @@ static int SetupResIcon(const ResTIMG* img, u8* dst, size_t max_size, size_t* si
         icon_fmt = CARD_STAT_ICON_NONE;
     }
 
+    #ifdef GAMECUBE
+    //TODO: Memory
     if (size_p != nullptr) {
         *size_p = (u32)data_p - (u32)dst;
     }
+    #endif
 
     if (icon_fmt_p != nullptr) {
         *icon_fmt_p = icon_fmt;
@@ -2235,7 +2259,10 @@ static void famicom_draw() {
     GXInitTexObjLOD(&famicomTexObj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&famicomTexObj, GX_TEXMAP0);
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+    #ifdef GAMECUBE
+    //TODO: missing API
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_FALSE, 0, 0);
+    #endif
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
     GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
