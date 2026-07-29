@@ -5,6 +5,9 @@
 #include "libu64/u64types.h"
 #include "PR/mbi.h"
 // #include "va_args.h"
+#ifndef GAMECUBE
+#include <stdarg.h>
+#endif
 
 #ifdef __cplusplus
 extern "C"{
