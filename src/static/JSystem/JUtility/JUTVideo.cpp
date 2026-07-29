@@ -37,8 +37,11 @@ JUTVideo::JUTVideo(const GXRenderModeObj* renderModeObj) {
     _18 = 0;
     sVideoLastTick = OSGetTick();
     sVideoInterval = 670000;
+    #ifdef GAMECUBE
+    //TODO
     mPreviousPreRetraceCallback = VISetPreRetraceCallback(preRetraceProc);
     mPreviousPostRetraceCallback = VISetPostRetraceCallback(postRetraceProc);
+    #endif
     mPreRetraceCallback = nullptr;
     mPostRetraceCallback = nullptr;
     OSInitMessageQueue(&mMessageQueue, &mMessage, 1);

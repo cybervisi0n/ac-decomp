@@ -16,7 +16,11 @@ JUTGraphFifo::JUTGraphFifo(u32 size) {
     } else {
         /** TODO: Figure out what has sizeof 0xA0. */
         mBase = JKRAllocFromSysHeap(mSize + 0xA0, 32);
+        #ifdef GAMECUBE
         mBase = (void*)ALIGN_NEXT((u32)mBase, 32);
+        #else
+        mBase = (void*)ALIGN_NEXT((u64)mBase, 32);
+        #endif
         mFifo = GXInit(mBase, mSize);
         sInitiated = true;
         sCurrentFifo = this;

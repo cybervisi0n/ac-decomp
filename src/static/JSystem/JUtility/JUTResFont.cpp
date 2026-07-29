@@ -136,28 +136,52 @@ void JUTResFont::setBlock() {
         int magic = data->mMagic;
         switch (magic) {
             case 'INF1':
+                #ifndef GAMECUBE
+                {
+                #endif
                 mInfoBlock = (ResFONT::InfoBlock*)data;
                 u32 u = mInfoBlock->mFontType;
                 JUT_ASSERT(u < suAboutEncoding_);
                 mIsLeadByte = (IsLeadByte*)&saoAboutEncoding_[u];
+                #ifndef GAMECUNE
+                }
+                #endif
                 break;
 
             case 'WID1':
+                #ifndef GAMECUBE
+                {
+                #endif
                 mWidthBlocks[widthNum] = (ResFONT::WidthBlock*)data;
                 widthNum++;
+                #ifndef GAMECUNE
+                }
+                #endif
                 break;
 
             case 'GLY1':
+                #ifndef GAMECUBE
+                {
+                #endif
                 mGlyphBlocks[glyphNum] = (ResFONT::GlyphBlock*)data;
                 glyphNum++;
+                #ifndef GAMECUNE
+                }
+                #endif
                 break;
 
             case 'MAP1':
+                #ifndef GAMECUBE
+                {
+                #endif
                 mMapBlocks[mapNum] = (ResFONT::MapBlock*)data;
                 if (mMaxCode > mMapBlocks[mapNum]->mStartCode) {
                     mMaxCode = mMapBlocks[mapNum]->mStartCode;
                 }
                 mapNum++;
+                #ifndef GAMECUNE
+                }
+                #endif
                 break;
 
             default:

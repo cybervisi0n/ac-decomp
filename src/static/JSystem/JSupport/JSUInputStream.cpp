@@ -1,5 +1,9 @@
 #include "JSystem/JSupport/JSUStream.h"
 
+#ifndef GAMECUBE
+#define EOF JEOF
+#endif
+
 JSUInputStream::~JSUInputStream() {
 }
 
@@ -79,7 +83,11 @@ int JSUInputStream::skip(s32 amount) {
 /* JSURandomInputStream */
 
 int JSURandomInputStream::skip(s32 amount) {
+    #ifdef GAMECUBE
     int s = this->seekPos(amount, SEEK_CUR);
+    #else
+    int s = this->seekPos(amount, JSEEK_CUR);
+    #endif
     if (s != amount) {
         this->setState(EOF);
     }
@@ -93,7 +101,11 @@ int JSURandomInputStream::align(s32 alignment) {
     int change = aligned - pos;
 
     if (change != 0) {
+        #ifdef GAMECUBE
         int s = this->seekPos(aligned, SEEK_SET);
+        #else
+        int s = this->seekPos(aligned, JSEEK_SET);
+        #endif
         if (s != change) {
             this->setState(EOF);
         }
@@ -107,7 +119,11 @@ int JSURandomInputStream::peek(void* buf, s32 len) {
     int pos = this->getPosition();
     int r = this->read(buf, len);
     if (r != 0) {
+        #ifdef GAMECUBE
         this->seekPos(pos, SEEK_SET);
+        #else
+        this->seekPos(pos, JSEEK_SET);
+        #endif
     }
 
     return r;

@@ -1,5 +1,9 @@
 #include "JSystem/J2D/J2DGrafContext.h"
+#ifdef GAMECUBE
 #include "MSL_C/math.h"
+#else
+#include "math.h"
+#endif
 
 J2DGrafContext::J2DGrafContext(f32 left, f32 top, f32 right, f32 bottom)
     : mBounds(left, top, left + right, top + bottom), mScissorBounds(left, top, left + right, top + bottom) {
@@ -32,7 +36,7 @@ void J2DGrafContext::setup2D() {
     GXSetCullMode(GX_CULL_NONE);
 
     GXLoadPosMtxImm(mPosMtx, 0);
-    GC_Mtx m;
+    Mtx m;
     PSMTXIdentity(m);
     GXLoadTexMtxImm(m, 60, GX_MTX3x4);
 

@@ -1,8 +1,12 @@
 #include "JSystem/JUtility/JUTGamePad.h"
 
 #include <dolphin/pad.h>
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
 #include "MSL_C/math.h"
+#else
+#include <cmath>
+#endif
 
 static u32 channel_mask[PAD_MAX_CONTROLLERS] = { 0x80000000 >> 0, 0x80000000 >> 1, 0x80000000 >> 2, 0x80000000 >> 3 };
 

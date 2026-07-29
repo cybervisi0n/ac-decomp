@@ -185,7 +185,7 @@ float fastcast_float(register short* s) {
 
 #define number(n) ARRAY_COUNT(n)
 
-void guMtxNormalize(GC_Mtx mtx);
+void guMtxNormalize(Mtx mtx);
 void N64Mtx_to_DOLMtx(const UltraMtx* n64, MtxP gc);
 
 typedef union {
@@ -767,10 +767,10 @@ private:
     /* 0x049C */ EmuColor fill_color;
     /* 0x04A0 */ EmuColor fill_tev_color; /* GX_TEVREG0 */
     /* 0x04A4 */ bool dirty_flags[NUM_DIRTY_FLAGS];
-    /* 0x04C4 */ GC_Mtx original_projection_mtx;
-    /* 0x04F4 */ GC_Mtx position_mtx;
-    /* 0x0524 */ GC_Mtx model_view_mtx_stack[MTX_STACK_SIZE];
-    /* 0x0704 */ GC_Mtx position_mtx_stack[MTX_STACK_SIZE];
+    /* 0x04C4 */ Mtx original_projection_mtx;
+    /* 0x04F4 */ Mtx position_mtx;
+    /* 0x0524 */ Mtx model_view_mtx_stack[MTX_STACK_SIZE];
+    /* 0x0704 */ Mtx position_mtx_stack[MTX_STACK_SIZE];
     /* 0x08E4 */ Mtx44 projection_mtx;
     /* 0x0924 */ struct {
         struct {
@@ -782,15 +782,15 @@ private:
     } lookAt;
     /* 0x092C */ f32 near; /* Near clipping plane */
     /* 0x0930 */ f32 far;  /* Far clipping plane */
-    /* 0x0934 */ GC_Mtx model_view_mtx;
-    /* 0x0964 */ GC_Mtx _0964; /* UNCONFIRMED TYPE */
+    /* 0x0934 */ Mtx model_view_mtx;
+    /* 0x0964 */ Mtx _0964; /* UNCONFIRMED TYPE */
     /* 0x0994 */ int mtx_stack_size;
     /* 0x0998 */ Gtexture_internal texture_gfx;
     /* 0x09A0 */ f32 texture_scale_s; /* x-scale */
     /* 0x09A4 */ f32 texture_scale_t; /* y-scale */
     /* 0x09A8 */ Mtx44 ortho_mtx;
     /* 0x09E8 */ GXProjectionType projection_type;
-    /* 0x09EC */ GC_Mtx perspective_mtx;
+    /* 0x09EC */ Mtx perspective_mtx;
     /* 0x0A1C */ u32 _0A1C;
     /* 0x0A20 */ u32 rdpHalf_1;
     /* 0x0A24 */ EmuLight lights[NUM_LIGHTS];

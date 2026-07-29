@@ -1,4 +1,8 @@
+#ifdef GAMECUBE
 #include <libc/string.h>
+#else
+#include <string.h>
+#endif
 #include <dolphin/vi.h>
 #include "_mem.h"
 #include "JSystem/J2D/J2DGrafContext.h"
@@ -13,7 +17,7 @@
 // https://github.com/kiwi515/ogws/blob/master/src/egg/core/eggAsyncDisplay.cpp
 // gpHang: https://github.com/valentinaslover/paper-mar/blob/master/source/sdk/DEMOInit.c#L280
 
-GC_Mtx e_mtx = { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } };
+Mtx e_mtx = { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } };
 
 JFWDisplay* JFWDisplay::sManager;
 
@@ -328,8 +332,14 @@ void waitForTick(u32 p1, u16 p2) {
             if (!OSReceiveMessage(JUTVideo::getManager()->getMessageQueue(), &msg, OS_MESSAGE_BLOCK)) {
                 msg = 0;
             }
-        } while (((int)msg - (int)nextCount) < 0);
+        } 
+        #ifdef GAMECUBE
+        while (((int)msg - (int)nextCount) < 0);
         nextCount = (int)msg + uVar1;
+        #else
+        while (((s64)msg - (s64)nextCount) < 0);
+        nextCount = (s64)msg + uVar1;
+        #endif
     }
 }
 

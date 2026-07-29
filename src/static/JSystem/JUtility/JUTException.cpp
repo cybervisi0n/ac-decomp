@@ -1,11 +1,20 @@
+#ifdef GAMECUBE
 #include "MSL_C/MSL_Common/float.h"
+#else
+#include "float.h"
+#endif
 
 #include <dolphin/base/PPCArch.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
 #include "libc/string.h"
+#else
+#include <cstdio>
+#include <string.h>
+#endif
 
 #include "JSystem/JUtility/JUTException.h"
 #include "JSystem/JUtility/JUTDirectPrint.h"
@@ -46,7 +55,11 @@ JUTErrorHandler JUTException::sPreUserCallback;
 JUTErrorHandler JUTException::sPostUserCallback;
 static CallbackObject exCallbackObject;
 void* JUTException::sConsoleBuffer;
+#ifdef GAMECUBE
 u32 JUTException::sConsoleBufferSize;
+#else
+size_t JUTException::sConsoleBufferSize;
+#endif
 JUTConsole* JUTException::sConsole;
 u32 JUTException::msr;
 u32 JUTException::fpscr;
@@ -610,9 +623,16 @@ void JUTException::createFB() {
     u32 pixel_count = width * height;
     u32 size = pixel_count * 2;
 
+    #ifdef GAMECUBE
+    //TODO: pointer size
     void* begin = (void*)ALIGN_PREV((u32)end - size, 32);
     void* object = (void*)ALIGN_PREV((s32)begin - sizeof(JUTExternalFB), 32);
     JUTExternalFB* fb = new (object) JUTExternalFB(renderMode, GX_GM_1_7, begin, size);
+    #else
+    void* begin = nullptr;
+    void* object = nullptr;
+    JUTExternalFB* fb = nullptr;
+    #endif
 
     mDirectPrint->changeFrameBuffer(object);
     VIConfigure(renderMode);
@@ -623,6 +643,7 @@ void JUTException::createFB() {
     mFrameMemory = (JUTExternalFB*)object;
 }
 // clang-format off
+#ifdef GAMECUBE
 asm u32 JUTException::getFpscr() { // TODO: figure out if this is possible with asm
     fralloc
     mfmsr r5
@@ -635,6 +656,12 @@ asm u32 JUTException::getFpscr() { // TODO: figure out if this is possible with 
     frfree
     blr
 }
+#else
+u32 JUTException::getFpscr() {
+    //TODO
+    return 0;
+}
+#endif
 // clang-format on
 
 JUTErrorHandler JUTException::setPreUserCallback(JUTErrorHandler callback) {

@@ -1,0 +1,6 @@
+subdir('J2DGraph')
+subdir('JFramework')
+subdir('JGadget')
+subdir('JKernel')
+subdir('JSupport')
+subdir('JUtility')

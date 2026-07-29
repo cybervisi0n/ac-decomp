@@ -1,5 +1,11 @@
 #include "JSystem/JSupport/JSUStream.h"
 
+#ifndef GAMECUBE
+#define SEEK_SET JSEEK_SET
+#define SEEK_END JSEEK_END
+#define SEEK_CUR JSEEK_CUR
+#endif
+
 JSUFileInputStream::JSUFileInputStream(JKRFile* file) : mObject(file), mPosition(0) {
 }
 

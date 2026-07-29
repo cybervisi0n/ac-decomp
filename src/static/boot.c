@@ -670,3 +670,9 @@ int main(int argc, const char** argv) {
   JW_Cleanup();
   return 0;
 }
+
+#ifdef LIBPORPOISE_PORT
+void DolphinMain() {
+  main(0, NULL);
+}
+#endif

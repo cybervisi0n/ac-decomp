@@ -503,7 +503,7 @@ f32 PsendoArcSinConvert(f32 arcsin) {
 
 
 static void emu64_init2(GXRenderModeObj* render_mode) {
-    GC_Mtx m;
+    Mtx m;
     int i;
 
     // __GXSetIndirectMask(0);
@@ -2390,12 +2390,12 @@ void emu64::texture_gen(int tex) {
     };
     // clang-format on
 
-    GC_Mtx mm; /* Model-view matrix */
-    GC_Mtx ml; /* Look-at matrix */
-    GC_Mtx mf; /* Finalized texture matrix */
-    GC_Mtx ms; /* Scale matrix */
-    GC_Mtx mt; /* Translation matrix */
-    GC_Mtx mn; /* Scale-Translation normalization matrix */
+    Mtx mm; /* Model-view matrix */
+    Mtx ml; /* Look-at matrix */
+    Mtx mf; /* Finalized texture matrix */
+    Mtx ms; /* Scale matrix */
+    Mtx mt; /* Translation matrix */
+    Mtx mn; /* Scale-Translation normalization matrix */
 
     /* Setup lookat matrix */
 
@@ -2489,7 +2489,7 @@ void emu64::texture_matrix() {
 
     EMU64_ASSERTLINE_DEBUG(this, 4036);
     if (this->texture_gfx.on != 0) {
-        GC_Mtx m;
+        Mtx m;
         u16 uls0;
         u16 ult0;
 
@@ -2605,7 +2605,7 @@ void emu64::set_position(unsigned int vtx) {
 
     if ((emu_vtx->flag & MTX_NONSHARED) != MTX_SHARED) {
         if (!this->using_nonshared_mtx) {
-            GC_Mtx& m = this->position_mtx_stack[this->mtx_stack_size];
+            Mtx& m = this->position_mtx_stack[this->mtx_stack_size];
 
             if (aflags[AFLAGS_USE_GUVECMULT]) {
                 guMtxXFM1F_dol(m, emu_vtx->position.x, emu_vtx->position.y, emu_vtx->position.z, &emu_vtx->position.x,
@@ -4260,7 +4260,7 @@ void emu64::dl_G_MTX() {
         Mtx_t* mtx =
             (Mtx_t*)this->seg2k0(mtx_gfx->addr); /* Matrix is in N64 s16.16 format. (First 8 elements are s16 integer
                                                     components, second 8 elements are s16 fractional components) */
-        GC_Mtx mtx34;
+        Mtx mtx34;
         Mtx44 mtx44; /* float-based matrix */
 
         /* Convert our s16.u16 matrix into a f32 matrix. */
@@ -4293,10 +4293,10 @@ void emu64::dl_G_MTX() {
                 this->dirty_flags[EMU64_DIRTY_FLAG_PROJECTION_MTX] = true;
                 this->dirty_flags[EMU64_DIRTY_FLAG_FOG] = true;
             } else {
-                bcopy(mtx44, &this->position_mtx, sizeof(GC_Mtx)); /* Last row of Mtx44 is ignored */
+                bcopy(mtx44, &this->position_mtx, sizeof(Mtx)); /* Last row of Mtx44 is ignored */
             }
         } else { /* Modelview */
-            GC_Mtx& concat_src = this->model_view_mtx_stack[this->mtx_stack_size];
+            Mtx& concat_src = this->model_view_mtx_stack[this->mtx_stack_size];
 
             if ((mtx_gfx->type & G_MTX_PUSH) == G_MTX_NOPUSH) {
                 if (this->mtx_stack_size < MTX_STACK_SIZE - 1) {
@@ -4307,15 +4307,15 @@ void emu64::dl_G_MTX() {
                 }
             }
 
-            GC_Mtx& model_view_src = this->model_view_mtx_stack[this->mtx_stack_size];
+            Mtx& model_view_src = this->model_view_mtx_stack[this->mtx_stack_size];
             if ((mtx_gfx->type & G_MTX_LOAD) != G_MTX_MUL) {
-                bcopy(mtx34, model_view_src, sizeof(GC_Mtx));
+                bcopy(mtx34, model_view_src, sizeof(Mtx));
             } else {
                 MTXConcat(concat_src, mtx34, model_view_src);
             }
 
             if (aflags[AFLAGS_COPY_POSITION_MTX] == 0) {
-                GC_Mtx& src = this->model_view_mtx_stack[mtx_stack_size];
+                Mtx& src = this->model_view_mtx_stack[mtx_stack_size];
 
                 for (int i = 0; i < 3; i++) {
                     this->model_view_mtx[i][0] = src[i][0];
@@ -4374,7 +4374,7 @@ void emu64::dl_G_VTX() {
         Vtx* vtx_p = (Vtx*)this->seg2k0(this->gfx.dma.addr);
         Vertex* emu_vtx_p = &this->vertices[v0];
 
-        GC_Mtx& position_mtx = this->position_mtx_stack[this->mtx_stack_size];
+        Mtx& position_mtx = this->position_mtx_stack[this->mtx_stack_size];
         if ((this->print_commands & (1 << 5)) != 0) {
             /* NOTE: They print a 4x4 matrix, but position matrix is only 3x4. */
             this->disp_matrix(position_mtx);

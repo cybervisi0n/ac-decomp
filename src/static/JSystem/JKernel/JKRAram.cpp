@@ -37,6 +37,8 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
     u32 aramBase = ARInit(mStackArray, ARRAY_COUNT(mStackArray));
     ARQInit();
 
+    #ifdef GAMECUBE
+    //TODO: missign apis, memory stuff
     u32 aramSize = ARGetSize();
     mAudioMemorySize = bufSize;
     if (graphSize == 0xffffffff) {
@@ -57,6 +59,7 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
     }
 
     mAramHeap = new (JKRHeap::getSystemHeap(), 0) JKRAramHeap(mGraphMemoryPtr, mGraphMemorySize);
+    #endif
 }
 
 JKRAram::~JKRAram() {
@@ -85,6 +88,8 @@ void* JKRAram::run() {
 }
 
 bool JKRAram::checkOkAddress(u8* addr, u32 size, JKRAramBlock* block, u32 blockSize) {
+    #ifdef GAMECUBE
+    //TODO: Memory stuff
     if (!IS_ALIGNED((u32)addr, 0x20) && !IS_ALIGNED(size, 0x20)) {
         JPANIC(225, ":::address not 32Byte aligned.");
         return false;
@@ -96,6 +101,7 @@ bool JKRAram::checkOkAddress(u8* addr, u32 size, JKRAramBlock* block, u32 blockS
             return false;
         }
     }
+    #endif
     return true;
 }
 
@@ -142,7 +148,10 @@ JKRAramBlock* JKRAram::mainRamToAram(u8* buf, u32 address, u32 alignedSize, JKRE
             block = nullptr;
         } else {
             JKRDecompress(buf, (u8*)allocatedMem, fileSize, 0);
+            #ifdef GAMECUBE
+            //TODO Memory
             JKRAramPcs(0, (u32)allocatedMem, address, alignedSize, block);
+            #endif
             JKRFreeToHeap(heap, allocatedMem);
             block = block == nullptr ? (JKRAramBlock*)-1 : block;
         }
@@ -156,7 +165,10 @@ JKRAramBlock* JKRAram::mainRamToAram(u8* buf, u32 address, u32 alignedSize, JKRE
             address = block->getAddress();
         }
 
+        #ifdef GAMECUBE
+        //TODO memory
         JKRAramPcs(0, (u32)buf, address, alignedSize, block);
+        #endif
         block = block == nullptr ? (JKRAramBlock*)-1 : block;
     }
     return block;
@@ -193,11 +205,14 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
     u32 expandSize;
     if (expandSwitch == EXPAND_SWITCH_DECOMPRESS) {
         u8 buffer[64];
+        #ifdef GAMECUBE
+        //TODO: Memory stuff
         u8* bufPtr = (u8*)ALIGN_NEXT((u32)buffer, 32);
         JKRAramPcs(1, address, (u32)bufPtr, sizeof(buffer) / 2,
                    nullptr); // probably change sizeof(buffer) / 2 to 32
         compression = JKRCheckCompressed(bufPtr);
         expandSize = JKRDecompExpandSize(bufPtr);
+        #endif
     }
 
     if (compression == JKRCOMPRESSION_YAZ0) // SZS
@@ -223,7 +238,10 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
         if (szpSpace == nullptr) {
             return nullptr;
         } else {
+            #ifdef GAMECUBE
+            //TODO: Memory
             JKRAramPcs(1, address, (u32)szpSpace, srcSize, nullptr);
+            #endif
             if (p5 != 0 && p5 < expandSize)
                 expandSize = p5;
 
@@ -250,7 +268,10 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
             return nullptr;
         } else {
             changeGroupIdIfNeed(buf, id);
+            #ifdef GAMECUBE
+            //TODO
             JKRAramPcs(1, address, (u32)buf, srcSize, nullptr);
+            #endif
             if (pSize != nullptr) {
                 *pSize = srcSize;
             }
@@ -456,7 +477,10 @@ static u8* firstSrcData() {
     u32 maxSize = (szpEnd - szpBuf);
     u32 transSize = MIN(transLeft, maxSize);
 
+    #ifdef GAMECUBE
+    //TODO Memory
     JKRAramPcs(1, srcAddress + srcOffset, (u32)buf, ALIGN_NEXT(transSize, 32), nullptr);
+    #endif
 
     srcOffset += transSize;
     transLeft -= transSize;
@@ -478,7 +502,10 @@ u8* nextSrcData(u8* current) {
         transSize = transLeft;
     JUT_ASSERT(transSize > 0);
 
+    #ifdef GAMECUBE
+    //TODO Memory
     JKRAramPcs(1, (u32)(srcAddress + srcOffset), ((u32)dest + left), ALIGN_NEXT(transSize, 0x20), nullptr);
+    #endif
     srcOffset += transSize;
     transLeft -= transSize;
 

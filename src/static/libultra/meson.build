@@ -32,3 +32,12 @@ libultra_srcs = files(
     'xlitob.c',
     'xprintf.c'
 )
+
+libultra_lib = static_library('ultra',
+    include_directories: project_includes,
+    pic: false,
+    dependencies: libporpoise_dep,
+    sources: libultra_srcs,
+    native: build_target != 'gc'
+)
+animalcrossing_libs += libultra_lib

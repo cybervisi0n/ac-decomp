@@ -314,9 +314,11 @@ void JKRDefaultMemoryErrorRoutine(void*, u32, int);
 void* operator new(size_t);
 void* operator new(size_t, s32);
 void* operator new(size_t, JKRHeap*, int);
+#ifdef GAMECUBE
 inline void* operator new(size_t, void* buf) {
     return buf;
 } // i believe this is actually part of MSL_C?
+#endif
 
 void* operator new[](size_t);
 void* operator new[](size_t, s32);

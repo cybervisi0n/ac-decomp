@@ -276,6 +276,9 @@ u32 JKRAramArchive::fetchResource_subroutine(u32 srcAram, u32 size, JKRHeap* hea
             return size;
         case JKRCOMPRESSION_YAY0:
         case JKRCOMPRESSION_YAZ0:
+            #ifndef GAMECUBE
+            {
+            #endif
             u8* header = (u8*)JKRAllocFromHeap(heap, 0x20, 0x20);
             JKRAramToMainRam(srcAram, header, 0x20, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);
             u32 expandSize = JKRDecompExpandSize(header);
@@ -287,6 +290,9 @@ u32 JKRAramArchive::fetchResource_subroutine(u32 srcAram, u32 size, JKRHeap* hea
             JKRAramToMainRam(srcAram, buffer, alignedSize, EXPAND_SWITCH_DECOMPRESS, expandSize, heap, -1, &resSize);
             *pBuf = buffer;
             return resSize;
+            #ifndef GAMECUBE
+            }
+            #endif
         default:
             JPANIC(605, ":::??? bad sequence\n");
             return 0;

@@ -1,6 +1,10 @@
 #include <dolphin/os.h>
 
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
+#else
+#include <cstdio>
+#endif
 #include "JSystem/JUtility/JUTDirectPrint.h"
 
 JUTDirectPrint* JUTDirectPrint::sDirectPrint;

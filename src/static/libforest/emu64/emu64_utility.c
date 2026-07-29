@@ -40,7 +40,7 @@ void guMtxXFM1F_dol(MtxP mtx, float x, float y, float z, float* ox, float* oy, f
 }
 
 void guMtxXFM1F_dol7(MtxP mtx, float x, float y, float z, float* ox, float* oy, float* oz) {
-    GC_Mtx inv;
+    Mtx inv;
 
     PSMTXInverse(mtx, inv);
     *ox = inv[0][0] * x + inv[0][1] * y + inv[0][2] * z + inv[0][3];
@@ -152,7 +152,7 @@ void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float 
 
 /* @unused void guMtxXFMWL(N64Mtx*, float, float, float, float, float*, float*, float*, float*) */
 
-void guMtxNormalize(GC_Mtx mtx) {
+void guMtxNormalize(Mtx mtx) {
     for (int i = 0; i < 3; i++) {
         float magnitude = sqrtf(mtx[i][0] * mtx[i][0] + mtx[i][1] * mtx[i][1] + mtx[i][2] * mtx[i][2]);
 
@@ -162,7 +162,7 @@ void guMtxNormalize(GC_Mtx mtx) {
     }
 }
 
-/* TODO: UltraMtx -> N64Mtx, GC_Mtx -> UltraMtx */
+/* TODO: UltraMtx -> N64Mtx, Mtx -> UltraMtx */
 void N64Mtx_to_DOLMtx(const UltraMtx* n64, MtxP gc) {
     s16* fixed = ((s16*)n64) + 0;
     u16* frac = ((u16*)n64) + 16;

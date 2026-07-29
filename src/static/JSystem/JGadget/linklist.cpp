@@ -1,7 +1,12 @@
 #include "JSystem/JGadget/linklist.h"
 
+#ifdef GAMECUBE
 #include "MSL_CPP/algorithm.h"
 #include "MSL_CPP/iterator.h"
+#else
+#include <algorithm>
+#include <iterator>
+#endif
 
 namespace JGadget {
 
@@ -45,7 +50,10 @@ void TNodeLinkList::splice(TNodeLinkList::iterator it, TNodeLinkList& rSrc, TNod
     }
   }
   else {
+    #ifdef GAMECUBE
+    //TODO
     dist = std::distance(itBegin, itEnd);
+    #endif
 
     if (dist == 0) {
       return;
@@ -95,7 +103,12 @@ void TNodeLinkList::splice(iterator it, TNodeLinkList& rSrc) {
 }
 
 TNodeLinkList::iterator TNodeLinkList::Find(const TLinkListNode* node) {
+  #ifdef GAMECUBE
+  //TODO
   return std::find_if(this->begin(), this->end(), TPRIsEqual_pointer_<TLinkListNode>(node));
+  #else
+  return nullptr;
+  #endif
 }
 
 #undef NULL

@@ -6,6 +6,10 @@
 #include "JSystem/JUtility/JUTAssertion.h"
 #include "types.h"
 
+#ifndef GAMECUBE
+#define SEEK_SET JSEEK_SET
+#endif
+
 // From Pikmin Repo
 
 OSMessage JKRAramStream::sMessageBuffer[4] = { 0 };
@@ -96,7 +100,10 @@ s32 JKRAramStream::writeToAram(JKRAramStreamCommand* command) {
 
             s32 readLength = command->mStream->read(buffer, length);
 
+            #ifdef GAMECUBE
+            //TODO Memory
             JKRAramPcs(0, (u32)buffer, destination, length, nullptr);
+            #endif
             dstSize -= length;
             writtenLength += length;
             destination += length;
@@ -122,7 +129,10 @@ JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream
                                                               u32 offset) {
     JKRAramStreamCommand* command = new (JKRGetSystemHeap(), -4) JKRAramStreamCommand();
     command->type = JKRAramStreamCommand::ECT_WRITE;
+    #ifdef GAMECUBE
+    //TODO: memory
     command->mAddress = (u32)addr;
+    #endif
     command->mSize = size;
     command->mStream = stream;
     command->_28 = stream->getAvailable();
@@ -184,7 +194,10 @@ void JKRAramStream::setTransBuffer(u8* buffer, u32 bufferSize, JKRHeap* heap) {
     transHeap = nullptr;
 
     if (buffer) {
+        #ifdef GAMECUBE
+        //TODO
         transBuffer = (u8*)ALIGN_NEXT((u32)buffer, 0x20);
+        #endif
     }
 
     if (bufferSize) {

@@ -4,9 +4,17 @@
 #include <dolphin/mtx.h>
 #include "types.h"
 
+#ifndef GAMECUBE
+#define FLT_EPSILON 1.1920928955078125e-07f
+#endif
+
 #ifdef __cplusplus
 inline f32 fsqrt_step(f32 mag) {
+    #ifdef GAMECUBE
     f32 root = __frsqrte(mag);
+    #else
+    f32 root = sqrtf(mag);
+    #endif
     return 0.5f * root * (3.0f - mag * (root * root));
 }
 
@@ -218,8 +226,14 @@ template <typename T> struct TVec3 {
 template <class T> struct TBox {
     TBox() : i(), f() {
     }
+    #ifdef GAMECUBE
     TBox(const TBox& other) : i(other.f), f(other.y) {
     }
+    #else
+    //TODO: needs more review
+    TBox(const TBox& other) : i(other.i), f(other.f) {
+    }
+    #endif
 
     T i, f;
 };
@@ -260,10 +274,14 @@ struct TBox2 : TBox<TVec2<T> > {
 	TBox2(f32 x0, f32 y0, TVec2<f32>& f) { set(x0, y0, x0 + f.x, y0 + f.y);	}
 	TBox2(f32 val)
 	{
+        #ifdef GAMECUBE
 		f.y = val;
 		f.x = val;
 		i.y = val;
 		i.x = val;
+        #else
+        set(val, val, val, val);
+        #endif
 	}
 
 	// inline TBox2& operator=(const TBox2& other)

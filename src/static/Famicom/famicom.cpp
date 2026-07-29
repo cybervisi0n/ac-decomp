@@ -1,7 +1,11 @@
 #include "Famicom/famicomPriv.h"
 #include "Famicom/famicomInternal.hpp"
 
+#ifdef GAMECUBE
 #include "libc/string.h"
+#else
+#include <string.h>
+#endif
 #include "dolphin/gx.h"
 #include "dolphin/os.h"
 #include "dolphin/mtx.h"
@@ -19,7 +23,11 @@
 #include "libc64/sprintf.h"
 #include "libjsys/jsyswrapper.h"
 #include "jsyswrap_cpp.h"
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
+#else
+#include <stdio.h>
+#endif
 #include "jaudio_NES/emusound.h"
 #include "JSystem/JUtility/JUTProcBar.h"
 #include "JSystem/JUtility/JUTGamePad.h"

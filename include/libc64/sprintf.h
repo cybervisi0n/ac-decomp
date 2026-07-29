@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
+#ifdef GAMECUBE
 int sprintf(char* dst, const char* fmt, ...);
+#endif
 
 #ifdef __cplusplus
 }

@@ -14,7 +14,7 @@
 
 typedef void (*JFWDisplayUnkFunc)(void);
 
-extern GC_Mtx e_mtx;
+extern Mtx e_mtx;
 
 class JFWAlarm : public OSAlarm { // everything here seems to be auto inlined or unused
   public:

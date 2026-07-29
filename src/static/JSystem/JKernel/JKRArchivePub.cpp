@@ -82,7 +82,12 @@ JKRArchive* JKRArchive::mount(const char* path, EMountMode mode, JKRHeap* heap, 
 }
 
 JKRArchive* JKRArchive::mount(void* p1, JKRHeap* heap, EMountDirection mountDirection) {
+    #ifdef GAMECUBE
+    //TODO: Memory
     JKRArchive* archive = check_mount_already((s32)p1, heap);
+    #else
+    JKRArchive* archive = nullptr;
+    #endif
     if (archive != nullptr) {
         return archive;
     }

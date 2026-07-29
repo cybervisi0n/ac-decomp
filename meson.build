@@ -60,15 +60,6 @@ libporpoise_dep = dependency('libPorpoise')
 
 subdir('src')
 
-libultra_lib = static_library('ultra',
-    include_directories: project_includes,
-    pic: false,
-    dependencies: libporpoise_dep,
-    sources: libultra_srcs,
-    native: build_target != 'gc'
-)
-animalcrossing_libs += libultra_lib
-
 foresta_rel_lib = static_library('foresta.rel',
     include_directories: project_includes,
     pic: false,
@@ -79,8 +70,9 @@ foresta_rel_lib = static_library('foresta.rel',
 animalcrossing_libs += foresta_rel_lib
 
 animalcrossing_exe = executable(
-    'animalcrossing',
+    'main',
     dependencies: [ libporpoise_dep ],
+    sources: [ boot_srcs ],
     link_args: [ animalcrossing_link_args ],
     link_with: [ animalcrossing_libs ],
     include_directories: [ project_includes ],

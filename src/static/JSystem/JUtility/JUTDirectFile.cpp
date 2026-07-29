@@ -15,9 +15,12 @@ int JUTDirectFile::fetch32byte() {
         return -1;
     } else {
         interrupts = OSEnableInterrupts();
+        #ifdef GAMECUBE
+        //todo
         while (DVDGetCommandBlockStatus(&mFileInfo.cb)) {
             ;
         }
+        #endif
         OSRestoreInterrupts(interrupts);
         return mToRead;
     }
@@ -27,7 +30,10 @@ JUTDirectFile::JUTDirectFile() {
     mLength = 0;
     mPos = 0;
     mToRead = 0;
+    #ifdef GAMECUBE
+    //TODO: memory pointer size
     mSectorStart = (u8*)ALIGN_NEXT((u32)mBuffer, DVD_MIN_TRANSFER_SIZE);
+    #endif
     mIsOpen = false;
 }
 

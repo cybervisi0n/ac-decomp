@@ -1,4 +1,8 @@
+#ifdef GAMECUBE
 #include <MSL_C/printf.h>
+#else
+#include <stdio.h>
+#endif
 
 #include <dolphin/os.h>
 #include <dolphin/vi.h>
@@ -21,12 +25,17 @@ JUTConsole* JUTConsole::create(uint param_0, uint maxLines, JKRHeap* pHeap) {
 
     u8* buffer = (u8*)JKRAllocFromHeap(pHeap, getObjectSizeFromBufferSize(param_0, maxLines), 0);
 
+    #ifdef GAMECUBE
+    //TODO
     JUTConsole* newConsole = new (buffer) JUTConsole(param_0, maxLines, true);
     newConsole->mBuf = buffer + sizeof(JUTConsole);
     newConsole->clear();
 
     pManager->appendConsole(newConsole);
     return newConsole;
+    #else
+    return nullptr;
+    #endif
 }
 
 JUTConsole* JUTConsole::create(uint param_0, void* buffer, u32 bufferSize) {
@@ -35,12 +44,17 @@ JUTConsole* JUTConsole::create(uint param_0, void* buffer, u32 bufferSize) {
     JUT_ASSERT(( (u32)buffer & 0x3 ) == 0);
     u32 maxLines = getLineFromObjectSize(bufferSize, param_0);
 
+    #ifdef GAMECUBE
     JUTConsole* newConsole = new (buffer) JUTConsole(param_0, maxLines, false);
     newConsole->mBuf = (u8*)buffer + sizeof(JUTConsole);
     newConsole->clear();
 
     pManager->appendConsole(newConsole);
     return newConsole;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 // unused
