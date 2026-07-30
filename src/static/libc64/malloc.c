@@ -3,6 +3,7 @@
 
 OSArena malloc_arena;
 
+#ifdef GAMECUBE
 extern void* malloc(size_t size) {
     return __osMalloc(&malloc_arena, size);
 }
@@ -10,6 +11,7 @@ extern void* malloc(size_t size) {
 extern void free(void* ptr) {
     __osFree(&malloc_arena, ptr);
 }
+#endif
 
 extern void DisplayArena(void) {
     __osDisplayArena(&malloc_arena);

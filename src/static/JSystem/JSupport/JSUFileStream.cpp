@@ -55,5 +55,7 @@ int JSUFileInputStream::seekPos(s32 offset, JSUStreamSeekFrom from) {
     return this->mPosition - pos;
 }
 
+#ifdef GAMECUBE
 JSUFileOutputStream::JSUFileOutputStream(JKRFile* file) {
 }
+#endif
