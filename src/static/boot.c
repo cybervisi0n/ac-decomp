@@ -41,6 +41,10 @@ u8 SoftResetEnable;
 #endif
 u8 boot_sound_initializing;
 
+#ifndef GAMECUBE
+OSModuleHeader* BaseModule AT_ADDRESS(0x800030C8);
+#endif
+
 /**
  * @brief Stubbed function. Was responsible for allocated space for sound.
  * 
@@ -474,7 +478,12 @@ void adjustOSArena() {
  * @param argv unused
  * @return int exitCode
  */
-int main(int argc, const char** argv) {
+#ifdef GAMECUBE
+int main(int argc, const char** argv) 
+#else
+int bootMain(int argc, const char** argv) 
+#endif
+{
   static fault_client
     my_fault_client1,
     my_fault_client2,
@@ -546,7 +555,10 @@ int main(int argc, const char** argv) {
       break;
     case OS_RESETCODE_RESTART:
       OSReport("リスタート\n"); /* restart */
+      #ifdef GAMECUBE
+      //TODO
       OSGetSaveRegion(&start, &end);
+      #endif
       OSReport("OSGetSaveRegion %08x %08x\n", start, end);
       bcopy(NMISaveArea, osAppNMIBuffer, 16 * sizeof(s32));
       break;
@@ -673,6 +685,6 @@ int main(int argc, const char** argv) {
 
 #ifdef LIBPORPOISE_PORT
 void DolphinMain() {
-  main(0, NULL);
+  bootMain(0, NULL);
 }
 #endif

@@ -381,9 +381,12 @@ extern void debug_hayakawa_move(pad_t* pad) {
         if (GETREG(SREG, 21) & 1) {
             OSReportDisable();
         } else {
+            #ifdef GAMECUBE
+            //TODO
             if (OS_CONSOLE_IS_DEV()) {
                 OSReportEnable();
             }
+            #endif
         }
 
         JC_JUTDbPrint_setVisible(JC_JUTDbPrint_getManager(), !(GETREG(SREG, 21) & 2));

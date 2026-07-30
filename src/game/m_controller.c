@@ -2,7 +2,11 @@
 #include "game.h"
 #include "m_lib.h"
 #include "m_event.h"
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
+#else
+#include <math.h>
+#endif
 #include "sys_math.h"
 
 /**

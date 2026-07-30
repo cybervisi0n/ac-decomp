@@ -91,7 +91,10 @@ static void __DspSync(__OSInterrupt interrupt, OSContext* context) {
 
 static void __DspReg(void) {
     BOOL enable = OSDisableInterrupts();
+    #ifdef GAMECUBE
+    //TODO
     __OSSetInterruptHandler(OS_INTR_DSP_DSP, &__DspSync);
+    #endif
     OSRestoreInterrupts(enable);
 }
 
@@ -111,6 +114,8 @@ static void* audioproc(void* param) {
     AIRegisterDMACallback(&AudioSync);
     AIStartDMA();
 
+    #ifdef GAMECUBE
+    //TODO
     while (TRUE) {
         OSMessage msg;
 
@@ -143,6 +148,7 @@ static void* audioproc(void* param) {
                 break;
         }
     }
+    #endif
 }
 
 static BOOL priority_set = FALSE;

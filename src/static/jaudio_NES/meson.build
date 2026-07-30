@@ -1,0 +1,2 @@
+subdir('game')
+subdir('internal')

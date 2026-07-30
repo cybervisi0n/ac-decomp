@@ -1,6 +1,11 @@
 #include "jaudio_NES/OSAttention.h"
 
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
+#else
+#include <stdio.h>
+#include <stdarg.h>
+#endif
 
 extern "C" int OSAttention(const char* msg, ...) {
     va_list marker;

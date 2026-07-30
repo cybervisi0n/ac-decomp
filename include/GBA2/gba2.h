@@ -2,7 +2,7 @@
 #define GBA2_H
 
 #include "types.h"
-#include "GBA/gba.h"
+#include "dolphin/gba.h"
 
 #ifdef __cplusplus
 extern "C" {

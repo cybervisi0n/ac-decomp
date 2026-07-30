@@ -45,6 +45,7 @@ void OSVReport(const char* fmt, va_list list) {
     }
 }
 
+#ifdef GAMECUBE
 void OSReport(const char* fmt, ...) {
     va_list arg;
     va_start(arg, fmt);
@@ -70,14 +71,19 @@ void OSPanic(const char* file, int line, const char* fmt, ...) {
     OSRestoreInterrupts(enable);
     OSThrow(); /* Stop processor execution forcefully */
 }
+#endif
 
 extern void OSChangeBootMode(u32 mode) {
+    #ifdef GAMECUBE
     __OSSetBootMode(mode ? OS_BOOT_MODE_RETAIL : OS_BOOT_MODE_DEBUG);
     
     while(__OSSyncSram() == FALSE) { }
+    #endif
 }
 
 extern void OSDVDFatalError(void) {
+    #ifdef GAMECUBE
     OSReport("OSDVDFatalError called.\nExitThread.\n");
     OSExitThread(NULL);
+    #endif
 }

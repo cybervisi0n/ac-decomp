@@ -1,9 +1,17 @@
 #include "jaudio_NES/ja_calc.h"
 
+#ifdef GAMECUBE
 #include "PowerPC_EABI_Support/msl/MSL_C/PPC_EABI/cmath_gcn.h"
+#else
+#include <cmath>
+#endif
 // #include "std/Math.h"
 // #include "dolphin/math.h"
 // #include "stl/math.h"
+
+#ifndef GAMECUBE
+#define HALF_PI (M_PI/2.0f)
+#endif
 
 #define SINTABLE_LENGTH (257)
 static f32 SINTABLE[SINTABLE_LENGTH];

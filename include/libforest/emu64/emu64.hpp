@@ -4,10 +4,16 @@
 #include "types.h"
 // #include "va_args.h"
 #include <libc/stdarg.h>
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
+#else
+#include <stdio.h>
+#endif
 #include "libforest/gbi_extensions.h"
 #include "libforest/emu64/texture_cache.h"
+#ifdef GAMECUBE
 #include "dolphin/os/__ppc_eabi_init.h"
+#endif
 #include "dolphin/gx.h"
 #include "dolphin/mtx.h"
 #include "sys_ucode.h"

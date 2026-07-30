@@ -1,5 +1,9 @@
 #include "libc64/math64.h"
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
+#else
+#include <math.h>
+#endif
 
 f32 fatan2(f32 x, f32 y) {
     return atan2(x, y);

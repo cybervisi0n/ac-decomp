@@ -2,7 +2,11 @@
 
 #include "m_play.h"
 #include "sys_math3d.h"
+#ifdef GAMECUBE
 #include "MSL_C/math.h"
+#else
+#include <math.h>
+#endif
 #include "c_keyframe.h"
 #include "m_player_lib.h"
 #include "m_room_type.h"

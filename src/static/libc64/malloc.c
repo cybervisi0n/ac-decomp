@@ -15,11 +15,27 @@ extern void DisplayArena(void) {
     __osDisplayArena(&malloc_arena);
 }
 
-extern void GetFreeArena(u32* max, u32* free, u32* alloc) {
+#ifdef GAMECUBE
+extern void GetFreeArena(u32* max, u32* free, u32* alloc)
+#else
+extern void GetFreeArena(size_t* max, size_t* free, size_t* alloc)
+#endif
+{
+    #ifdef GAMECUBE
+    //TODO
     __osGetFreeArena(&malloc_arena, max, free, alloc);
+    #endif
 }
-extern void MallocInit(void* start, u32 size) {
+#ifdef GAMECUBE
+extern void MallocInit(void* start, u32 size) 
+#else
+extern void MallocInit(void* start, size_t size) 
+#endif
+{
+    #ifdef GAMECUBE
+    //TODO
     __osMallocInit(&malloc_arena, start, size);
+    #endif
 }
 
 extern void MallocCleanup(void) {

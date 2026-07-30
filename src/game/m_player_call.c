@@ -9,9 +9,21 @@ static mActor_proc Player_actor_dt_func;
 static mActor_proc Player_actor_move_func;
 static mActor_proc Player_actor_draw_func;
 
+#ifndef GAMECUBE
+static
+#endif
 void Player_actor_ct_call(ACTOR* actor, GAME* game);
+#ifndef GAMECUBE
+static
+#endif
 void Player_actor_dt_call(ACTOR* actor, GAME* game);
+#ifndef GAMECUBE
+static
+#endif
 void Player_actor_move_call(ACTOR* actor, GAME* game);
+#ifndef GAMECUBE
+static
+#endif
 void Player_actor_draw_call(ACTOR* actor, GAME* game);
 
 ACTOR_PROFILE Player_Profile = {

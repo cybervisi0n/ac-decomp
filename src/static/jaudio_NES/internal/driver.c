@@ -7,7 +7,7 @@
 #include "jaudio_NES/audiowork.h"
 #include "jaudio_NES/track.h"
 #include "jaudio_NES/system.h"
-#include "os/OSCache.h"
+#include "dolphin/os/OSCache.h"
 #include "types.h"
 
 #define DMEM_TEMP 0x380

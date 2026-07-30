@@ -1,4 +1,8 @@
+#ifdef GAMECUBE
 #include <MSL_C/ctype.h>
+#else
+#include <ctype.h>
+#endif
 #include <string.h>
 #include "JSystem/JKernel/JKRFileLoader.h"
 

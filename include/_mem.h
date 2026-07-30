@@ -9,9 +9,11 @@ extern "C" {
 
 #pragma section code_type ".init"
 
+#ifndef LIBPORPOISE_BUILD_LINUX
 void * memcpy(void * dst, const void * src, size_t n);
 void * memset(void * dst, int val, size_t n);
 int memcmp(const void* src1, const void* src2, size_t n);
+#endif
 void __fill_mem(void * dst, int val, unsigned long n);
 
 #pragma section code_type

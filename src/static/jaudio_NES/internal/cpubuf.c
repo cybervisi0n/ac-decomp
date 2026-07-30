@@ -34,6 +34,9 @@ extern s16* CpubufProcess(DSPBUF_EVENTS event) {
             dspstatus = 0;
             break;
         case DSPBUF_EVENT_FRAME_END:
+            #ifndef GAMECUBE
+            {
+            #endif
             u8 write = write_buffer + 1;
 
             if (write == DSPBUF_NUM) {
@@ -49,7 +52,13 @@ extern s16* CpubufProcess(DSPBUF_EVENTS event) {
                 }
             }
             break;
+            #ifndef GAMECUBE
+            }
+            #endif
         case DSPBUF_EVENT_MIX:
+            #ifndef GAMECUBE
+            {
+            #endif
             u8 read = read_buffer + 1;
             if (read == DSPBUF_NUM) {
                 read = 0;
@@ -76,6 +85,9 @@ extern s16* CpubufProcess(DSPBUF_EVENTS event) {
                     CpubufProcess(DSPBUF_EVENT_FRAME_END);
                 }
             }
+            #ifndef GAMECUBE
+            }
+            #endif
 
             return dsp_buf[read_buffer];
     }

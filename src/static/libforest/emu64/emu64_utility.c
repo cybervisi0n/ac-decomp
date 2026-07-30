@@ -2,7 +2,11 @@
 
 #include "boot.h"
 #include "terminal.h"
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
+#else
+#include <math.h>
+#endif
 
 u32 emu64::seg2k0(u32 segadr) {
     u32 k0;

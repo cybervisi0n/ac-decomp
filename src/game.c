@@ -14,7 +14,7 @@
 #include "m_bgm.h"
 #include "libu64/debug.h"
 #include "libc64/malloc.h"
-#include "GBA/gba.h"
+#include "dolphin/gba.h"
 #include "m_vibctl.h"
 
 GAME* gamePT = NULL;

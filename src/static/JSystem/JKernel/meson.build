@@ -7,6 +7,20 @@ JKernel_srcs = files(
     'JKRAramStream.cpp',
     'JKRArchivePri.cpp',
     'JKRArchivePub.cpp',
+    'JKRCompArchive.cpp',
+    'JKRDecomp.cpp',
+    'JKRDisposer.cpp',
+    'JKRDvdAramRipper.cpp',
+    'JKRDvdArchive.cpp',
+    'JKRDvdFile.cpp',
+    'JKRDvdRipper.cpp',
+    'JKRExpHeap.cpp',
+    'JKRFile.cpp',
+    'JKRFileFinder.cpp',
+    'JKRFileLoader.cpp',
+    'JKRHeap.cpp',
+    'JKRMemArchive.cpp',
+    'JKRThread.cpp'
 )
 
 JKernel_lib = static_library('JKernel',

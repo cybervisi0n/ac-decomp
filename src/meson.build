@@ -1,4 +1,6 @@
+subdir('game')
 subdir('static')
+subdir('system')
 
 foresta_srcs = files(
     'audio.c',

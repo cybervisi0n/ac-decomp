@@ -17,6 +17,9 @@
 
 void guMtxIdentF(float mf[4][4]);
 
+#ifndef GAMECUBE
+static
+#endif
 inline void guTranslateF(float m[4][4], float x, float y, float z){
     guMtxIdentF(m);
     m[3][0] = x;
@@ -24,6 +27,9 @@ inline void guTranslateF(float m[4][4], float x, float y, float z){
     m[3][2] = z;
 }
 
+#ifndef GAMECUBE
+static
+#endif
 inline void guScaleF(float mf[4][4], float x, float y, float z) {
     guMtxIdentF(mf);
     mf[0][0] = x;

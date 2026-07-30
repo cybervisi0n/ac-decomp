@@ -110,6 +110,9 @@ extern void StreamMain(void) {
 
         case JSTREAM_STATE_CANCELLED:
         case JSTREAM_STATE_FADEOUT:
+            #ifndef GAMECUBE
+            {
+            #endif
             u32 streamed_samples = AIGetStreamSampleCount();
             if (J_STREAM.fadeout_timer != 0 && (J_STREAM.total_samples - streamed_samples) != 0) {
                 f32 vol = -J_STREAM.stream_vol;
@@ -122,6 +125,9 @@ extern void StreamMain(void) {
                 DVDCancelStream(&cmd);
                 J_STREAM.state = JSTREAM_STATE_STOP;
             }
+            #ifndef GAMECUBE
+            }
+            #endif
             break;
 
         case JSTREAM_STATE_STOP:

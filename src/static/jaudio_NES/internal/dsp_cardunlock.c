@@ -3,12 +3,18 @@
 
 #include "jaudio_NES/dsp_cardunlock.h"
 
+#ifdef GAMECUBE
 #include "MSL_C/rand.h"
+#else
+#include <stdlib.h>
+#endif
 #include "jaudio_NES/ipldec.h"
 #include "_mem.h"
 #include "dolphin/os.h"
 #include "dolphin/card.h"
-#include "card/__card.h"
+#include "dolphin/card/__card.h"
+#include "dolphin/exi.h"
+
 
 #define DATA_SCRAMBLE_R(data) (~(data ^ (data >> 7) ^ (data >> 15) ^ (data >> 23)))
 #define DATA_SCRAMBLE_L(data) (~(data ^ (data << 7) ^ (data << 15) ^ (data << 23)))
@@ -147,12 +153,14 @@ static u32 DummyLen()
 static void InitCallback(void* dspTask);
 static void DoneCallback(void* dspTask);
 
+#ifdef GAMECUBE
 struct CARDDecodeParameters {
 	u8* inputAddr;   // _00
 	u32 inputLength; // _04
 	u32 aramAddr;    // _08
 	u8* outputAddr;  // _0C
 };
+#endif
 
 /*
  * --INFO--

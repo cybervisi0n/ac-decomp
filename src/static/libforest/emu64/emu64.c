@@ -11,7 +11,7 @@
 #include "dolphin/os.h"
 // #include "va_args.h"
 #include "jsyswrap.h"
-#include "dolphin/PPCArch.h"
+#include "dolphin/base/PPCArch.h"
 
 // this pragma may be unnecessary
 #pragma inline_depth(1024)
@@ -302,7 +302,10 @@ static const OthermodeParameterInfo l_tbl[] = {
 #include "../src/static/libforest/emu64/emu64_print.cpp"
 
 /* Helper function to convert N64 texture format to Dolphin format */
-__declspec(section ".rodata") const u16 emu64::fmtxtbl[8][4] = {
+#ifdef GAMECUBE
+__declspec(section ".rodata")
+#endif
+const u16 emu64::fmtxtbl[8][4] = {
     { GX_TF_CMPR, -1, GX_TF_RGB5A3, GX_TF_RGBA8 }, /* G_IM_FMT_RGBA */
     { -1, -1, -1, -1 },                            /* G_IM_FMT_YUV */
     { GX_TF_C4, GX_TF_C8, 0xA, -1 },               /* G_IM_FMT_CI */
@@ -350,9 +353,12 @@ extern void emu64_texture_cache_data_entry_set(void* begin, void* end) {
 static texture_cache_t* texture_cache_select(void* addr) {
     int i;
 
+    #ifdef GAMECUBE
+    //TODO
     if (aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 1 || (addr >= _f_rodata && addr <= _e_data)) {
         return &texture_cache_data;
     }
+    #endif
 
     for (i = 0; i < texture_cache_data_entry_num; i++) {
         if (addr >= texture_cache_data_entry_tbl[i].start && addr < texture_cache_data_entry_tbl[i].end) {
@@ -714,7 +720,10 @@ void emu64::emu64_cleanup() {
     GXSetAlphaUpdate(GX_TRUE);
 }
 
-__declspec(weak) inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
+#ifdef GAMECUBE
+__declspec(weak)
+#endif
+inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
     static const u8 blk_tbl[4][2] = {
         { 8, 8 }, // G_IM_SIZ_4b
         { 8, 4 }, // G_IM_SIZ_8b
@@ -3102,7 +3111,10 @@ void emu64::dirty_check(int tile, int n_tiles, int do_texture_matrix) {
             f32 endz =
                 -guMtxXFM1F_dol3(this->projection_mtx, this->projection_type, ((f32)(u32)max - 1000.0f) / 1016.0f);
 
+            #ifdef GAMECUBE
+            //TODO
             GXSetFog(GX_FOG_PERSP_LIN, startz, endz, this->near, this->far, this->fog_color.color);
+            #endif
         } else {
             GXSetFog(GX_FOG_NONE, 0.0f, 0.0f, 0.0f, 0.0f, this->fog_color.color);
         }

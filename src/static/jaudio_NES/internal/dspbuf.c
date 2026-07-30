@@ -37,6 +37,9 @@ extern s16* DspbufProcess(DSPBUF_EVENTS event) {
             dspstatus = 0;
             break;
         case DSPBUF_EVENT_FRAME_END:
+            #ifndef GAMECUBE
+            {
+            #endif
             DspExtraTaskCheck();
             u8 write = write_buffer + 1;
 
@@ -54,6 +57,9 @@ extern s16* DspbufProcess(DSPBUF_EVENTS event) {
                 dspstatus = 1;
                 UpdateDSP();
             }
+            #ifndef GAMECUBE
+            }
+            #endif
             break;
         case DSPBUF_EVENT_MIX:
             u8 read = read_buffer + 1;

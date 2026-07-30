@@ -2982,8 +2982,12 @@ void ksNesEmuFrame(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags) {
 #define WRAM r31
 
 // clang-format off
-asm u32 ksNesResetAsm(register ksNesCommonWorkObj* work, register ksNesStateObj* state)
+#ifdef GAMECUBE
+asm 
+#endif
+u32 ksNesResetAsm(register ksNesCommonWorkObj* work, register ksNesStateObj* state)
 {
+#ifdef GAMECUBE
     register void* func_tbl;
     register ksNesStateObj* state_temp;
     nofralloc
@@ -3272,13 +3276,19 @@ exit:
     mtlr r0
     addi r1, r1, 0xf0
     blr
+#else
+    return 0;
+#endif
 }
 
 extern "C" void _savegpr_14(void);
 extern "C" void _restgpr_14(void);
 
 // TODO: use ksNesStateObj members instead of hardcoded offsets
-asm void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesStateObj* state_arg) {
+#ifdef GAMECUBE
+asm 
+#endif
+void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesStateObj* state_arg) {
     // these might be part of a fralloc? they're stored twice
     #define STACK_WORK_ARG 0x08(r1)
     #define STACK_STATE_ARG 0x0C(r1)
@@ -3287,7 +3297,7 @@ asm void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesS
     #define STACK_CPU_CYCLES 0xF0(r1)
     #define STACK_PPU_SCANLINE_REGS 0xF4(r1)
 
-
+#ifdef GAMECUBE
     register int local_25;
     register int local_26;
     register int local_27;
@@ -7414,6 +7424,7 @@ L_8003DE94:
     cmpw r9, r0
     bne L_8003DE94
     b ksNesLinecntIrqDefault
+#endif
 }
 
 // clang-format on

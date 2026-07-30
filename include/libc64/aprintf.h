@@ -3,6 +3,9 @@
 
 #include "types.h"
 // #include "va_args.h"
+#ifndef GAMECUBE
+#include <stdarg.h>
+#endif
 
 #ifdef __cplusplus
 extern "C"{

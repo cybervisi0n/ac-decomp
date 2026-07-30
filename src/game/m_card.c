@@ -1,10 +1,10 @@
 #include "m_card.h"
 
-#include "card.h"
-#include "card/CARDBios.h"
-#include "card/CARDCheck.h"
-#include "card/CARDMount.h"
-#include "card/__card.h"
+#include "dolphin/card.h"
+#include "dolphin/card/CARDBios.h"
+#include "dolphin/card/CARDCheck.h"
+#include "dolphin/card/CARDMount.h"
+#include "dolphin/card/__card.h"
 #include "graph.h"
 #include "lb_rtc.h"
 #include "libultra/libultra.h"
@@ -1193,7 +1193,10 @@ static int mCD_create_file_bg_set_not_copy(mCD_bg_info_c* bg_info, s32 chan, s32
             dir.permission |= data_len;
 
             /* @bug - missing *result = ? */
+            #ifdef GAMECUBE
+            //TODO
             __CARDSetStatusEx((s32)chan, bg_info->fileNo, &dir);
+            #endif
             if (*result == CARD_RESULT_READY) {
                 bg_info->space_proc++;
                 res = mCD_RESULT_SUCCESS;
@@ -1292,7 +1295,10 @@ static int mCD_set_file_permission_bg_set(mCD_bg_info_c* bg_info, s32 chan, s32*
                 dir.permission |= data_len;
 
                 /* @bug - missing *result = ? */
+                #ifdef GAMECUBE
+                //TODO
                 __CARDSetStatusEx((s32)chan, bg_info->fileNo, &dir);
+                #endif
                 if (*result == CARD_RESULT_READY) {
                     bg_info->space_proc++;
                     res = mCD_RESULT_SUCCESS;

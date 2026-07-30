@@ -1726,12 +1726,21 @@ typedef union {
 	_g->words.w1 = (unsigned int)(s);				\
 }
 
+#ifdef GAMECUBE
 #define	gsDma1p(c, s, l, p)						\
 {{									\
 	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
 	 _SHIFTL((l), 0, 16)), 						\
         (unsigned int)(s)						\
 }}
+#else
+//TODO
+#define	gsDma1p(c, s, l, p)						\
+{{									\
+	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
+	 _SHIFTL((l), 0, 16)), 						\
+}}
+#endif
 
 #define	gDma2p(pkt, c, adrs, len, idx, ofs)				\
 {									\
@@ -1740,12 +1749,21 @@ typedef union {
 			_SHIFTL((ofs)/8,8,8)|_SHIFTL((idx),0,8));	\
 	_g->words.w1 = (unsigned int)(adrs);				\
 }
+#ifdef GAMECUBE
 #define	gsDma2p(c, adrs, len, idx, ofs)					\
 {{									\
 	(_SHIFTL((c),24,8)|_SHIFTL(((len)-1)/8,19,5)|			\
 	 _SHIFTL((ofs)/8,8,8)|_SHIFTL((idx),0,8)),			\
         (unsigned int)(adrs)						\
 }}
+#else
+//TODO
+#define	gsDma2p(c, adrs, len, idx, ofs)					\
+{{									\
+	(_SHIFTL((c),24,8)|_SHIFTL(((len)-1)/8,19,5)|			\
+	 _SHIFTL((ofs)/8,8,8)|_SHIFTL((idx),0,8)),			\
+}}
+#endif
 
 #define	gSPNoOp(pkt)		gDma0p(pkt, G_SPNOOP, 0, 0)
 #define	gsSPNoOp()		gsDma0p(G_SPNOOP, 0, 0)
@@ -1777,11 +1795,19 @@ typedef union {
 	  _SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7);	\
 	_g->words.w1 = (unsigned int)(v);				\
 }
+#ifdef GAMECUBE
 # define	gsSPVertex(v, n, v0)					\
 {{									\
 	(_SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7)),	\
         (unsigned int)(v)						\
 }}
+#else
+//TODO
+# define	gsSPVertex(v, n, v0)					\
+{{									\
+	(_SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7)),	\
+}}
+#endif
 #elif	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
 /*
  * F3DEX_GBI: G_VTX GBI format was changed to support 64 vertice.
@@ -3003,12 +3029,21 @@ typedef union {
 	_g->words.w1 = (unsigned int)(i);				\
 }
 
+#ifdef GAMECUBE
 #define	gsSetImage(cmd, fmt, siz, width, i)				\
 {{									\
 	_SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |			\
 	_SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12),		\
 	(unsigned int)(i)						\
 }}
+#else
+//TODO
+#define	gsSetImage(cmd, fmt, siz, width, i)				\
+{{									\
+	_SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |			\
+	_SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12),		\
+}}
+#endif
 
 #define	gDPSetColorImage(pkt, f, s, w, i)	gSetImage(pkt, G_SETCIMG, f, s, w, i)
 #define	gsDPSetColorImage(f, s, w, i)		gsSetImage(G_SETCIMG, f, s, w, i)

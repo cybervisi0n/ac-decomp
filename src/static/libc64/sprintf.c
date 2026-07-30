@@ -1,7 +1,12 @@
 #include "libc64/sprintf.h"
 
 #include "libultra/xprintf.h"
+#ifdef GAMECUBE
 #include "_mem.h"
+#else
+#include <string.h>
+#include <stdarg.h>
+#endif
 
 
 static void* proutPrintf(void* dst, const char* fmt, int size) {

@@ -19,6 +19,10 @@
 #include "m_field_info.h"
 #include "m_common_data.h"
 
+#ifndef GAMECUBE
+#define __alloca malloc
+#endif
+
 static void game_next_play(GAME* game, int scene_no) {
     Save_Set(scene_no, scene_no);
 

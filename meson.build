@@ -22,7 +22,8 @@ project_c_args = shared_args + [
     '-D_LANGUAGE_C'
 ]
 project_cpp_args = shared_args + [
-    '-D_LANGUAGE_C_PLUS_PLUS'
+    '-D_LANGUAGE_C_PLUS_PLUS',
+    '-fpermissive'
 ]
 
 add_project_arguments(project_c_args, language: 'c', native: build_target != 'gc')

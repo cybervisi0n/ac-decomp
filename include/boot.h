@@ -27,6 +27,9 @@ extern u8 boot_sound_initializing;
 typedef void(*HotStartProc)();
 
 #define NMISaveArea (void*)0x811FFFC0
+#ifndef GAMECUBE
+extern
+#endif
 OSModuleHeader* BaseModule AT_ADDRESS(0x800030C8);
 
 // TODO: this macro should probably go elsewhere

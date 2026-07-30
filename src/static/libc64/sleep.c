@@ -9,9 +9,12 @@ void csleep(OSTime c) {
     OSMessageQueue mq;
     OSTimer timer;
 
+    #ifdef GAMECUBE
+    //TODO
     osCreateMesgQueue(&mq, &msg, 1);
     osSetTimer(&timer, c, 0, &mq, NULL);
     osRecvMesg(&mq, NULL, 1);
+    #endif
 }
 
 void msleep(u32 ms) {

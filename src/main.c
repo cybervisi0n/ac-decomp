@@ -86,7 +86,9 @@ u32 entry(void) {
     return 0;
 }
 
+#ifdef GAMECUBE
 void main(void) {
     OSReport("どうぶつの森 main2 開始\n");
     HotStartEntry = &entry;
 }
+#endif

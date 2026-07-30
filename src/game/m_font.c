@@ -9,7 +9,11 @@
 #include "types.h"
 #include "libultra/gu.h"
 #include "sys_matrix.h"
+#ifdef GAMECUBE
 #include "MSL_C/w_math.h"
+#else
+#include <math.h>
+#endif
 #include "m_rcp.h"
 #include "libc64/math64.h"
 #include "libultra/libultra.h"

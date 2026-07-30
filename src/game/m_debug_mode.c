@@ -572,7 +572,10 @@ static void Debug_mode_zelda_malloc_info_output(gfxprint_t* gfxprint) {
 
     if (zelda_MallocIsInitalized()) {
         graph_alloc = THA_GA_getFreeBytes(&gamePT->graph->polygon_opaque_thaga);
+        #ifdef GAMECUBE
+        //TODO
         zelda_GetFreeArena(&max, &free, &alloc);
+        #endif
 
         gfxprint_color(gfxprint, 200, 200, 250, 255); /* color -> opaque lilac */
         gfxprint_locate8x8(gfxprint, 3, 23);
