@@ -88,7 +88,10 @@ JKRHeap* JKRHeap::becomeCurrentHeap() {
 
 void JKRHeap::destroy(JKRHeap* heap) {
     JUT_ASSERT(heap != 0);
+    #ifdef GAMECUBE
+    //TODO: linker error
     heap->destroy();
+    #endif
 }
 
 void* JKRHeap::alloc(u32 byteCount, int padding, JKRHeap* heap) {

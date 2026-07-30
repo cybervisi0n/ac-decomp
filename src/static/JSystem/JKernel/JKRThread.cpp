@@ -84,6 +84,8 @@ void* JKRTask::run() {
 }
 
 bool JKRTask::request(RequestCallback callback, void* arg, void* msg) {
+    #ifdef GAMECUBE
+    //TODO
     Request* req = searchBlank();
     if (req == nullptr) {
         return false;
@@ -96,4 +98,7 @@ bool JKRTask::request(RequestCallback callback, void* arg, void* msg) {
         req->mCb = nullptr;
     }
     return sendResult;
+    #else
+    return false;
+    #endif
 }

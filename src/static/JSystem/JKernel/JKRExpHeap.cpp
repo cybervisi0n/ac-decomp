@@ -13,6 +13,7 @@ static JKRExpHeap::CMemBlock* DBnewFreeBlock;
 static JKRExpHeap::CMemBlock* DBnewUsedBlock;
 
 JKRExpHeap* JKRExpHeap::createRoot(int maxHeaps, bool errorFlag) {
+    #ifdef GAMECUBE
     JKRExpHeap* heap = nullptr;
     if (!sRootHeap) {
         void* memory;
@@ -25,9 +26,14 @@ JKRExpHeap* JKRExpHeap::createRoot(int maxHeaps, bool errorFlag) {
     }
     heap->_6E = true;
     return heap;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 JKRExpHeap* JKRExpHeap::create(u32 size, JKRHeap* parent, bool errorFlag) {
+    #ifdef GAMECUBE
     JKRExpHeap* newHeap;
     if (!parent) {
         parent = sRootHeap;
@@ -55,9 +61,14 @@ JKRExpHeap* JKRExpHeap::create(u32 size, JKRHeap* parent, bool errorFlag) {
     };
     newHeap->_6E = false;
     return newHeap;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 JKRExpHeap* JKRExpHeap::create(void* ptr, u32 size, JKRHeap* parent, bool errorFlag) {
+    #ifdef GAMECUBE
     JKRHeap* parent2;
     if (parent == nullptr) {
         parent2 = sRootHeap->find(ptr);
@@ -83,6 +94,9 @@ JKRExpHeap* JKRExpHeap::create(void* ptr, u32 size, JKRHeap* parent, bool errorF
     newHeap->_70 = ptr;
     newHeap->_74 = size;
     return newHeap;
+    #else
+    return nullptr;
+    #endif
 }
 
 JKRExpHeap::JKRExpHeap(void* p1, u32 p2, JKRHeap* p3, bool p4) : JKRHeap(p1, p2, p3, p4) {

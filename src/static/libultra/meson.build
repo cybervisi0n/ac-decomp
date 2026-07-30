@@ -12,6 +12,7 @@ libultra_srcs = files(
     'gu/translate.c',
     'contquery.c',
     'contreaddata.c',
+    'controller.c',
     'contsetch.c',
     'createmesgqueue.c',
     'createthread.c',
