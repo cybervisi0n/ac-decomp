@@ -299,6 +299,7 @@ bool JKRHeap::isSubHeap(JKRHeap* heap) const {
     return false;
 }
 
+#ifdef GAMECUBE
 void* operator new(u32 byteCount) {
     return JKRHeap::alloc(byteCount, 4, nullptr);
 }
@@ -326,6 +327,7 @@ void operator delete(void* memory) {
 void operator delete[](void* memory) {
     JKRHeap::free(memory, nullptr);
 }
+#endif
 
 /*JKRHeap::TState::TState(const JKRHeap::TState::TArgument &arg, const JKRHeap::TState::TLocation &location)
 {

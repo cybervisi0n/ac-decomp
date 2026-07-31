@@ -38,6 +38,7 @@ JKRAramBlock* JKRDvdAramRipper::loadToAram(JKRDvdFile* dvdFile, u32 p1, JKRExpan
 
 JKRADCommand* JKRDvdAramRipper::loadToAram_Async(JKRDvdFile* dvdFile, u32 p1, JKRExpandSwitch expSwitch,
                                                  JKRADCommand::LoadCallback cb, u32 p4, u32 p5) {
+    #ifdef GAMECUBE
     JKRADCommand* command = new (JKRGetSystemHeap(), -4) JKRADCommand();
     command->mDvdFile = dvdFile;
     command->_1C = p1;
@@ -54,6 +55,10 @@ JKRADCommand* JKRDvdAramRipper::loadToAram_Async(JKRDvdFile* dvdFile, u32 p1, JK
     }
 
     return command;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
@@ -64,6 +69,7 @@ JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
 
     s32 uncompressedSize;
 
+    #ifdef GAMECUBE
     if (dvdFile->mAramThread) {
         isCmdTrdNull = false;
     } else {
@@ -156,6 +162,10 @@ JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
 
     OSUnlockMutex(&dvdFile->mAramMutex);
     return isCmdTrdNull == true ? command : nullptr;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 bool JKRDvdAramRipper::syncAram(JKRADCommand* command, int p1) {

@@ -67,6 +67,8 @@ void JUTXfb::initiate(u16 w, u16 h, JKRHeap* heap, JUTXfb::EXfbNumber number) {
 
     u32 size = (u16)ALIGN_NEXT((u16)w, 16) * h;
 
+    #ifdef GAMECUBE
+    //TODO
     mBuffer[0] = new (heap, 32) u16[size];
     mXfbAllocated[0] = true;
     if (number >= DoubleBuffer) {
@@ -84,6 +86,7 @@ void JUTXfb::initiate(u16 w, u16 h, JKRHeap* heap, JUTXfb::EXfbNumber number) {
         mBuffer[2] = nullptr;
         mXfbAllocated[2] = false;
     }
+    #endif
 }
 
 u32 JUTXfb::accumeXfbSize() {

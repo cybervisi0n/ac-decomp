@@ -14,8 +14,11 @@ u32 JKRAram::sSZSBufferSize = 0x400;
 JKRAram* JKRAram::create(u32 aram_audio_buffer_size, u32 aram_audio_graph_size, s32 streamPriority, s32 decomp_priority,
                          s32 piece_priority) {
     if (!sAramObject) {
+        #ifdef GAMECUBE
+        //TODO
         sAramObject =
             new (JKRGetSystemHeap(), 0) JKRAram(aram_audio_buffer_size, aram_audio_graph_size, piece_priority);
+        #endif
     }
 
     JKRCreateAramStreamManager(streamPriority);

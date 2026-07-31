@@ -22,8 +22,11 @@ JKRHeap* JKRAramStream::transHeap = nullptr;
 
 JKRAramStream* JKRAramStream::create(s32 param) {
     if (JKRAramStream::sAramStreamObject == nullptr) {
+        #ifdef GAMECUBE
+        //TODO
         JKRAramStream::sAramStreamObject = new (JKRGetSystemHeap(), 0) JKRAramStream(param);
         setTransBuffer(nullptr, 0, nullptr);
+        #endif
     }
     return JKRAramStream::sAramStreamObject;
 }
@@ -127,12 +130,11 @@ s32 JKRAramStream::writeToAram(JKRAramStreamCommand* command) {
  */
 JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream* stream, JKRAramBlock* addr, u32 size,
                                                               u32 offset) {
+    #ifdef GAMECUBE
+    //TODO: removed global new
     JKRAramStreamCommand* command = new (JKRGetSystemHeap(), -4) JKRAramStreamCommand();
     command->type = JKRAramStreamCommand::ECT_WRITE;
-    #ifdef GAMECUBE
-    //TODO: memory
     command->mAddress = (u32)addr;
-    #endif
     command->mSize = size;
     command->mStream = stream;
     command->_28 = stream->getAvailable();
@@ -144,10 +146,15 @@ JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream
     OSInitMessageQueue(&command->mMessageQueue, &command->mMessage, 1);
     OSSendMessage(&sMessageQueue, command, OS_MESSAGE_BLOCK);
     return command;
+    #else
+    return nullptr;
+    #endif
 }
 
 JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream* stream, u32 addr, u32 size,
                                                               u32 offset) {
+    #ifdef GAMECUBE
+    //TODO: Removed global new
     JKRAramStreamCommand* command = new (JKRGetSystemHeap(), -4) JKRAramStreamCommand();
     command->type = JKRAramStreamCommand::ECT_WRITE;
     command->mAddress = addr;
@@ -162,6 +169,9 @@ JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream
     OSInitMessageQueue(&command->mMessageQueue, &command->mMessage, 1);
     OSSendMessage(&sMessageQueue, command, OS_MESSAGE_BLOCK);
     return command;
+    #else
+    return nullptr;
+    #endif
 }
 
 JKRAramStreamCommand* JKRAramStream::sync(JKRAramStreamCommand* command, BOOL isNonBlocking) {

@@ -354,7 +354,10 @@ JUTConsoleManager* JUTConsoleManager::createManager(JKRHeap* pHeap) {
     if (pHeap == nullptr) {
         pHeap = JKRGetCurrentHeap();
     }
+    #ifdef GAMECUBE
+    //TODO
     sManager = new (pHeap, 0) JUTConsoleManager();
+    #endif
     return sManager;
 }
 

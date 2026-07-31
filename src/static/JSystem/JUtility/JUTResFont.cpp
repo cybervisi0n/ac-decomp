@@ -70,7 +70,10 @@ bool JUTResFont::protected_initiate(const ResFONT* resource, JKRHeap* heap) {
     countBlock();
     u32 blockNum = mWidthBlockCount + mGlyphBlockCount + mMapBlockCount;
 
+    #ifdef GAMECUBE
+    //TODO
     mMemBlocks = new (heap, 0) void*[blockNum];
+    #endif
     blocks = mMemBlocks;
     if (mMemBlocks == nullptr) {
         return false;

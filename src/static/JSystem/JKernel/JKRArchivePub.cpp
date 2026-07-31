@@ -46,6 +46,7 @@ JKRArchive* JKRArchive::check_mount_already(s32 entryNum) {
 }
 
 JKRArchive* JKRArchive::mount(const char* path, EMountMode mode, JKRHeap* heap, EMountDirection direction) {
+    #ifdef GAMECUBE
     int entryNum = DVDConvertPathToEntrynum((char*)path);
     if (entryNum < 0)
         return nullptr;
@@ -79,22 +80,27 @@ JKRArchive* JKRArchive::mount(const char* path, EMountMode mode, JKRHeap* heap, 
         archive = nullptr;
     }
     return archive;
+    #else
+    //TODO
+    return nullptr;
+    #endif
 }
 
 JKRArchive* JKRArchive::mount(void* p1, JKRHeap* heap, EMountDirection mountDirection) {
     #ifdef GAMECUBE
     //TODO: Memory
     JKRArchive* archive = check_mount_already((s32)p1, heap);
-    #else
-    JKRArchive* archive = nullptr;
-    #endif
     if (archive != nullptr) {
         return archive;
     }
     return new (heap, (mountDirection == MOUNT_DIRECTION_HEAD) ? 4 : -4) JKRMemArchive(p1, 0xFFFF, MBF_0);
+    #else
+    return nullptr;
+    #endif
 }
 
 JKRArchive* JKRArchive::mount(s32 entryNum, EMountMode mountMode, JKRHeap* heap, EMountDirection mountDirection) {
+    #ifdef GAMECUBE
     JKRArchive* archive = check_mount_already(entryNum, heap);
     if (archive) {
         return archive;
@@ -121,6 +127,9 @@ JKRArchive* JKRArchive::mount(s32 entryNum, EMountMode mountMode, JKRHeap* heap,
         }
         return archive;
     }
+    #else
+    return nullptr;
+    #endif
 }
 
 bool JKRArchive::becomeCurrent(const char* path) {
@@ -307,8 +316,10 @@ JKRFileFinder* JKRArchive::getFirstFile(const char* path) const {
         dirEntry = findDirectory(path, sCurrentDirID);
     }
     if (dirEntry) {
+        #ifdef GAMECUBE
         return new (JKRGetSystemHeap(), 0)
             JKRArcFinder(const_cast<JKRArchive*>(this), dirEntry->mFirstIdx, dirEntry->mNum);
+        #endif
     }
     return nullptr;
 }

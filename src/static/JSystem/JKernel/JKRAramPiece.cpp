@@ -14,6 +14,8 @@ OSMutex JKRAramPiece::mMutex;
 
 JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destination, u32 length,
                                            JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
+    #ifdef GAMECUBE
+    //TODO
     JKRAMCommand* cmd = new (JKRGetSystemHeap(), -4) JKRAMCommand();
     cmd->mDirection = direction;
     cmd->mSource = source;
@@ -23,6 +25,9 @@ JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destin
     cmd->mCallback = callback;
 
     return cmd;
+    #else
+    return nullptr;
+    #endif
 }
 
 void JKRAramPiece::sendCommand(JKRAMCommand* cmd) {
@@ -41,7 +46,11 @@ JKRAMCommand* JKRAramPiece::orderAsync(int direction, u32 source, u32 destinatio
         JPANICLINE(102);
     }
 
+    #ifdef GAMECUBE
     JKRAramCommand* aramCmd = new (JKRGetSystemHeap(), -4) JKRAramCommand();
+    #else
+    JKRAramCommand* aramCmd = nullptr;
+    #endif
     JKRAMCommand* cmd = JKRAramPiece::prepareCommand(direction, source, destination, length, aramBlock, callback);
     aramCmd->setting(TRUE, cmd);
     OSSendMessage((OSMessageQueue*)&JKRAram::sMessageQueue, (OSMessage)aramCmd, OS_MESSAGE_BLOCK);

@@ -126,7 +126,10 @@ bool JKRAramArchive::open(long entryNum) {
     mStrTable = nullptr;
     mBlock = nullptr;
 
+    #ifdef GAMECUBE
+    //TODO
     mDvdFile = new (JKRGetSystemHeap(), mMountDirection == MOUNT_DIRECTION_HEAD ? 4 : -4) JKRDvdFile(entryNum);
+    #endif
     if (mDvdFile == nullptr) {
         mMountMode = 0;
         return 0;

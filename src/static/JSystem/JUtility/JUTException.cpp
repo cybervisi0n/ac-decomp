@@ -68,8 +68,11 @@ JSUList<JUTException::JUTExMapFile> JUTException::sMapFileList(false);
 
 JUTException* JUTException::create(JUTDirectPrint* directPrint) {
     if (sErrorManager == nullptr) {
+        #ifdef GAMECUBE
+        //TODO
         sErrorManager = new (JKRGetSystemHeap(), 0) JUTException(directPrint);
         sErrorManager->resume();
+        #endif
     }
     return sErrorManager;
 }

@@ -63,7 +63,10 @@ bool JKRCompArchive::open(long entryNum) {
     mFileEntries = nullptr;
     mStrTable = nullptr;
 
+    #ifdef GAMECUBE
+    //TODO
     mDvdFile = new (JKRGetSystemHeap(), 0) JKRDvdFile(entryNum);
+    #endif
     if (mDvdFile == nullptr) {
         mMountMode = 0;
         return 0;
