@@ -143,7 +143,7 @@ game_srcs = files(
 game_lib = static_library('game',
     include_directories: project_includes,
     pic: false,
-    dependencies: libporpoise_dep,
+    dependencies: [libporpoise_dep, gafe_assets_dep],
     sources: game_srcs,
     native: build_target != 'gc'
 )

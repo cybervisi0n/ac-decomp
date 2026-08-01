@@ -7,7 +7,11 @@ project('animalcrossing', ['c', 'cpp'],
 )
 
 build_target = get_option('build_target')
-libPorpoise_prj = subproject('libPorpoise')
+libPorpoise_prj = subproject('libPorpoise',
+    default_options: [
+        'dvd_game_id=GAFE',
+        'dvd_company=01'
+    ])
 
 
 shared_args = [
