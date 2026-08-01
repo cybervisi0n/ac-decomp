@@ -15,7 +15,8 @@ libPorpoise_prj = subproject('libPorpoise',
 
 
 shared_args = [
-    '-DF3DEX_GBI_2'
+    '-DF3DEX_GBI_2',
+    '-I' + meson.current_build_dir() / 'GAFE01_00' / 'include'
 ]
 
 if(build_target == 'gc') 
@@ -68,7 +69,7 @@ if(get_option('address_sanitizer') == true)
     ]
 endif
 
-project_includes = include_directories('include', './GAFE01_00/include')
+project_includes = include_directories('include')
 animalcrossing_libs = []
 
 

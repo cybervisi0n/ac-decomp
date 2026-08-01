@@ -1,3 +1,0 @@
-This is not the real include dir. this is just a dummy dir to fool meson.
-
-TODO: setup meson properly so this dummy dir is not needed.
