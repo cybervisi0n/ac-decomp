@@ -79,7 +79,11 @@ static void eLL_ctrl_light_sw(LAMPLIGHT_ACTOR* lamp) {
                 case mFI_FIELD_PLAYER1_ROOM:
                 case mFI_FIELD_PLAYER2_ROOM:
                 case mFI_FIELD_PLAYER3_ROOM:
+                    #ifdef GAMECUBE
                     ret = eLL_get_light_sw_player_room(lamp);
+                    #else
+                    ret = eLL_get_light_sw_player_room();
+                    #endif
                     break;
 
                 case mFI_FIELD_DEMO_STARTDEMO:
@@ -94,7 +98,11 @@ static void eLL_ctrl_light_sw(LAMPLIGHT_ACTOR* lamp) {
             break;
 
         case 1:
+            #ifdef GAMECUBE
             ret = eLL_get_light_sw_player_room(lamp);
+            #else
+            ret = eLL_get_light_sw_player_room();
+            #endif
             break;
     }
 
