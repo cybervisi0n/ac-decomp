@@ -920,7 +920,11 @@ static void aMR_MsgControlDeleteAgbProgramQ(ACTOR* actorx, GAME* game) {
 static void aMR_MsgInitStartEmuDownLoad(ACTOR* actorx) {
     MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
 
+    #ifdef GAMECUBE
     my_room->famicom_agb_image_p = famicom_gba_getImage(my_room->emu_info.agb_rom_no, &my_room->agb_game_size);
+    #else
+    my_room->famicom_agb_image_p = famicom_gba_getImage(my_room->emu_info.agb_rom_no, (size_t*)&my_room->agb_game_size);
+    #endif
     mGcgba_InitVar();
     mMsg_SET_LOCKCONTINUE();
     sAdo_SysLevStart(0x47);

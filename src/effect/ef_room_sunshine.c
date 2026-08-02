@@ -33,7 +33,10 @@ ACTOR_PROFILE Room_Sunshine_Profile = {
     NULL,
 };
 
-static void Ef_Room_Sunshine_actor_ct(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_actor_ct(ACTOR* actor, GAME* game) {
     ROOMSUNSHINE_ACTOR* sunshine = (ROOMSUNSHINE_ACTOR*)actor;
     xyz_t pos;
     xyz_t pos2;
@@ -107,7 +110,10 @@ static int calc_alpha_Ef_Room_Sunshine() {
     return (u8)ret;
 }
 
-static void Ef_Room_SunshineL_actor_move(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_SunshineL_actor_move(ACTOR* actor, GAME* game) {
     ROOMSUNSHINE_ACTOR* sunshine = (ROOMSUNSHINE_ACTOR*)actor;
 
     if (Common_Get(time.now_sec) < 14400) {
@@ -119,7 +125,10 @@ static void Ef_Room_SunshineL_actor_move(ACTOR* actor, GAME* game) {
     }
 }
 
-static void Ef_Room_SunshineR_actor_move(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_SunshineR_actor_move(ACTOR* actor, GAME* game) {
     ROOMSUNSHINE_ACTOR* sunshine = (ROOMSUNSHINE_ACTOR*)actor;
 
     if ((Common_Get(time.now_sec) >= 14400) && (Common_Get(time.now_sec) < 43200)) {
@@ -160,7 +169,10 @@ static void setup_mode_Ef_Room_Sunshine(ACTOR* actor, GAME_PLAY* play) {
     CLOSE_DISP(graph);
 }
 
-static void Ef_Room_SunshineL_actor_draw(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_SunshineL_actor_draw(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     GRAPH* graph;
@@ -181,7 +193,10 @@ static void Ef_Room_SunshineL_actor_draw(ACTOR* actor, GAME* game) {
     CLOSE_DISP(graph);
 }
 
-static void Ef_Room_SunshineR_actor_draw(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_SunshineR_actor_draw(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     GRAPH* graph;

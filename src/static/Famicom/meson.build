@@ -2,7 +2,7 @@ Famicom_srcs = files(
     'famicom_nesinfo.cpp',
     'famicom.cpp',
     'ks_nes_core.cpp',
-    #'ks_nes_draw.cpp'
+    'ks_nes_draw.cpp'
 )
 
 Famicom_lib = static_library('Famicom',

@@ -153,7 +153,10 @@ static aNTT_think_data_c dt_tbl[13] = {
     {aNTT_THINK_NONE, 6, 2, aNTT_TALK_SELECT1, aNTT_THINK_NONE}
 };
 
-static void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, u8 think_id) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, u8 think_id) {
     static aNPC_TALK_REQUEST_PROC talk_request_table[3] = {
         (aNPC_TALK_REQUEST_PROC)none_proc1, 
         aNTT_norm_talk_request, 
@@ -196,7 +199,10 @@ static void aNTT_schedule_main_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *pla
     }
 }
 
-static void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int schedule_id) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int schedule_id) {
     switch (schedule_id) {
     case 0:
         aNTT_schedule_init_proc(totakeke, play);

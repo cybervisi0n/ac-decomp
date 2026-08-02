@@ -773,6 +773,8 @@ static void aBALL_actor_draw(ACTOR* actor, GAME* game) {
     gDPPipeSync(gfx++);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, ball_model_tbl[ball->type]);
+    #ifdef GAMECUBE
     NOW_POLY_OPA_DISP = gfx;
+    #endif
     CLOSE_DISP(graph);
 }

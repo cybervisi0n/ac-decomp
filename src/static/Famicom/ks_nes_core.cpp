@@ -2982,6 +2982,7 @@ void ksNesEmuFrame(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags) {
 #define WRAM r31
 
 #ifndef GAMECUBE
+extern void ksNesLinecntIrqDefault(){}
 extern void ksNesInit01(){}
 extern void ksNesInit03(){}
 extern void ksNesInit04(){}

@@ -6,6 +6,10 @@
 #include "m_msg.h"
 #include "m_soncho.h"
 
+#ifndef GAMECUBE
+#include <limits.h>
+#endif
+
 // TODO - this file needs enums for action & talk states
 
 static int aTS0_delete_flag = FALSE;

@@ -1,4 +1,5 @@
 subdir('npc')
+subdir('tool')
 
 actor_srcs = files(
     'ac_airplane.c',

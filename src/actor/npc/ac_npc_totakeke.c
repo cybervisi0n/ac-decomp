@@ -38,7 +38,10 @@ ACTOR_PROFILE Npc_Totakeke_Profile = {
     &aNTT_actor_save,
 };
 
-static void aNTT_actor_ct(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_ct(ACTOR *actorx, GAME *game) {
     static aNPC_ct_data_c ct_data = {
         &aNTT_actor_move,
         &aNTT_actor_draw,
@@ -106,21 +109,33 @@ static void aNTT_actor_ct(ACTOR *actorx, GAME *game) {
     }
 }
 
-static void aNTT_actor_save(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_save(ACTOR *actorx, GAME *game) {
     mNpc_RenewalSetNpc(actorx);
 }
 
-static void aNTT_actor_dt(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_dt(ACTOR *actorx, GAME *game) {
     mEv_actor_dying_message(mEv_EVENT_KK_SLIDER, actorx);
     CLIP(npc_clip)->dt_proc(actorx, game);
     mCoBG_SetPlussOffset(actorx->world.position, 0x0, 0x64);
 }
 
-static void aNTT_actor_init(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_init(ACTOR *actorx, GAME *game) {
     CLIP(npc_clip)->init_proc(actorx, game);
 }
 
-static void aNTT_actor_move(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_move(ACTOR *actorx, GAME *game) {
     NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
 
     CLIP(npc_clip)->move_proc(actorx, game);
@@ -129,7 +144,10 @@ static void aNTT_actor_move(ACTOR *actorx, GAME *game) {
     }
 }
 
-static void aNTT_actor_draw(ACTOR *actorx, GAME *game) {
+#ifdef GAMECUBE
+static
+#endif
+void aNTT_actor_draw(ACTOR *actorx, GAME *game) {
     NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
     aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     GAME_PLAY* play = (GAME_PLAY*)game;

@@ -43,6 +43,7 @@ void ksNesDrawInit(ksNesCommonWorkObj* wp) {
 }
 
 void ksNesDrawEnd() {
+
     GXSetClipMode(GX_CLIP_ENABLE);
     GXSetZCompLoc(GX_TRUE);
     GXSetNumIndStages(0);
@@ -55,8 +56,10 @@ void ksNesDrawEnd() {
     GXSetTevSwapMode(GX_TEVSTAGE1, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevSwapMode(GX_TEVSTAGE2, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevSwapMode(GX_TEVSTAGE3, GX_TEV_SWAP0, GX_TEV_SWAP0);
+#ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_FALSE, 0, 0);
     GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_FALSE, 0, 0);
+#endif
 }
 
 void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
@@ -384,8 +387,10 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXInitTexObjLOD(&obj0, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj0, GX_TEXMAP0);
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 128, 1025);
     GXSetTexCoordBias(GX_TEXCOORD0, GX_FALSE, GX_FALSE);
+    #endif
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
     GXSetTevColor(GX_TEVREG0, color_r_0xf0);
@@ -395,8 +400,10 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXInitTexObjLOD(&obj1, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj1, GX_TEXMAP1);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_TRUE, 1024, 1025);
     GXSetTexCoordBias(GX_TEXCOORD1, GX_FALSE, GX_FALSE);
+    #endif
     GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD1, GX_TEXMAP1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_8, GX_ITS_1);
     GXSetIndTexMtx(GX_ITM_0, indtexmtx_screen, 36);
@@ -691,8 +698,10 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXInitTexObjLOD(&GStack_9c, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_9c, GX_TEXMAP1);
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3c);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 0x100, 0x101);
     GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+    #endif
     GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD0, GX_TEXMAP1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_8, GX_ITS_1);
     GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE,
@@ -705,8 +714,10 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXInitTexObjLOD(&GStack_bc, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_bc, GX_TEXMAP2);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, 0x3c);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_TRUE, 0x100, 0x101);
     GXSetTexCoordBias(GX_TEXCOORD1, 0, 0);
+    #endif
     GXSetIndTexOrder(GX_INDTEXSTAGE1, GX_TEXCOORD1, GX_TEXMAP2);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_8, GX_ITS_1);
     {
@@ -922,8 +933,10 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
     GXLoadTexObj(&obj, GX_TEXMAP1);
 
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 0x100, 0x101);
     GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+    #endif
     
     GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD0, GX_TEXMAP1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_8, GX_ITS_1);
@@ -939,8 +952,10 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
     GXLoadTexObj(&obj2, GX_TEXMAP2);
 
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, 60);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_TRUE, 0x100, 0x101);
     GXSetTexCoordBias(GX_TEXCOORD1, 0, 0);
+    #endif
     GXSetIndTexOrder(GX_INDTEXSTAGE1, GX_TEXCOORD1, GX_TEXMAP2);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_8, GX_ITS_1);
     
@@ -1174,8 +1189,10 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
     GXLoadTexObj(&obj, GX_TEXMAP0);
 
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 0x100, 0x100);
     GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+    #endif
 
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
@@ -1255,8 +1272,10 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     GXLoadTexObj(&obj, GX_TEXMAP0);
 
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60, GX_FALSE, 125);
+    #ifdef GAMECUBE
     GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 256, 256);
     GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+    #endif
 
     GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD0, GX_TEXMAP1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_1, GX_ITS_1);

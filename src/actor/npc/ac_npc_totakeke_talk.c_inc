@@ -19,7 +19,10 @@ static int aNTT_bitcheck_func(int field, u16 flag) {
     }
 }
 
-static int aNTT_enso_init(NPC_TOTAKEKE_ACTOR* totakeke) {
+#ifdef GAMECUBE
+static
+#endif
+int aNTT_enso_init(NPC_TOTAKEKE_ACTOR* totakeke) {
     totakeke->npc_class.request.act_priority = 4;
     totakeke->npc_class.request.act_idx = aNPC_ACT_ENSOU;
     totakeke->npc_class.request.act_type = aNPC_ACT_TYPE_DEFAULT;
@@ -151,7 +154,10 @@ static void aNTT_talk_give(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
     }
 }
 
-static int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR* totakeke, int talk) {
+#ifdef GAMECUBE
+static
+#endif
+int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR* totakeke, int talk) {
     static aNTT_PROC proc[7] = { (aNTT_PROC)none_proc1, aNTT_talk_select0,  aNTT_talk_select1, aNTT_talk_stop_player,
                                  aNTT_talk_submenu,     aNTT_talk_submenu2, aNTT_talk_give };
     totakeke->proc = proc[talk];
@@ -218,7 +224,10 @@ static void aNTT_norm_talk_request(ACTOR* actorx, GAME* game) {
     }
 }
 
-static int aNTT_talk_init(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static
+#endif
+int aNTT_talk_init(ACTOR* actorx, GAME* game) {
     NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
     totakeke->npc_class.talk_info.talk_request_proc = (void*)none_proc1;
     mDemo_Set_ListenAble();
@@ -233,7 +242,10 @@ static int aNTT_talk_init(ACTOR* actorx, GAME* game) {
     return TRUE;
 }
 
-static int aNTT_talk_end_chk(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static
+#endif
+int aNTT_talk_end_chk(ACTOR* actorx, GAME* game) {
     NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
     int res = FALSE;

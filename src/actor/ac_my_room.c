@@ -19,6 +19,10 @@
 #include "sys_matrix.h"
 #include "m_rcp.h"
 
+#ifndef GAMECUBE
+#define F_SQRT2_DIV2 (0.707106f)
+#endif
+
 enum {
     aMR_ICON_LEAF,
     aMR_ICON_HANIWA,

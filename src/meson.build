@@ -1,5 +1,7 @@
 subdir('actor')
+subdir('bg_item')
 subdir('data')
+subdir('effect')
 subdir('game')
 subdir('static')
 subdir('system')

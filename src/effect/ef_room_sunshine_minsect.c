@@ -35,7 +35,10 @@ ACTOR_PROFILE Room_Sunshine_Minsect_Profile = {
     NULL,
 };
 
-static void Ef_Room_Sunshine_Minsect_actor_ct(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_Minsect_actor_ct(ACTOR* actor, GAME* game) {
     ROOMSUNSHINEMINSECT_ACTOR* minsect = (ROOMSUNSHINEMINSECT_ACTOR*)actor;
     xyz_t pos;
 
@@ -105,7 +108,10 @@ static int calc_alpha_Ef_Room_SunshineMinsect() {
     return (u8)ret;
 }
 
-static void Ef_Room_Sunshine_MinsectL_actor_move(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MinsectL_actor_move(ACTOR* actor, GAME* game) {
     ROOMSUNSHINEMINSECT_ACTOR* minsect = (ROOMSUNSHINEMINSECT_ACTOR*)actor;
 
     if (Common_Get(time.now_sec) < 14400) {
@@ -122,7 +128,10 @@ static void Ef_Room_Sunshine_MinsectL_actor_move(ACTOR* actor, GAME* game) {
     minsect->ef_sunshine_class.actor_class.world.position.y += 0.01f * GETREG(TAKREG, 64);
 }
 
-static void Ef_Room_Sunshine_MinsectR_actor_move(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MinsectR_actor_move(ACTOR* actor, GAME* game) {
     ROOMSUNSHINEMINSECT_ACTOR* minsect = (ROOMSUNSHINEMINSECT_ACTOR*)actor;
 
     if ((Common_Get(time.now_sec) >= 14400) && (Common_Get(time.now_sec) < 43200)) {
@@ -230,7 +239,10 @@ static void BG_draw_Minsect_niwa(ACTOR* actor, GAME_PLAY* play) {
     CLOSE_DISP(graph);
 }
 
-static void Ef_Room_Sunshine_MinsectL_actor_draw(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MinsectL_actor_draw(ACTOR* actor, GAME* game) {
     GRAPH* graph;
 
     _texture_z_light_fog_prim(game->graph);
@@ -269,7 +281,10 @@ static void Ef_Room_Sunshine_MinsectL_actor_draw(ACTOR* actor, GAME* game) {
     }
 }
 
-static void Ef_Room_Sunshine_MinsectR_actor_draw(ACTOR* actor, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MinsectR_actor_draw(ACTOR* actor, GAME* game) {
     GRAPH* graph;
 
     _texture_z_light_fog_prim(game->graph);

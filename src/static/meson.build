@@ -12,7 +12,7 @@ boot_srcs = files(
     'bootdata/gam_win2.c',
     'bootdata/gam_win3.c',
     'bootdata/logo_nin.c',
-    #'GBA2/JoyBoot.c'
+    'GBA2/JoyBoot.c',
     'boot.c',
     'dvderr.c',
     'initial_menu.c',

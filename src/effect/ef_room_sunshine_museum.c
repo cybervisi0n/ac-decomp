@@ -29,7 +29,10 @@ ACTOR_PROFILE Room_Sunshine_Museum_Profile = {
     NULL,
 };
 
-static void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actorx, GAME* game) {
     ROOMSUNSHINEMUSEUM_ACTOR* museum = (ROOMSUNSHINEMUSEUM_ACTOR*)actorx;
 
     museum->ef_sunshine_class.unk_174 = 0;
@@ -89,7 +92,10 @@ static u8 calc_alpha_Ef_Room_SunshineMuseum(void) {
     return (int)alpha;
 }
 
-static void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actorx, GAME* game) {
     int now_sec = Common_Get(time.now_sec);
 
     if (now_sec < mTM_TIME2SEC(4, 0, 0)) {
@@ -101,7 +107,10 @@ static void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actorx, GAME* game) {
     }
 }
 
-static void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actorx, GAME* game) {
     int now_sec = Common_Get(time.now_sec);
 
     if (now_sec >= mTM_TIME2SEC(4, 0, 0) && now_sec < mTM_TIME2SEC(12, 0, 0)) {
@@ -137,7 +146,10 @@ static void setup_mode_Ef_Room_Sunshine_Museum(ACTOR* actorx, GAME* game) {
     CLOSE_DISP(game->graph);
 }
 
-static void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actorx, GAME* game) {
     if (!(mKK_windowlight_alpha_get() < 0.0001f) && (actorx->scale.x != 0.0f)) {
         OPEN_DISP(game->graph);
 
@@ -149,7 +161,10 @@ static void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actorx, GAME* game) {
     }
 }
 
-static void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actorx, GAME* game) {
+#ifdef GAMECUBE
+static 
+#endif
+void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actorx, GAME* game) {
     if (!(mKK_windowlight_alpha_get() < 0.0001f) && (actorx->scale.x != 0.0f)) {
         OPEN_DISP(game->graph);
 

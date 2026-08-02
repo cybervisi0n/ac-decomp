@@ -555,6 +555,9 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
  * @param keyframe Pointer to the animation structure.
  * @return Pointer to the flag table.
  */
+#ifndef GAMECUBE
+static
+#endif
 inline u8* cKF_Animation_R_getFlagTable(cKF_Animation_R_c* keyframe) {
     return keyframe->flag_table;
 }
@@ -568,6 +571,9 @@ inline u8* cKF_Animation_R_getFlagTable(cKF_Animation_R_c* keyframe) {
  * @param keyframe Pointer to the animation structure.
  * @return Pointer to the fixed table.
  */
+#ifndef GAMECUBE
+static
+#endif
 inline s16* cKF_Animation_R_getFixedTable(cKF_Animation_R_c* keyframe) {
     return keyframe->fixed_table;
 }
@@ -581,6 +587,9 @@ inline s16* cKF_Animation_R_getFixedTable(cKF_Animation_R_c* keyframe) {
  * @param keyframe Pointer to the animation structure.
  * @return Pointer to the key table.
  */
+#ifndef GAMECUBE
+static
+#endif
 inline s16* cKF_Animation_R_getKeyTable(cKF_Animation_R_c* keyframe) {
     return keyframe->key_table;
 }
@@ -594,6 +603,9 @@ inline s16* cKF_Animation_R_getKeyTable(cKF_Animation_R_c* keyframe) {
  * @param keyframe Pointer to the animation structure.
  * @return Pointer to the data table.
  */
+#ifndef GAMECUBE
+static
+#endif
 inline s16* cKF_Animation_R_getDataTable(cKF_Animation_R_c* keyframe) {
     return keyframe->data_table;
 }

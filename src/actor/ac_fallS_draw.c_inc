@@ -19,7 +19,9 @@ void aFLS_actor_draw(ACTOR* actor, GAME* game) {
         gfx = NOW_POLY_XLU_DISP;
         gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
+        #ifdef GAMECUBE
         NOW_POLY_XLU_DISP = gfx;
+        #endif
     }
     Evw_Anime_Set(play, &obj_fallS_evw_anime);
 
@@ -56,6 +58,8 @@ void aFLS_actor_draw(ACTOR* actor, GAME* game) {
         }
     }
 
+    #ifdef GAMECUBE
     NOW_POLY_XLU_DISP = gfx;
+    #endif
     CLOSE_DISP(graph);
 }

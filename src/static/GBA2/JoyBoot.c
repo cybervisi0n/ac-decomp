@@ -1,7 +1,12 @@
 #include "GBA2/gba2.h"
 
+#ifdef GAMECUBE
 #include "_mem.h"
 #include "MSL_C/printf.h"
+#else
+#include <stdio.h>
+#include <string.h>
+#endif
 
 static Joy_wrk_c g_Joy_wrk;
 int Port;
