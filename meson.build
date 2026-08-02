@@ -37,11 +37,13 @@ add_project_arguments(project_cpp_args, language: 'cpp', native: build_target !=
 
 # Decomp Toolkit
 dtk_exe = find_program('dtk-tools/dtk', native: true)
+python_exe = import('python').find_installation()
+run_in_dir = files('scripts/run_in_dir.py')
 
 # Extract GAFE01 assets
 gafe_config_yml = meson.project_source_root() + '/config/GAFE01_00/config.yml'
 gafe_dir = custom_target(
-    command: ['scripts/run_in_dir.sh', meson.project_source_root(), dtk_exe, 'dol', 'split', gafe_config_yml, meson.current_build_dir() + '/@OUTPUT@' ] , output: 'GAFE01_00')
+    command: [python_exe, run_in_dir, meson.project_source_root(), dtk_exe, 'dol', 'split', gafe_config_yml, meson.current_build_dir() + '/@OUTPUT@' ] , output: 'GAFE01_00')
 
 gafe_custom_assets = custom_target(
     input: gafe_dir,
