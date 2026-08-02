@@ -8,6 +8,9 @@
 #include "JSystem/JKernel/JKRDvdRipper.h"
 #include "JSystem/JSystem.h"
 #include "JSystem/JUtility/JUTAssertion.h"
+#ifndef GAMECUBE
+#include <new>
+#endif
 
 JKRAramArchive::JKRAramArchive() : JKRArchive() {
 }
@@ -127,8 +130,10 @@ bool JKRAramArchive::open(long entryNum) {
     mBlock = nullptr;
 
     #ifdef GAMECUBE
-    //TODO
     mDvdFile = new (JKRGetSystemHeap(), mMountDirection == MOUNT_DIRECTION_HEAD ? 4 : -4) JKRDvdFile(entryNum);
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRDvdFile), mMountDirection == MOUNT_DIRECTION_HEAD ? 4 : -4, JKRGetSystemHeap());
+    mDvdFile = new (memory) JKRDvdFile(entryNum);
     #endif
     if (mDvdFile == nullptr) {
         mMountMode = 0;
