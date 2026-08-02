@@ -6,7 +6,10 @@
 #include "ef_effect_control.h"
 
 extern Vtx act_m_monki_v[];
-static Vtx act_m_monki_v[] = {
+#ifdef GAMECUBE
+static 
+#endif
+Vtx act_m_monki_v[] = {
 #include "assets/act_m_monki2/act_m_monki_v.inc"
 };
 

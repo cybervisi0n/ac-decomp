@@ -14,6 +14,7 @@
 #else
 #include <cstdio>
 #include <string.h>
+#include <new>
 #endif
 
 #include "JSystem/JUtility/JUTException.h"
@@ -69,10 +70,12 @@ JSUList<JUTException::JUTExMapFile> JUTException::sMapFileList(false);
 JUTException* JUTException::create(JUTDirectPrint* directPrint) {
     if (sErrorManager == nullptr) {
         #ifdef GAMECUBE
-        //TODO
         sErrorManager = new (JKRGetSystemHeap(), 0) JUTException(directPrint);
-        sErrorManager->resume();
+        #else
+        void * memory = JKRHeap::alloc(sizeof(JUTException), 0, JKRGetSystemHeap());
+        sErrorManager = new (memory) JUTException(directPrint);
         #endif
+        sErrorManager->resume();
     }
     return sErrorManager;
 }

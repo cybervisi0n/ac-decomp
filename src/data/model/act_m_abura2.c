@@ -6,7 +6,10 @@
 #include "ef_effect_control.h"
 
 extern Vtx act_m_abura_v[];
-static Vtx act_m_abura_v[] = {
+#ifdef GAMECUBE
+static 
+#endif
+Vtx act_m_abura_v[] = {
 #include "assets/act_m_abura2/act_m_abura_v.inc"
 };
 

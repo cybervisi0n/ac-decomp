@@ -6,7 +6,10 @@
 #include "ef_effect_control.h"
 
 extern Vtx act_m_nanahoshi_v[];
-static Vtx act_m_nanahoshi_v[] = {
+#ifdef GAMECUBE
+static 
+#endif
+Vtx act_m_nanahoshi_v[] = {
 #include "assets/act_m_nanahoshi2/act_m_nanahoshi_v.inc"
 };
 

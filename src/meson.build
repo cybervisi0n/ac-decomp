@@ -1,3 +1,5 @@
+subdir('actor')
+subdir('data')
 subdir('game')
 subdir('static')
 subdir('system')

@@ -66,7 +66,11 @@ bool JKRHeap::initArena(char** outUserRamStart, u32* outUserRamSize, int numHeap
     mCodeEnd = (u8*)arenaLo;
     mUserRamStart = (u8*)arenaLo;
     mUserRamEnd = (u8*)arenaHi;
+    #ifdef GAMECUBE
     mMemorySize = *(u32*)((start + 0x28));
+    #else
+    mMemorySize = 24 * 1024 * 1024;
+    #endif
     OSSetArenaLo(arenaHi);
     OSSetArenaHi(arenaHi);
     *outUserRamStart = (char*)arenaLo;

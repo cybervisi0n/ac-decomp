@@ -1840,6 +1840,8 @@ void Sou_DVD_Error(char*, u8*) {
 
 void Na_InitAudio(void (*fatal_callback)(), u8* load_addr, size_t load_size, u8* bootsound, size_t bootsound_size,
                   BOOL cut_flag) {
+    #ifdef GAMECUBE
+    //TODO
     u32 v = 0x810000;
     fatalErrorCallback = fatal_callback;
     u32 unused = SetPreCopy_NeosRom(load_addr, load_size, cut_flag);
@@ -1847,6 +1849,7 @@ void Na_InitAudio(void (*fatal_callback)(), u8* load_addr, size_t load_size, u8*
     Jac_Start(audiomemory, sizeof(audiomemory), v);
     BootSound((u32)bootsound, bootsound_size);
     sou_NeosBootCheck_ok = 1;
+    #endif
 }
 
 void Na_GameFrame() {
@@ -4085,7 +4088,11 @@ extern void Na_RoomType(u8 roomType) {
 }
 
 extern u8 Na_CheckNeosBoot() {
+    #ifdef GAMECUBE
     return sou_NeosBootCheck_ok == 3 ? TRUE : FALSE;
+    #else
+    return TRUE;
+    #endif
 }
 
 extern void Na_Museum(u8 museumType) {

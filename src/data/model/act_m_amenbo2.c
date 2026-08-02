@@ -6,7 +6,10 @@
 #include "ef_effect_control.h"
 
 extern Vtx act_m_amenbo_v[];
-static Vtx act_m_amenbo_v[] = {
+#ifdef GAMECUBE
+static 
+#endif
+Vtx act_m_amenbo_v[] = {
 #include "assets/act_m_amenbo2/act_m_amenbo_v.inc"
 };
 

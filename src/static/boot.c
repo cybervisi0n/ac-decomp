@@ -165,6 +165,10 @@ extern void UnLink(OSModuleHeader* module) {
   JW_Free(module);
 }
 
+#ifndef GAMECUBE
+void forestaRelMain(void);
+#endif
+
 /**
  * @brief Relocatable module (reL) loading utility function. Loads a module by its file name.
  * May return nullptr if unable to load the module for whatever reason.
@@ -221,7 +225,14 @@ OSModuleHeader* LoadLink(const char* module_name) {
     }
         
     OSLink(&module->info, bss);
+    #ifdef GAMECUBE
     ((void (*)())module->prolog)();
+    #else
+    if(strcmp(module_name, "/foresta.rel.szs") == 0) {
+      // Load the foresta thing
+      forestaRelMain();
+    }
+    #endif
     return module;
   }
 
@@ -454,10 +465,14 @@ void adjustOSArena() {
   if (arenahi > (void*)0x81800000) {
     if (!APPNMI_EXTENDEDMEMORY_GET()) {
       OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。" VT_RST "\n"); /* The installed memory exceeds 24MB, but will be limited to 24MB. */
+      #ifdef GAMECUBE
       arenahi = (void*)0x817ffa80;
+      #endif
     } else if (arenahi > (void*)0x82000000) {
       OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。" VT_RST "\n"); /* The installed memory exceeds 32MB, but will be limited to 32MB. */
+      #ifdef GAMECUBE
       arenahi = (void*)0x81e00000;
+      #endif
     } else {
       OSReport("搭載メモリが 32MB を超えています。" VT_RST "\n"); /* The installed memory exceeds 32MB. */
     }

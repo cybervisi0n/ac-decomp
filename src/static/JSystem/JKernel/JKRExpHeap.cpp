@@ -4,6 +4,10 @@
 #include "JSystem/JUtility/JUTConsole.h"
 #include "JSystem/JMacro.h"
 
+#ifndef GAMECUBE
+#include <new>
+#endif
+
 static u32 whatdo;
 static u32 whatdo2;
 static u32 DBfoundSize;
@@ -13,27 +17,25 @@ static JKRExpHeap::CMemBlock* DBnewFreeBlock;
 static JKRExpHeap::CMemBlock* DBnewUsedBlock;
 
 JKRExpHeap* JKRExpHeap::createRoot(int maxHeaps, bool errorFlag) {
-    #ifdef GAMECUBE
     JKRExpHeap* heap = nullptr;
     if (!sRootHeap) {
         void* memory;
         u32 memorySize;
         initArena((char**)&memory, &memorySize, maxHeaps);
         u8* start = (u8*)memory + ALIGN_NEXT(sizeof(JKRExpHeap), 0x10);
+        #ifdef GAMECUBE
         u32 alignedSize = memorySize - ALIGN_NEXT(sizeof(JKRExpHeap), 0x10);
+        #else
+        u32 alignedSize = memorySize;
+        #endif
         heap = new (memory) JKRExpHeap(start, alignedSize, nullptr, errorFlag);
         sRootHeap = heap;
     }
     heap->_6E = true;
     return heap;
-    #else
-    //TODO
-    return nullptr;
-    #endif
 }
 
 JKRExpHeap* JKRExpHeap::create(u32 size, JKRHeap* parent, bool errorFlag) {
-    #ifdef GAMECUBE
     JKRExpHeap* newHeap;
     if (!parent) {
         parent = sRootHeap;
@@ -61,10 +63,6 @@ JKRExpHeap* JKRExpHeap::create(u32 size, JKRHeap* parent, bool errorFlag) {
     };
     newHeap->_6E = false;
     return newHeap;
-    #else
-    //TODO
-    return nullptr;
-    #endif
 }
 
 JKRExpHeap* JKRExpHeap::create(void* ptr, u32 size, JKRHeap* parent, bool errorFlag) {
@@ -231,7 +229,11 @@ void* JKRExpHeap::allocFromHead(u32 size, int align) {
             CMemBlock* prev = foundBlock->mPrev;
             CMemBlock* next = foundBlock->mNext;
             removeFreeBlock(foundBlock);
+            #ifdef GAMECUBE
             newUsedBlock = (CMemBlock*)((u32)foundBlock + foundOffset);
+            #else
+            newUsedBlock = (CMemBlock*)((u64)foundBlock + foundOffset);
+            #endif
             newUsedBlock->mAllocatedSpace = foundBlock->mAllocatedSpace - foundOffset;
             newFreeBlock = newUsedBlock->allocFore(size, mCurrentGroupID, (u8)foundOffset, 0, 0);
             if (newFreeBlock) {
@@ -310,10 +312,18 @@ void* JKRExpHeap::allocFromTail(u32 size, int align) {
     CMemBlock* foundBlock = nullptr;
     CMemBlock* newBlock = nullptr;
     u32 usedSize;
+    #ifdef GAMECUBE
     u32 start;
+    #else
+    u64 start;
+    #endif
 
     for (CMemBlock* block = mTail; block; block = block->mPrev) {
+        #ifdef GAMECUBE
         start = ALIGN_PREV((u32)block->getContent() + block->mAllocatedSpace - size, align);
+        #else
+        start = ALIGN_PREV((u64)block->getContent() + block->mAllocatedSpace - size, align);
+        #endif
         usedSize = (u32)block->getContent() + block->mAllocatedSpace - start;
         if (block->mAllocatedSpace >= usedSize) {
             foundBlock = block;
@@ -851,7 +861,11 @@ JKRExpHeap::CMemBlock* JKRExpHeap::CMemBlock::allocFore(u32 size, u8 groupId1, u
     mGroupID = groupId1;
     mFlags = alignment1;
     if (mAllocatedSpace >= size + sizeof(CMemBlock)) {
+        #ifdef GAMECUBE
         block = (CMemBlock*)(size + (u32)this);
+        #else
+        block = (CMemBlock*)(size + (u64)this);
+        #endif
         block = block + 1;
         block->mGroupID = groupId2;
         block->mFlags = alignment2;

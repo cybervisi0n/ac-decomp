@@ -87,8 +87,11 @@ u32 entry(void) {
 }
 
 #ifdef GAMECUBE
-void main(void) {
+void main(void) 
+#else
+void forestaRelMain(void)
+#endif
+{
     OSReport("どうぶつの森 main2 開始\n");
     HotStartEntry = &entry;
 }
-#endif

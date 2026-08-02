@@ -16,7 +16,8 @@ libPorpoise_prj = subproject('libPorpoise',
 
 shared_args = [
     '-DF3DEX_GBI_2',
-    '-I' + meson.current_build_dir() / 'GAFE01_00' / 'include'
+    '-I' + meson.current_build_dir() / 'GAFE01_00' / 'include',
+    '-I' + meson.global_source_root()
 ]
 
 if(build_target == 'gc') 

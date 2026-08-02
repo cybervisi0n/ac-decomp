@@ -72,6 +72,8 @@ void JFWSystem::init() {
     debugPrint->changeFont(systemFont);
     systemConsoleManager = JUTConsoleManager::createManager(nullptr);
     systemConsole = JUTConsole::create(60, 200, nullptr);
+    #ifdef GAMECUBE
+    //TODO
     systemConsole->setFont(systemFont);
 
     if (CSetUpParam::renderMode->efbHeight < 300) {
@@ -88,4 +90,5 @@ void JFWSystem::init() {
     JUTSetWarningConsole(systemConsole);
     void* mem = systemHeap->alloc(CSetUpParam::exConsoleBufferSize, 4);
     JUTException::createConsole(mem, CSetUpParam::exConsoleBufferSize);
+    #endif
 }

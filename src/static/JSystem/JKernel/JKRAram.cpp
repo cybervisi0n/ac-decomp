@@ -7,6 +7,10 @@
 #include "JSystem/JSystem.h"
 #include "_mem.h"
 
+#ifndef GAMECUBE
+#include <new>
+#endif
+
 JSUList<JKRAMCommand> JKRAram::sAramCommandList;
 JKRAram* JKRAram::sAramObject;
 u32 JKRAram::sSZSBufferSize = 0x400;
@@ -15,9 +19,11 @@ JKRAram* JKRAram::create(u32 aram_audio_buffer_size, u32 aram_audio_graph_size, 
                          s32 piece_priority) {
     if (!sAramObject) {
         #ifdef GAMECUBE
-        //TODO
         sAramObject =
             new (JKRGetSystemHeap(), 0) JKRAram(aram_audio_buffer_size, aram_audio_graph_size, piece_priority);
+        #else
+        void * memory = JKRHeap::alloc(sizeof(JKRAram), 0, JKRGetSystemHeap());
+        sAramObject = new (memory) JKRAram(aram_audio_buffer_size, aram_audio_graph_size, piece_priority);
         #endif
     }
 

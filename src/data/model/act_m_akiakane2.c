@@ -6,7 +6,10 @@
 #include "ef_effect_control.h"
 
 extern Vtx act_m_akiakane_v[];
-static Vtx act_m_akiakane_v[] = {
+#ifdef GAMECUBE
+static 
+#endif
+Vtx act_m_akiakane_v[] = {
 #include "assets/act_m_akiakane2/act_m_akiakane_v.inc"
 };
 

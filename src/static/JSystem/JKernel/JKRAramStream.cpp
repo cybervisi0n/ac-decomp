@@ -7,6 +7,7 @@
 #include "types.h"
 
 #ifndef GAMECUBE
+#include <new>
 #define SEEK_SET JSEEK_SET
 #endif
 
@@ -23,10 +24,12 @@ JKRHeap* JKRAramStream::transHeap = nullptr;
 JKRAramStream* JKRAramStream::create(s32 param) {
     if (JKRAramStream::sAramStreamObject == nullptr) {
         #ifdef GAMECUBE
-        //TODO
         JKRAramStream::sAramStreamObject = new (JKRGetSystemHeap(), 0) JKRAramStream(param);
-        setTransBuffer(nullptr, 0, nullptr);
+        #else
+        void * memory = JKRHeap::alloc(sizeof(JKRAramStream), 0, JKRGetSystemHeap());
+        JKRAramStream::sAramStreamObject = new (memory) JKRAramStream(param);
         #endif
+        setTransBuffer(nullptr, 0, nullptr);
     }
     return JKRAramStream::sAramStreamObject;
 }
@@ -205,8 +208,9 @@ void JKRAramStream::setTransBuffer(u8* buffer, u32 bufferSize, JKRHeap* heap) {
 
     if (buffer) {
         #ifdef GAMECUBE
-        //TODO
         transBuffer = (u8*)ALIGN_NEXT((u32)buffer, 0x20);
+        #else
+        transBuffer = (u8*)ALIGN_NEXT((u64)buffer, 0x20);
         #endif
     }
 

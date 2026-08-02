@@ -5,6 +5,9 @@
 #include "JSystem/JSystem.h"
 #include "dolphin/os/OSMessage.h"
 #include "types.h"
+#ifndef GAMECUBE
+#include <new>
+#endif
 
 OSMessage JKRDecomp::sMessageBuffer[JKRDECOMP_MSG_BUF_COUNT] = { 0 };
 OSMessageQueue JKRDecomp::sMessageQueue = { 0 };
@@ -14,6 +17,9 @@ JKRDecomp* JKRDecomp::create(s32 decompPriority) {
     if (JKRDecomp::sDecompObject == nullptr) {
         #ifdef GAMECUBE
         JKRDecomp::sDecompObject = new (JKRGetSystemHeap(), 0) JKRDecomp(decompPriority);
+        #else
+        void * memory = JKRHeap::alloc(sizeof(JKRDecomp), 0, JKRGetSystemHeap());
+        JKRDecomp::sDecompObject = new (memory) JKRDecomp(decompPriority);
         #endif
     }
 

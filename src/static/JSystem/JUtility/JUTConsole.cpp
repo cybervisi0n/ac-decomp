@@ -26,16 +26,15 @@ JUTConsole* JUTConsole::create(uint param_0, uint maxLines, JKRHeap* pHeap) {
     u8* buffer = (u8*)JKRAllocFromHeap(pHeap, getObjectSizeFromBufferSize(param_0, maxLines), 0);
 
     #ifdef GAMECUBE
-    //TODO
     JUTConsole* newConsole = new (buffer) JUTConsole(param_0, maxLines, true);
+    #else
+    JUTConsole* newConsole = new JUTConsole(param_0, maxLines, true);
+    #endif
     newConsole->mBuf = buffer + sizeof(JUTConsole);
     newConsole->clear();
 
     pManager->appendConsole(newConsole);
     return newConsole;
-    #else
-    return nullptr;
-    #endif
 }
 
 JUTConsole* JUTConsole::create(uint param_0, void* buffer, u32 bufferSize) {
@@ -355,8 +354,9 @@ JUTConsoleManager* JUTConsoleManager::createManager(JKRHeap* pHeap) {
         pHeap = JKRGetCurrentHeap();
     }
     #ifdef GAMECUBE
-    //TODO
     sManager = new (pHeap, 0) JUTConsoleManager();
+    #else
+    sManager = new JUTConsoleManager();
     #endif
     return sManager;
 }
