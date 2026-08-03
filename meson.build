@@ -91,7 +91,7 @@ animalcrossing_libs += foresta_rel_lib
 
 animalcrossing_exe = executable(
     'main',
-    dependencies: [ libporpoise_dep ],
+    dependencies: [ libporpoise_dep, gafe_assets_dep ],
     sources: [ boot_srcs ],
     link_args: [ animalcrossing_link_args ],
     link_with: [ animalcrossing_libs ],
