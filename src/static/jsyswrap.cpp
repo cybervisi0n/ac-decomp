@@ -473,7 +473,11 @@ extern void JW_Init() {
     void* arena_hi = OSGetArenaHi();
     void* arena_lo = OSGetArenaLo();
 
+    #ifdef GAMECUBE
     SystemHeapSize = (u32)arena_hi - (u32)arena_lo - 0xD0;
+    #else
+    SystemHeapSize = (u64)arena_hi - (u64)arena_lo - 0x500;
+    #endif
     JC_JFWSystem_setMaxStdHeap(1);
     JC_JFWSystem_setSysHeapSize(SystemHeapSize);
     JC_JFWSystem_setFifoBufSize(0x10001);

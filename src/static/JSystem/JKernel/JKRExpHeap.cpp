@@ -26,7 +26,7 @@ JKRExpHeap* JKRExpHeap::createRoot(int maxHeaps, bool errorFlag) {
         #ifdef GAMECUBE
         u32 alignedSize = memorySize - ALIGN_NEXT(sizeof(JKRExpHeap), 0x10);
         #else
-        u32 alignedSize = memorySize;
+        u32 alignedSize = memorySize - ALIGN_NEXT(sizeof(JKRExpHeap), 0x10);;
         #endif
         heap = new (memory) JKRExpHeap(start, alignedSize, nullptr, errorFlag);
         sRootHeap = heap;
@@ -321,10 +321,11 @@ void* JKRExpHeap::allocFromTail(u32 size, int align) {
     for (CMemBlock* block = mTail; block; block = block->mPrev) {
         #ifdef GAMECUBE
         start = ALIGN_PREV((u32)block->getContent() + block->mAllocatedSpace - size, align);
+                usedSize = (u32)block->getContent() + block->mAllocatedSpace - start;
         #else
         start = ALIGN_PREV((u64)block->getContent() + block->mAllocatedSpace - size, align);
+        usedSize = (u64)block->getContent() + block->mAllocatedSpace - start;
         #endif
-        usedSize = (u32)block->getContent() + block->mAllocatedSpace - start;
         if (block->mAllocatedSpace >= usedSize) {
             foundBlock = block;
             offset = block->mAllocatedSpace - usedSize;

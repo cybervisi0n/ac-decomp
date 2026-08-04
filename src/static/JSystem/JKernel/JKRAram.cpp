@@ -49,6 +49,9 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
     #ifdef GAMECUBE
     //TODO: missign apis, memory stuff
     u32 aramSize = ARGetSize();
+    #else
+    u32 aramSize = 1024 * 1024; //just hardcoded 1MB for now
+    #endif
     mAudioMemorySize = bufSize;
     if (graphSize == 0xffffffff) {
         mGraphMemorySize = aramSize - bufSize - aramBase;
@@ -58,16 +61,29 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
         mUserMemorySize = (aramSize - (bufSize + graphSize) - aramBase);
     }
 
+    #ifdef GAMECUBE
     mAudioMemoryPtr = ARAlloc(mAudioMemorySize);
     mGraphMemoryPtr = ARAlloc(mGraphMemorySize);
+    #else
+    mAudioMemoryPtr = malloc(mAudioMemorySize);
+    mGraphMemoryPtr = malloc(mGraphMemorySize);
+    #endif
 
     if (mUserMemorySize != 0) { // ternary?
+        #ifdef GAMECUBE
         mUserMemoryPtr = ARAlloc(mUserMemorySize);
+        #else
+        mUserMemoryPtr = malloc(mUserMemorySize);
+        #endif
     } else {
         mUserMemoryPtr = nullptr;
     }
 
+    #ifdef GAMECUBE
     mAramHeap = new (JKRHeap::getSystemHeap(), 0) JKRAramHeap(mGraphMemoryPtr, mGraphMemorySize);
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRAram), 0, JKRGetSystemHeap());
+    mAramHeap = new (memory) JKRAramHeap(mGraphMemoryPtr, mGraphMemorySize);
     #endif
 }
 
@@ -215,13 +231,17 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
     if (expandSwitch == EXPAND_SWITCH_DECOMPRESS) {
         u8 buffer[64];
         #ifdef GAMECUBE
-        //TODO: Memory stuff
         u8* bufPtr = (u8*)ALIGN_NEXT((u32)buffer, 32);
         JKRAramPcs(1, address, (u32)bufPtr, sizeof(buffer) / 2,
                    nullptr); // probably change sizeof(buffer) / 2 to 32
+        #else
+        u8* bufPtr = (u8*)ALIGN_NEXT((u64)buffer, 32);
+        //TODO
+        //JKRAramPcs(1, address, (u64)bufPtr, sizeof(buffer) / 2,
+        //           nullptr);
+        #endif
         compression = JKRCheckCompressed(bufPtr);
         expandSize = JKRDecompExpandSize(bufPtr);
-        #endif
     }
 
     if (compression == JKRCOMPRESSION_YAZ0) // SZS

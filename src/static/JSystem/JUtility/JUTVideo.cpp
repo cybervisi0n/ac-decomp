@@ -37,11 +37,8 @@ JUTVideo::JUTVideo(const GXRenderModeObj* renderModeObj) {
     _18 = 0;
     sVideoLastTick = OSGetTick();
     sVideoInterval = 670000;
-    #ifdef GAMECUBE
-    //TODO
     mPreviousPreRetraceCallback = VISetPreRetraceCallback(preRetraceProc);
     mPreviousPostRetraceCallback = VISetPostRetraceCallback(postRetraceProc);
-    #endif
     mPreRetraceCallback = nullptr;
     mPostRetraceCallback = nullptr;
     OSInitMessageQueue(&mMessageQueue, &mMessage, 1);
@@ -53,7 +50,12 @@ JUTVideo::~JUTVideo() {
     VISetPostRetraceCallback(mPreviousPostRetraceCallback);
 }
 
-void JUTVideo::preRetraceProc(u32 retrace_count) {
+#ifndef GAMECUBE
+void *
+#else
+void
+#endif
+JUTVideo::preRetraceProc(u32 retrace_count) {
     if (sManager->mPreRetraceCallback) {
         (*sManager->mPreRetraceCallback)(retrace_count);
     }
@@ -66,7 +68,11 @@ void JUTVideo::preRetraceProc(u32 retrace_count) {
     if (!xfb) {
         VISetBlack(TRUE);
         VIFlush();
+        #ifndef GAMECUBE
+        return NULL;
+        #else
         return;
+        #endif
     }
 
     static void* frameBuffer = nullptr;
@@ -88,13 +94,21 @@ void JUTVideo::preRetraceProc(u32 retrace_count) {
         sManager->mIsSetBlack = frame_count != 0 ? true : false;
         VISetBlack(TRUE);
         VIFlush();
+        #ifndef GAMECUBE
+        return NULL;
+        #else
         return;
+        #endif
     }
 
     if (!xfb) {
         VISetBlack(TRUE);
         VIFlush();
+        #ifndef GAMECUBE
+        return NULL;
+        #else
         return;
+        #endif
     }
 
     if (xfb->getBufferNum() == 3 || xfb->getBufferNum() == 2) {
@@ -128,6 +142,9 @@ void JUTVideo::preRetraceProc(u32 retrace_count) {
         }
         VIFlush();
     }
+    #ifndef GAMECUBE
+    return NULL;
+    #endif
 }
 
 void JUTVideo::drawDoneStart() {
@@ -156,12 +173,20 @@ void JUTVideo::drawDoneCallback() {
     }
 }
 
-void JUTVideo::postRetraceProc(u32 p1) {
+#ifndef GAMECUBE
+void *
+#else
+void
+#endif
+JUTVideo::postRetraceProc(u32 p1) {
     if (sManager->mPostRetraceCallback != nullptr) {
         sManager->mPostRetraceCallback(p1);
     }
     u32 retraceCount = VIGetRetraceCount();
     OSSendMessage(&sManager->mMessageQueue, (void*)retraceCount, OS_MESSAGE_NOBLOCK);
+    #ifndef GAMECUBE
+    return NULL;
+    #endif
 }
 
 void JUTVideo::setRenderMode(const GXRenderModeObj* newRenderModeObj) {
