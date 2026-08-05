@@ -1485,8 +1485,16 @@ typedef struct {
 	int		cmd:8;
 	unsigned int	par:8;
 	unsigned int	len:16;
+#ifdef GAMECUBE
 	unsigned int	addr;
-} Gdma;
+#else
+	u64 addr;
+#endif
+} 
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gdma;
 
 /*
  * Graphics Immediate Mode Packet types
@@ -1668,8 +1676,16 @@ typedef struct {
  */
 typedef struct {
 	unsigned int w0;
+#ifdef GAMECUBE
 	unsigned int w1;
-} Gwords;
+#else
+	u64 w1;
+#endif
+} 
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gwords;
 
 /*
  * This union is the fundamental type of the display list.
@@ -1704,6 +1720,7 @@ typedef union {
 /*
  * DMA macros
  */
+ #ifdef GAMECUBE
 #define	gDma0p(pkt, c, s, l)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1711,12 +1728,29 @@ typedef union {
 	_g->words.w0 = _SHIFTL((c), 24, 8) | _SHIFTL((l), 0, 24);	\
 	_g->words.w1 = (unsigned int)(s);				\
 }
+#else
+#define	gDma0p(pkt, c, s, l)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24);	\
+	_g->words.w1 = (u64)(s);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDma0p(c, s, l)						\
 {{									\
 	_SHIFTL((c), 24, 8) | _SHIFTL((l), 0, 24), (unsigned int)(s)	\
 }}
+#else
+#define	gsDma0p(c, s, l)						\
+{{									\
+	_SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24), (u64)(s)	\
+}}
+#endif
 
+#ifdef GAMECUBE
 #define	gDma1p(pkt, c, s, l, p)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1725,6 +1759,16 @@ typedef union {
 			_SHIFTL((l), 0, 16));				\
 	_g->words.w1 = (unsigned int)(s);				\
 }
+#else
+#define	gDma1p(pkt, c, s, l, p)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL((c), 0, 8) | _SHIFTL((p), 8, 8) |	\
+			_SHIFTL((l), 16, 16));				\
+	_g->dma.addr = (u64)(s);				\
+}
+#endif
 
 #ifdef GAMECUBE
 #define	gsDma1p(c, s, l, p)						\
@@ -1734,14 +1778,15 @@ typedef union {
         (unsigned int)(s)						\
 }}
 #else
-//TODO
 #define	gsDma1p(c, s, l, p)						\
 {{									\
-	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
-	 _SHIFTL((l), 0, 16)), 						\
+	(_SHIFTL((c), 0, 8) | _SHIFTL((p), 8, 8) | 			\
+	 _SHIFTL((l), 16, 16)), \
+	 ((u64)(s)), \
 }}
 #endif
 
+#ifdef GAMECUBE
 #define	gDma2p(pkt, c, adrs, len, idx, ofs)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1749,6 +1794,15 @@ typedef union {
 			_SHIFTL((ofs)/8,8,8)|_SHIFTL((idx),0,8));	\
 	_g->words.w1 = (unsigned int)(adrs);				\
 }
+#else
+#define	gDma2p(pkt, c, adrs, len, idx, ofs)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 = (_SHIFTL((c),0,8)|_SHIFTL(((len)-1)/8,11,5)|	\
+			_SHIFTL((ofs)/8,16,8)|_SHIFTL((idx),24,8));	\
+	_g->words.w1 = (u64)(adrs);				\
+}
+#endif
 #ifdef GAMECUBE
 #define	gsDma2p(c, adrs, len, idx, ofs)					\
 {{									\
@@ -1757,11 +1811,12 @@ typedef union {
         (unsigned int)(adrs)						\
 }}
 #else
-//TODO
+//NOTES: the endian swap might not be right
 #define	gsDma2p(c, adrs, len, idx, ofs)					\
 {{									\
-	(_SHIFTL((c),24,8)|_SHIFTL(((len)-1)/8,19,5)|			\
-	 _SHIFTL((ofs)/8,8,8)|_SHIFTL((idx),0,8)),			\
+	(_SHIFTL((c),0,8)|_SHIFTL(((len)-1)/8,11,5)|			\
+	 _SHIFTL((ofs)/8,16,8)|_SHIFTL((idx),24,8)),			\
+        (u64)(adrs)						\
 }}
 #endif
 
@@ -1788,6 +1843,7 @@ typedef union {
  *        | |seg|         address             |
  *        +-+---+-----------------------------+
  */
+#ifdef GAMECUBE
 # define	gSPVertex(pkt, v, n, v0)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1795,6 +1851,16 @@ typedef union {
 	  _SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7);	\
 	_g->words.w1 = (unsigned int)(v);				\
 }
+#else
+//NOTES: the endian swap might not be correct
+# define	gSPVertex(pkt, v, n, v0)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 =							\
+	  _SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),23,7);	\
+	_g->words.w1 = (u64)(v);				\
+}
+#endif
 #ifdef GAMECUBE
 # define	gsSPVertex(v, n, v0)					\
 {{									\
@@ -1802,10 +1868,11 @@ typedef union {
         (unsigned int)(v)						\
 }}
 #else
-//TODO
+//NOTES: the endian swap offset might not be correct
 # define	gsSPVertex(v, n, v0)					\
 {{									\
-	(_SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7)),	\
+	(_SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),23,7)),	\
+        (u64)(v)						\
 }}
 #endif
 #elif	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
@@ -2741,6 +2808,7 @@ typedef union {
 /*
  * Macros to turn texture on/off
  */
+#ifdef GAMECUBE
 # define gSPTexture(pkt, s, t, level, tile, on)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2751,12 +2819,36 @@ typedef union {
 			_SHIFTL((on),1,7));				\
 	_g->words.w1 = (_SHIFTL((s),16,16) | _SHIFTL((t),0,16));	\
 }
+#else
+// TODO: The endian swap might be wrong
+# define gSPTexture(pkt, s, t, level, tile, on)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_TEXTURE,0,8) | 			\
+			_SHIFTL(BOWTIE_VAL,8,8) |			\
+			_SHIFTL((level),19,3) | _SHIFTL((tile),24,3) |	\
+			_SHIFTL((on),24,7));				\
+	_g->words.w1 = (_SHIFTL((s),0,16) | _SHIFTL((t),16,16));	\
+}
+#endif
+
+#ifdef GAMECUBE
 # define gsSPTexture(s, t, level, tile, on)				\
 {{									\
 	(_SHIFTL(G_TEXTURE,24,8) | _SHIFTL(BOWTIE_VAL,16,8) |		\
 	 _SHIFTL((level),11,3) | _SHIFTL((tile),8,3) | _SHIFTL((on),1,7)),\
         (_SHIFTL((s),16,16) | _SHIFTL((t),0,16))			\
 }}
+#else
+// TODO: The endian swap might be wrong
+# define gsSPTexture(s, t, level, tile, on)				\
+{{									\
+	(_SHIFTL(G_TEXTURE,0,8) | _SHIFTL(BOWTIE_VAL,8,8) |		\
+	 _SHIFTL((level),19,3) | _SHIFTL((tile),24,3) | _SHIFTL((on),24,7)),\
+        (_SHIFTL((s),0,16) | _SHIFTL((t),16,16))			\
+}}
+#endif
 /* 
  * Different version of SPTexture macro, has an additional parameter
  * which is currently reserved in the microcode.
@@ -2830,6 +2922,7 @@ typedef union {
 # define gsSPPopMatrix(n)		gsImmp1(    G_POPMTX, n)
 #endif	/* F3DEX_GBI_2 */
 
+#ifdef GAMECUBE
 #define gSPEndDisplayList(pkt)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2837,11 +2930,27 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_ENDDL, 24, 8);				\
 	_g->words.w1 = 0;						\
 }
+#else
+#define gSPEndDisplayList(pkt)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_ENDDL, 0, 8);				\
+	_g->words.w1 = 0;						\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsSPEndDisplayList()						\
 {{									\
 	_SHIFTL(G_ENDDL, 24, 8), 0					\
 }}
+#else
+#define gsSPEndDisplayList()						\
+{{									\
+	_SHIFTL(G_ENDDL, 0, 8), 0					\
+}}
+#endif
 
 #ifdef	F3DEX_GBI_2
 /*
@@ -2852,17 +2961,33 @@ typedef union {
  *
  *	gSPLoadGeometryMode(pkt, word) sets GeometryMode directly.
  */
+#ifdef GAMECUBE
 #define	gSPGeometryMode(pkt, c, s)					\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
 	_g->words.w0 = _SHIFTL(G_GEOMETRYMODE,24,8)|_SHIFTL(~(u32)(c),0,24);\
 	_g->words.w1 = (u32)(s);					\
 }
+#else
+#define	gSPGeometryMode(pkt, c, s)					\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 = _SHIFTL(G_GEOMETRYMODE,0,8)|_SHIFTL(~(u32)(c),8,24);\
+	_g->words.w1 = (u32)(s);					\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsSPGeometryMode(c, s)						\
 {{									\
 	(_SHIFTL(G_GEOMETRYMODE,24,8)|_SHIFTL(~(u32)(c),0,24)),(u32)(s)	\
 }}
+#else
+#define	gsSPGeometryMode(c, s)						\
+{{									\
+	(_SHIFTL(G_GEOMETRYMODE,0,8)|_SHIFTL(~(u32)(c),8,24)),(u32)(s)	\
+}}
+#endif
 #define	gSPSetGeometryMode(pkt, word)	gSPGeometryMode((pkt),0,(word))
 #define	gsSPSetGeometryMode(word)	gsSPGeometryMode(0,(word))
 #define	gSPClearGeometryMode(pkt, word)	gSPGeometryMode((pkt),(word),0)
@@ -2899,6 +3024,7 @@ typedef union {
 #endif	/* F3DEX_GBI_2 */
 
 #ifdef	F3DEX_GBI_2
+#ifdef GAMECUBE
 #define	gSPSetOtherMode(pkt, cmd, sft, len, data)			\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2906,12 +3032,31 @@ typedef union {
 			_SHIFTL((len)-1,0,8));				\
 	_g->words.w1 = (unsigned int)(data);				\
 }
+#else
+//TODO: the endian on this one will be wrong besides the cmd
+#define	gSPSetOtherMode(pkt, cmd, sft, len, data)			\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 = (_SHIFTL(cmd,0,8)|_SHIFTL(32-(sft)-(len),8,8)|	\
+			_SHIFTL((len)-1,0,8));				\
+	_g->words.w1 = (unsigned int)(data);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsSPSetOtherMode(cmd, sft, len, data)				\
 {{									\
 	_SHIFTL(cmd,24,8)|_SHIFTL(32-(sft)-(len),8,8)|_SHIFTL((len)-1,0,8), \
 	(unsigned int)(data)						\
 }}
+#else
+//TODO: the endian on this one will be wrong besides the cmd
+#define	gsSPSetOtherMode(cmd, sft, len, data)				\
+{{									\
+	_SHIFTL(cmd,0,8)|_SHIFTL(32-(sft)-(len),8,8)|_SHIFTL((len)-1,0,8), \
+	(unsigned int)(data)						\
+}}
+#endif
 #else
 #define	gSPSetOtherMode(pkt, cmd, sft, len, data)			\
 {									\
@@ -3037,11 +3182,12 @@ typedef union {
 	(unsigned int)(i)						\
 }}
 #else
-//TODO
+//TODO: The endian swap offsets might not be right
 #define	gsSetImage(cmd, fmt, siz, width, i)				\
 {{									\
-	_SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |			\
-	_SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12),		\
+	_SHIFTL(cmd, 0, 8) | _SHIFTL(fmt, 11, 3) |			\
+	_SHIFTL(siz, 14, 2) | _SHIFTL((width)-1, 20, 12),		\
+	(u64)(i) \
 }}
 #endif
 
@@ -3142,6 +3288,7 @@ typedef union {
 #define gDPSetCombineMode(pkt, a, b)	gDPSetCombineLERP(pkt, a, b)
 #define	gsDPSetCombineMode(a, b)	gsDPSetCombineLERP(a, b)
 
+#ifdef GAMECUBE
 #define	gDPSetColor(pkt, c, d)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -3149,11 +3296,27 @@ typedef union {
 	_g->words.w0 = _SHIFTL(c, 24, 8);				\
 	_g->words.w1 = (unsigned int)(d);				\
 }
+#else
+#define	gDPSetColor(pkt, c, d)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(c, 0, 8);				\
+	_g->words.w1 = (unsigned int)(d);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPSetColor(c, d)						\
 {{									\
 	_SHIFTL(c, 24, 8), (unsigned int)(d)				\
 }}
+#else
+#define	gsDPSetColor(c, d)						\
+{{									\
+	_SHIFTL(c, 0, 24), (unsigned int)(d)				\
+}}
+#endif
 
 #define	DPRGBColor(pkt, cmd, r, g, b, a)				\
             gDPSetColor(pkt, cmd,					\
@@ -3188,6 +3351,7 @@ typedef union {
 		gsDPSetColor(G_SETPRIMDEPTH, _SHIFTL(z, 16, 16) | 	\
 			     _SHIFTL(dz, 0, 16))
 
+#ifdef GAMECUBE
 #define	gDPSetPrimColor(pkt, m, l, r, g, b, a)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -3197,7 +3361,19 @@ typedef union {
 	_g->words.w1 =  (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | 	\
 			 _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8));		\
 }
+#else
+#define	gDPSetPrimColor(pkt, m, l, r, g, b, a)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 =	(_SHIFTL(G_SETPRIMCOLOR, 0, 8) | 		\
+			 _SHIFTL(m, 16, 8) | _SHIFTL(l, 24, 8));		\
+	_g->words.w1 =  (_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | 	\
+			 _SHIFTL(b, 16, 8) | _SHIFTL(a, 24, 8));		\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPSetPrimColor(m, l, r, g, b, a)				\
 {{									\
 	(_SHIFTL(G_SETPRIMCOLOR, 24, 8) | _SHIFTL(m, 8, 8) |		\
@@ -3205,6 +3381,15 @@ typedef union {
 	(_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) |	\
 	 _SHIFTL(a, 0, 8))						\
 }}
+#else
+#define	gsDPSetPrimColor(m, l, r, g, b, a)				\
+{{									\
+	(_SHIFTL(G_SETPRIMCOLOR, 0, 8) | _SHIFTL(m, 16, 8) |		\
+	 _SHIFTL(l, 24, 8)),						\
+	(_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | _SHIFTL(b, 16, 8) |	\
+	 _SHIFTL(a, 24, 8))						\
+}}
+#endif
 
 /*
  * gDPSetOtherMode (This is for expert user.)
@@ -3234,6 +3419,7 @@ typedef union {
  *
  *	modeB = G_AC_* | G_ZS_*  | G_RM_* | G_RM_*2;
  */
+#ifdef GAMECUBE
 #define	gDPSetOtherMode(pkt, mode0, mode1)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -3241,12 +3427,29 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_RDPSETOTHERMODE,24,8)|_SHIFTL(mode0,0,24);\
 	_g->words.w1 = (unsigned int)(mode1);				\
 }
+#else
+#define	gDPSetOtherMode(pkt, mode0, mode1)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_RDPSETOTHERMODE,0,8)|_SHIFTL(mode0,8,24);\
+	_g->words.w1 = (unsigned int)(mode1);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPSetOtherMode(mode0, mode1)					\
 {{									\
 	_SHIFTL(G_RDPSETOTHERMODE,24,8)|_SHIFTL(mode0,0,24),		\
 	(unsigned int)(mode1)						\
 }}
+#else
+#define	gsDPSetOtherMode(mode0, mode1)					\
+{{									\
+	_SHIFTL(G_RDPSETOTHERMODE,0,8)|_SHIFTL(mode0,8,24),		\
+	(unsigned int)(mode1)						\
+}}
+#endif
 
 /*
  * Texturing macros

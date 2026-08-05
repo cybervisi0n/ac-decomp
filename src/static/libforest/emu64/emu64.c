@@ -3355,16 +3355,28 @@ void emu64::dl_G_DL(void) {
             }
 
             if (this->DL_stack_level < DL_MAX_STACK_LEVEL) {
+                #ifdef GAMECUBE
                 this->DL_stack[this->DL_stack_level++] = (u32)(this->gfx_p + 1);
+                #else
+                this->DL_stack[this->DL_stack_level++] = (u64)(this->gfx_p + 1);
+                #endif
             } else {
                 this->err_count++;
                 this->Printf0("*** DL stack overflow ***\n");
             }
 
+            #ifdef GAMECUBE
             this->gfx_p = (Gfx*)((int)this->work_ptr - sizeof(Gfx));
+            #else
+            this->gfx_p = (Gfx*)((u64)this->work_ptr - sizeof(Gfx));
+            #endif
             break;
         case G_DL_NOPUSH:
+            #ifdef GAMECUBE
             this->gfx_p = (Gfx*)((u32)this->work_ptr - sizeof(Gfx));
+            #else
+                        this->gfx_p = (Gfx*)((u64)this->work_ptr - sizeof(Gfx));
+            #endif
             break;
         default:
             if (this->disable_polygons == false) {

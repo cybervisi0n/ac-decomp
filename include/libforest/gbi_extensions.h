@@ -1,6 +1,7 @@
 #ifndef __GBI_EXTENSIONS_H__
 #define __GBI_EXTENSIONS_H__
 
+#include "PR/gbi.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -360,8 +361,16 @@ typedef struct {
     unsigned int cmd:8;
     unsigned int index:8;
     unsigned int offset:16;
+    #ifdef GAMECUBE
     unsigned int data;
-} Gmoveword;
+    #else
+    u64 data;
+    #endif
+}
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gmoveword;
 
 typedef struct {
     unsigned int cmd:8;
@@ -369,8 +378,16 @@ typedef struct {
     unsigned int offset:8;
     unsigned int index:8;
 
+    #ifdef GAMECUBE
     unsigned int data;
-} Gmovemem;
+    #else
+    u64 data;
+    #endif
+}
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gmovemem;
 
 typedef struct Gsettexedgealpha {
     unsigned int cmd:8;
@@ -420,8 +437,16 @@ typedef struct Gmtx {
     unsigned int pad: 8;
     unsigned int type: 8;
 
+    #ifdef GAMECUBE
     unsigned int addr;
-} Gmtx;
+    #else
+    u64 addr;
+    #endif
+} 
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gmtx;
 
 typedef struct Gvtx {
     unsigned int cmd: 8;
@@ -430,8 +455,16 @@ typedef struct Gvtx {
     unsigned int pad1: 4;
     unsigned int vn:8;
 
+    #ifdef GAMECUBE
     unsigned int addr;
-} Gvtx;
+    #else
+    u64 addr;
+    #endif
+}
+#ifndef GAMECUBE
+__attribute__((packed))
+#endif
+Gvtx;
 
 typedef struct Gline3D_new {
     unsigned int cmd: 8;
@@ -708,11 +741,11 @@ do { \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (unsigned int)img \
 }}
 #else
-//TODO
+//TODO: Fix Endian
 #define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
 {{ \
-    _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
-        _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10) \
+    _SHIFTL(G_SETTIMG, 0, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
+        _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (u64)img \
 }}
 #endif
 

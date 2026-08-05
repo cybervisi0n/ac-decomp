@@ -8,7 +8,13 @@
 #include <math.h>
 #endif
 
-u32 emu64::seg2k0(u32 segadr) {
+#ifdef GAMECUBE
+u32 emu64::seg2k0(u32 segadr)
+#else
+u64 emu64::seg2k0(u64 segaddr)
+#endif
+{
+    #ifdef GAMECUBE
     u32 k0;
 
     if ((segadr >> 28) == 0) {
@@ -31,6 +37,9 @@ u32 emu64::seg2k0(u32 segadr) {
     }
 
     return k0;
+    #else
+    return segaddr;
+    #endif
 }
 
 /* @unused void guMtxXFMWF(MtxP, float, float, float, float, float, float*, float*, float*, float*) */
