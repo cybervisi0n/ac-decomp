@@ -1721,6 +1721,15 @@ typedef union {
  * DMA macros
  */
  #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] l (length)
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gDma0p(pkt, c, s, l)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1729,6 +1738,15 @@ typedef union {
 	_g->words.w1 = (unsigned int)(s);				\
 }
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] l (length)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gDma0p(pkt, c, s, l)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1739,11 +1757,29 @@ typedef union {
 #endif
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] l (length)
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gsDma0p(c, s, l)						\
 {{									\
 	_SHIFTL((c), 24, 8) | _SHIFTL((l), 0, 24), (unsigned int)(s)	\
 }}
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] l (length)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gsDma0p(c, s, l)						\
 {{									\
 	_SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24), (u64)(s)	\
@@ -1751,6 +1787,16 @@ typedef union {
 #endif
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-15 [16] l (length)
+ * 16-23 [8] p (param)
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gDma1p(pkt, c, s, l, p)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1760,6 +1806,16 @@ typedef union {
 	_g->words.w1 = (unsigned int)(s);				\
 }
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-15 [8] p (param)
+ * 16-31 [16] l (length)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gDma1p(pkt, c, s, l, p)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1771,6 +1827,16 @@ typedef union {
 #endif
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-15 [16] l (length)
+ * 16-23 [8] p (param)
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gsDma1p(c, s, l, p)						\
 {{									\
 	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
@@ -1778,6 +1844,16 @@ typedef union {
         (unsigned int)(s)						\
 }}
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-15 [8] p (param)
+ * 16-31 [16] l (length)
+ *
+ * Word 1:
+ * s (address)
+ */
 #define	gsDma1p(c, s, l, p)						\
 {{									\
 	(_SHIFTL((c), 0, 8) | _SHIFTL((p), 8, 8) | 			\
@@ -1787,6 +1863,18 @@ typedef union {
 #endif
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] idx
+ * 8-15 [8] ofs
+ * 16-18 [3] zero    <- part of len field?
+ * 19-23 [5] len / 8 <- part of len field?
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * adrs
+ */
 #define	gDma2p(pkt, c, adrs, len, idx, ofs)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1795,6 +1883,18 @@ typedef union {
 	_g->words.w1 = (unsigned int)(adrs);				\
 }
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-10 [3] zero
+ * 11-15 [5] len / 8 <- part of len field?
+ * 16-23 [8] ofs     <- part of len field?
+ * 24-31 [8] idx
+ *
+ * Word 1:
+ * adrs
+ */
 #define	gDma2p(pkt, c, adrs, len, idx, ofs)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1804,6 +1904,18 @@ typedef union {
 }
 #endif
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] idx
+ * 8-15 [8] ofs
+ * 16-18 [3] zero    <- part of len field?
+ * 19-23 [5] len / 8 <- part of len field?
+ * 24-31 [8] c (cmd)
+ *
+ * Word 1:
+ * adrs
+ */
 #define	gsDma2p(c, adrs, len, idx, ofs)					\
 {{									\
 	(_SHIFTL((c),24,8)|_SHIFTL(((len)-1)/8,19,5)|			\
@@ -1811,7 +1923,18 @@ typedef union {
         (unsigned int)(adrs)						\
 }}
 #else
-//NOTES: the endian swap might not be right
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-10 [3] zero
+ * 11-15 [5] len / 8 <- part of len field?
+ * 16-23 [8] ofs     <- part of len field?
+ * 24-31 [8] idx
+ *
+ * Word 1:
+ * adrs
+ */
 #define	gsDma2p(c, adrs, len, idx, ofs)					\
 {{									\
 	(_SHIFTL((c),0,8)|_SHIFTL(((len)-1)/8,11,5)|			\
@@ -1844,6 +1967,19 @@ typedef union {
  *        +-+---+-----------------------------+
  */
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0 [1] zero
+ * 1-7 [7] v0+n
+ * 8-11 [4] zero
+ * 12-19 [8] n
+ * 20-23 [4] zero
+ * 24-31 [8] G_VTX (cmd)
+ *
+ * Word 1:
+ * v
+ */
 # define	gSPVertex(pkt, v, n, v0)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1852,26 +1988,63 @@ typedef union {
 	_g->words.w1 = (unsigned int)(v);				\
 }
 #else
-//NOTES: the endian swap might not be correct
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_VTX (cmd)
+ * 8-11 [4] zero
+ * 12-19 [8] n
+ * 20-23 [4] zero
+ * 24 [1] zero
+ * 25-31 [7] v0+n
+ *
+ * Word 1:
+ * v
+ */
 # define	gSPVertex(pkt, v, n, v0)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
 	_g->words.w0 =							\
-	  _SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),23,7);	\
+	  _SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),25,7);	\
 	_g->words.w1 = (u64)(v);				\
 }
 #endif
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0 [1] zero
+ * 1-7 [7] v0+n
+ * 8-11 [4] zero
+ * 12-19 [8] n
+ * 20-23 [4] zero
+ * 24-31 [8] G_VTX (cmd)
+ *
+ * Word 1:
+ * v
+ */
 # define	gsSPVertex(v, n, v0)					\
 {{									\
 	(_SHIFTL(G_VTX,24,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),1,7)),	\
         (unsigned int)(v)						\
 }}
 #else
-//NOTES: the endian swap offset might not be correct
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_VTX (cmd)
+ * 8-11 [4] zero
+ * 12-19 [8] n
+ * 20-23 [4] zero
+ * 24 [1] zero
+ * 25-31 [7] v0+n
+ *
+ * Word 1:
+ * v
+ */
 # define	gsSPVertex(v, n, v0)					\
 {{									\
-	(_SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),23,7)),	\
+	(_SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),25,7)),	\
         (u64)(v)						\
 }}
 #endif
@@ -1921,18 +2094,68 @@ typedef union {
 /*
  * RSP short command (no DMA required) macros
  */
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ */
 #define	gImmp0(pkt, c)							\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
 									\
 	_g->words.w0 = _SHIFTL((c), 24, 8);				\
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ */
+#define	gImmp0(pkt, c)							\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL((c), 0, 8);				\
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ */
 #define	gsImmp0(c)							\
 {{									\
 	_SHIFTL((c), 24, 8)						\
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ */
+#define	gsImmp0(c)							\
+{{									\
+	_SHIFTL((c), 0, 8)						\
+}}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * p0 (parameter)
+ */
 #define	gImmp1(pkt, c, p0)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1940,12 +2163,66 @@ typedef union {
 	_g->words.w0 = _SHIFTL((c), 24, 8);				\
 	_g->words.w1 = (unsigned int)(p0);				\
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * p0 (parameter)
+ */
+#define	gImmp1(pkt, c, p0)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL((c), 0, 8);				\
+	_g->words.w1 = (unsigned int)(p0);				\
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * p0 (parameter)
+ */
 #define	gsImmp1(c, p0)							\
 {{									\
 	_SHIFTL((c), 24, 8), (unsigned int)(p0)				\
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * p0 (parameter)
+ */
+#define	gsImmp1(c, p0)							\
+{{									\
+	_SHIFTL((c), 0, 8), (unsigned int)(p0)				\
+}}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * 8-15 [8] p1 (parameter 1)
+ * 16-31 [16] p0 (parameter 0)
+ */
 #define	gImmp2(pkt, c, p0, p1)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1953,12 +2230,70 @@ typedef union {
 	_g->words.w0 = _SHIFTL((c), 24, 8);				\
 	_g->words.w1 = _SHIFTL((p0), 16, 16) | _SHIFTL((p1), 8, 8);	\
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * 0-15 [16] p0 (parameter 0)
+ * 16-23 [8] p1 (parameter 1)
+ */
+#define	gImmp2(pkt, c, p0, p1)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL((c), 0, 8);				\
+	_g->words.w1 = _SHIFTL((p0), 0, 16) | _SHIFTL((p1), 16, 8);	\
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * 8-15 [8] p1 (parameter 1)
+ * 16-31 [16] p0 (parameter 0)
+ */
 #define	gsImmp2(c, p0, p1)						\
 {{									\
 	_SHIFTL((c), 24, 8),  _SHIFTL((p0), 16, 16) | _SHIFTL((p1), 8, 8)\
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * 0-15 [16] p0 (parameter 0)
+ * 16-23 [8] p1 (parameter 1)
+ */
+#define	gsImmp2(c, p0, p1)						\
+{{									\
+	_SHIFTL((c), 0, 8),  _SHIFTL((p0), 0, 16) | _SHIFTL((p1), 16, 8)\
+}}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * 0-7 [8] p2 (parameter 2)
+ * 8-15 [8] p1 (parameter 1)
+ * 16-31 [16] p0 (parameter 0)
+ */
 #define	gImmp3(pkt, c, p0, p1, p2)					\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1967,13 +2302,75 @@ typedef union {
 	_g->words.w1 = (_SHIFTL((p0), 16, 16) | _SHIFTL((p1), 8, 8) |	\
 			_SHIFTL((p2), 0, 8));				\
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * 0-15 [16] p0 (parameter 0)
+ * 16-23 [8] p1 (parameter 1)
+ * 24-31 [8] p2 (parameter 2)
+ */
+#define	gImmp3(pkt, c, p0, p1, p2)					\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL((c), 0, 8);				\
+	_g->words.w1 = (_SHIFTL((p0), 0, 16) | _SHIFTL((p1), 16, 8) |	\
+			_SHIFTL((p2), 24, 8));				\
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] zero
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * 0-7 [8] p2 (parameter 2)
+ * 8-15 [8] p1 (parameter 1)
+ * 16-31 [16] p0 (parameter 0)
+ */
 #define	gsImmp3(c, p0, p1, p2)						\
 {{									\
 	_SHIFTL((c), 24, 8), (_SHIFTL((p0), 16, 16) | 			\
 			      _SHIFTL((p1), 8, 8) | _SHIFTL((p2), 0, 8))\
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-31 [24] zero
+ *
+ * Word 1:
+ * 0-15 [16] p0 (parameter 0)
+ * 16-23 [8] p1 (parameter 1)
+ * 24-31 [8] p2 (parameter 2)
+ */
+#define	gsImmp3(c, p0, p1, p2)						\
+{{									\
+	_SHIFTL((c), 0, 8), (_SHIFTL((p0), 0, 16) | 			\
+			      _SHIFTL((p1), 16, 8) | _SHIFTL((p2), 24, 8))\
+}}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] p1 (parameter 1)
+ * 8-23 [16] p0 (parameter 0)
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * dat
+ */
 #define	gImmp21(pkt, c, p0, p1, dat)					\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -1982,12 +2379,60 @@ typedef union {
 			_SHIFTL((p1), 0, 8));				\
 	_g->words.w1 = (unsigned int) (dat);				\
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-23 [16] p0 (parameter 0)
+ * 24-31 [8] p1 (parameter 1)
+ * 
+ * Word 1:
+ * dat
+ */
+#define	gImmp21(pkt, c, p0, p1, dat)					\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL((c), 0, 8)  | _SHIFTL((p0), 8, 16) |	\
+			_SHIFTL((p1), 24, 8));				\
+	_g->words.w1 = (u64) (dat);				\
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] p1 (parameter 1)
+ * 8-23 [16] p0 (parameter 0)
+ * 24-31 [8] c (cmd)
+ * 
+ * Word 1:
+ * dat
+ */
 #define	gsImmp21(c, p0, p1, dat)					\
 {{									\
 	_SHIFTL((c), 24, 8) | _SHIFTL((p0), 8, 16) | _SHIFTL((p1), 0, 8),\
         (unsigned int) (dat)						\
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] c (cmd)
+ * 8-23 [16] p0 (parameter 0)
+ * 24-31 [8] p1 (parameter 1)
+ * 
+ * Word 1:
+ * dat
+ */
+#define	gsImmp21(c, p0, p1, dat)					\
+{{									\
+	_SHIFTL((c), 0, 8) | _SHIFTL((p0), 8, 16) | _SHIFTL((p1), 24, 8),\
+        (u64) (dat)						\
+}}
+#endif
 
 #ifdef	F3DEX_GBI_2
 #define gMoveWd(pkt, index, offset, data)				\
@@ -2003,6 +2448,19 @@ typedef union {
 
 /* Sprite immediate macros, there is also a sprite dma macro above */
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] fy
+ * 8-15 [8] fx
+ * 16-23 [8] zero
+ * 24-31 [8] G_SPRITE2D_SCALEFLIP (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] sy
+ * 16-31 [16] sx
+ */
 #define gSPSprite2DScaleFlip(pkt, sx, sy, fx, fy)                       \
 {                                                                       \
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2013,7 +2471,44 @@ typedef union {
 	_g->words.w1 = (_SHIFTL((sx), 16, 16) |                         \
 			_SHIFTL((sy),  0, 16));                         \
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_SPRITE2D_SCALEFLIP (cmd)
+ * 8-15 [8] zero
+ * 16-23 [8] fx
+ * 24-31 [8] fy
+ *
+ * Word 1:
+ * 0-15 [16] sx
+ * 16-31 [16] sy
+ */
+#define gSPSprite2DScaleFlip(pkt, sx, sy, fx, fy)                       \
+{                                                                       \
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_SPRITE2D_SCALEFLIP, 0, 8) |          \
+			_SHIFTL((fx), 16, 8) |                           \
+			_SHIFTL((fy), 24, 8));	                        \
+	_g->words.w1 = (_SHIFTL((sx), 0, 16) |                         \
+			_SHIFTL((sy),  16, 16));                         \
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] fy
+ * 8-15 [8] fx
+ * 16-23 [8] zero
+ * 24-31 [8] G_SPRITE2D_SCALEFLIP (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] sy
+ * 16-31 [16] sx
+ */
 #define gsSPSprite2DScaleFlip(sx, sy, fx, fy)                           \
 {{                                                                       \
           (_SHIFTL(G_SPRITE2D_SCALEFLIP, 24, 8) |                       \
@@ -2022,7 +2517,39 @@ typedef union {
 	  (_SHIFTL((sx), 16, 16) |                                      \
 	   _SHIFTL((sy),  0, 16))                                       \
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_SPRITE2D_SCALEFLIP (cmd)
+ * 8-15 [8] zero
+ * 16-23 [8] fx
+ * 24-31 [8] fy
+ *
+ * Word 1:
+ * 0-15 [16] sx
+ * 16-31 [16] sy
+ */
+#define gsSPSprite2DScaleFlip(sx, sy, fx, fy)                           \
+{{                                                                       \
+          (_SHIFTL(G_SPRITE2D_SCALEFLIP, 0, 8) |                       \
+	   _SHIFTL((fx), 16, 8) |                                        \
+	   _SHIFTL((fy), 24, 8)),	                                \
+	  (_SHIFTL((sx), 0, 16) |                                      \
+	   _SHIFTL((sy),  16, 16))                                       \
+}}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 24-31 [8] G_SPRITE2D_DRAW (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] py
+ * 16-31 [16] px
+ */
 #define gSPSprite2DDraw(pkt, px, py)                                    \
 {                                                                       \
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2031,13 +2558,59 @@ typedef union {
 	_g->words.w1 = (_SHIFTL((px), 16, 16) |                         \
 			_SHIFTL((py),  0, 16));                         \
 }
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_SPRITE2D_DRAW (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] px
+ * 16-31 [16] py
+ */
+#define gSPSprite2DDraw(pkt, px, py)                                    \
+{                                                                       \
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_SPRITE2D_DRAW, 0, 8));               \
+	_g->words.w1 = (_SHIFTL((px), 0, 16) |                         \
+			_SHIFTL((py),  16, 16));                         \
+}
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 24-31 [8] G_SPRITE2D_DRAW (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] py
+ * 16-31 [16] px
+ */
 #define gsSPSprite2DDraw(px, py)                                        \
 {{                                                                       \
           (_SHIFTL(G_SPRITE2D_DRAW, 24, 8)),                            \
 	  (_SHIFTL((px), 16, 16) |                                      \
 	   _SHIFTL((py),  0, 16))                                       \
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_SPRITE2D_DRAW (cmd)
+ * 
+ * Word 1:
+ * 0-15 [16] px
+ * 16-31 [16] py
+ */
+#define gsSPSprite2DDraw(px, py)                                        \
+{{                                                                       \
+          (_SHIFTL(G_SPRITE2D_DRAW, 0, 8)),                            \
+	  (_SHIFTL((px), 0, 16) |                                      \
+	   _SHIFTL((py),  16, 16))                                       \
+}}
+#endif
 
 
 /*
