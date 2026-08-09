@@ -189,14 +189,23 @@ struct Wsys_ {
 struct WaveArchiveBank_ {
 	int magic;                   // _00, 'WINF'
 	int count;                   // _04, same count as CtrlGroup_
+	#ifdef GAMECUBE
 	WaveArchive_* waveGroups[1]; // _08, array size variable
+	#else
+	u32 waveGroups[1];
+	#endif
 };
 
 struct CtrlGroup_ {
 	int magic;        // _00, 'WBCT'
 	u32 _04;          // _04, unknown
 	int count;        // _08, same count as WaveArchiveBank_
+	#ifdef GAMECUBE
 	SCNE_* scenes[1]; // _0C, array size variable
+	#else
+	// TODO needs to be 32 bit to read the file correctly
+	SCNE_* scenes[1];
+	#endif
 };
 
 // Name fabricated based on magic ID.

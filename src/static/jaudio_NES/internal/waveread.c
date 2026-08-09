@@ -4,6 +4,11 @@
 #include "jaudio_NES/heapctrl.h"
 #include "jaudio_NES/bx.h"
 
+#ifdef PCPORT
+// TODO: Need a solution for windows
+#include <byteswap.h>
+#endif
+
 #define WAVEARC_SIZE   (0x100)
 #define WAVEGROUP_SIZE (0x100)
 
@@ -49,8 +54,27 @@ CtrlGroup_* Wave_Test(u8* data)
 
 	PTconvert((void**)&((Wsys_*)data)->waveArcBank, base_addr);
 	PTconvert((void**)&((Wsys_*)data)->ctrlGroup, base_addr);
+	#ifdef PCPORT
+	u32 arcBankOffset = bswap_32(*(u32*)(data + 0x10));
+	arcBank = (WaveArchiveBank_*)(data + arcBankOffset);
+	arcBank->magic = bswap_32(arcBank->magic);
+	arcBank->count = bswap_32(arcBank->count);
+	for(int i=0; i < arcBank->count; i++) {
+		arcBank->waveGroups[i] = bswap_32(arcBank->waveGroups[i]);
+	}
+
+	u32 groupOffset = bswap_32(*(u32*)(data + 0x14));
+	group = (CtrlGroup_*)(data + groupOffset);
+	group->magic = bswap_32(group->magic);
+	group->_04 = bswap_32(group->_04);
+	group->count = bswap_32(group->count);
+	for(int i=0; i < group->count; i++) {
+		group->scenes[i] = bswap_32(group->scenes[i]);
+	}
+	#else
 	arcBank       = *(WaveArchiveBank_**)(data + 0x10);
 	group         = *(CtrlGroup_**)(data + 0x14);
+	#endif
 	CGRP_ARRAY[0] = group;
 
 	if (arcBank->magic != 'WINF') {

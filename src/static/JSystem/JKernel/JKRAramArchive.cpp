@@ -10,6 +10,7 @@
 #include "JSystem/JUtility/JUTAssertion.h"
 #ifndef GAMECUBE
 #include <new>
+// TODO: this does not exist on windows
 #include <byteswap.h>
 #endif
 
@@ -168,9 +169,39 @@ bool JKRAramArchive::open(long entryNum) {
             JKRDvdToMainRam(entryNum, (u8*)mArcInfoBlock, EXPAND_SWITCH_DECOMPRESS, alignedSize, nullptr,
                             JKRDvdRipper::ALLOC_DIR_TOP, 32, nullptr);
 
+#ifdef PCPORT
+            // Byte swap SArcDataInfo
+            mArcInfoBlock->num_nodes = bswap_32(mArcInfoBlock->num_nodes);
+            mArcInfoBlock->node_offset = bswap_32(mArcInfoBlock->node_offset);
+            mArcInfoBlock->num_file_entries = bswap_32(mArcInfoBlock->num_file_entries);
+            mArcInfoBlock->file_entry_offset = bswap_32(mArcInfoBlock->file_entry_offset);
+            mArcInfoBlock->string_table_length  = bswap_32(mArcInfoBlock->string_table_length);
+            mArcInfoBlock->string_table_offset = bswap_32(mArcInfoBlock->string_table_offset);
+            mArcInfoBlock->nextFreeFileID = bswap_16(mArcInfoBlock->nextFreeFileID);
+#endif
+
             mDirectories = (SDIDirEntry*)((u8*)mArcInfoBlock + mArcInfoBlock->node_offset);
             mFileEntries = (SDIFileEntry*)((u8*)mArcInfoBlock + mArcInfoBlock->file_entry_offset);
             mStrTable = (const char*)((u8*)mArcInfoBlock + mArcInfoBlock->string_table_offset);
+
+#ifdef PCPORT
+            /* Byte-swap directory entries */
+            for (u32 i = 0; i < mArcInfoBlock->num_nodes; i++) {
+                mDirectories[i].mType = bswap_32(mDirectories[i].mType);
+                mDirectories[i].mOffset = bswap_32(mDirectories[i].mOffset);
+                mDirectories[i]._08 = bswap_16(mDirectories[i]._08);
+                mDirectories[i].mNum = bswap_16(mDirectories[i].mNum);
+                mDirectories[i].mFirstIdx = bswap_32(mDirectories[i].mFirstIdx);
+            }
+            /* Byte-swap file entries */
+            for (u32 i = 0; i < mArcInfoBlock->num_file_entries; i++) {
+                mFileEntries[i].mFileID = bswap_16(mFileEntries[i].mFileID);
+                mFileEntries[i].mHash = bswap_16(mFileEntries[i].mHash);
+                mFileEntries[i].mFlag = bswap_32(mFileEntries[i].mFlag);
+                mFileEntries[i].mDataOffset = bswap_32(mFileEntries[i].mDataOffset);
+                mFileEntries[i].mSize = bswap_32(mFileEntries[i].mSize);
+            }
+#endif
 
             u32 aramSize = ALIGN_NEXT(mem->file_data_length, 32);
             mBlock = JKRAllocFromAram(aramSize,
