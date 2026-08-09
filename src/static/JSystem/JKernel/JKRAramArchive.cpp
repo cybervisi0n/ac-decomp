@@ -10,6 +10,7 @@
 #include "JSystem/JUtility/JUTAssertion.h"
 #ifndef GAMECUBE
 #include <new>
+#include <byteswap.h>
 #endif
 
 JKRAramArchive::JKRAramArchive() : JKRArchive() {
@@ -148,6 +149,16 @@ bool JKRAramArchive::open(long entryNum) {
     } else {
         JKRDvdToMainRam(entryNum, (u8*)mem, EXPAND_SWITCH_DECOMPRESS, 32, nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 0,
                         &mCompression);
+#ifdef PCPORT
+        mem->signature = bswap_32(mem->signature);
+        mem->file_length = bswap_32(mem->file_length);
+        mem->header_length = bswap_32(mem->header_length);
+        mem->file_data_offset = bswap_32(mem->file_data_offset);
+        mem->file_data_length = bswap_32(mem->file_data_length);
+        mem->_14 = bswap_32(mem->_14);
+        mem->_18 = bswap_32(mem->_18);
+        mem->_1C = bswap_32(mem->_1C);
+#endif
         int alignment = mMountDirection == MOUNT_DIRECTION_HEAD ? 32 : -32;
         u32 alignedSize = ALIGN_NEXT(mem->file_data_offset, 32);
         mArcInfoBlock = (SArcDataInfo*)JKRAllocFromHeap(mHeap, alignedSize, alignment);

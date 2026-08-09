@@ -109,7 +109,11 @@ void* JKRDvdRipper::loadToMainRAM(JKRDvdFile* file, u8* buf, JKRExpandSwitch exp
 
         if (offset != 0) {
             u8 buffer[64];
+            #ifdef GAMECUBE
             u8* aligned_buf = (u8*)ALIGN_NEXT((u32)buffer, 32);
+            #else
+            u8* aligned_buf = (u8*)ALIGN_NEXT((u64)buffer, 32);
+            #endif
             while (true) {
                 if (DVDReadPrio(file->getFileInfo(), aligned_buf, 32, offset, 2) >= 0) {
                     break;
