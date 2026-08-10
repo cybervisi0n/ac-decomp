@@ -12,7 +12,11 @@
 #include "JSystem/JKernel/JKRDvdRipper.h"
 #include "JSystem/JUtility/JUTFont.h"
 
+#ifdef GAMECUBE
 #include "MSL_C/printf.h"
+#else
+#include <stdio.h>
+#endif
 
 // TODO: there are a ton of unused functions we may want to add to this, check DnM+'s static.map file
 

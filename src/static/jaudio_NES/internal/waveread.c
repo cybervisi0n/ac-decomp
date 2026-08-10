@@ -5,8 +5,8 @@
 #include "jaudio_NES/bx.h"
 
 #ifdef PCPORT
-// TODO: Need a solution for windows
-#include <byteswap.h>
+#include <simulator/byteswap.h>
+#include <stdlib.h>
 #endif
 
 #define WAVEARC_SIZE   (0x100)
@@ -28,6 +28,12 @@ static void PTconvert(void** pointer, u32 base_address)
 		*pointer = NULL;
 		return;
 	}
+
+#ifdef PCPORT
+	u32 ptrVal = bswap_32(*(u32*)pointer);
+	*pointer = (void*)ptrVal;
+#endif
+
 	if (*pointer >= (void*)base_address || *pointer == NULL) {
 		return;
 	}
@@ -41,7 +47,11 @@ static void PTconvert(void** pointer, u32 base_address)
  */
 CtrlGroup_* Wave_Test(u8* data)
 {
+	#ifdef PCPORT
+    u64 base_addr = (u64)data;
+	#else
     u32 base_addr = (u32)data;
+	#endif
 	CtrlGroup_* group;
 	SCNE_* scene;
 	Ctrl_* cst;
@@ -54,28 +64,18 @@ CtrlGroup_* Wave_Test(u8* data)
 
 	PTconvert((void**)&((Wsys_*)data)->waveArcBank, base_addr);
 	PTconvert((void**)&((Wsys_*)data)->ctrlGroup, base_addr);
-	#ifdef PCPORT
-	u32 arcBankOffset = bswap_32(*(u32*)(data + 0x10));
-	arcBank = (WaveArchiveBank_*)(data + arcBankOffset);
-	arcBank->magic = bswap_32(arcBank->magic);
-	arcBank->count = bswap_32(arcBank->count);
-	for(int i=0; i < arcBank->count; i++) {
-		arcBank->waveGroups[i] = bswap_32(arcBank->waveGroups[i]);
-	}
-
-	u32 groupOffset = bswap_32(*(u32*)(data + 0x14));
-	group = (CtrlGroup_*)(data + groupOffset);
-	group->magic = bswap_32(group->magic);
-	group->_04 = bswap_32(group->_04);
-	group->count = bswap_32(group->count);
-	for(int i=0; i < group->count; i++) {
-		group->scenes[i] = bswap_32(group->scenes[i]);
-	}
-	#else
 	arcBank       = *(WaveArchiveBank_**)(data + 0x10);
 	group         = *(CtrlGroup_**)(data + 0x14);
-	#endif
 	CGRP_ARRAY[0] = group;
+
+	#ifdef PCPORT
+	arcBank->magic = bswap_32(arcBank->magic);
+	arcBank->count = bswap_32(arcBank->count);
+
+	group->magic = bswap_32(group->magic);
+	group->count = bswap_32(group->count);
+	group->_04 = bswap_32(group->_04);
+	#endif
 
 	if (arcBank->magic != 'WINF') {
 		return NULL;
@@ -87,6 +87,9 @@ CtrlGroup_* Wave_Test(u8* data)
 	for (i = 0; i < arcBank->count; i++) {
 		PTconvert((void**)&arcBank->waveGroups[i], base_addr);
 		arc     = arcBank->waveGroups[i];
+		#ifdef PCPORT
+		arc->waveCount = bswap_32(arc->waveCount);
+		#endif
 		Jac_InitHeap(&arc->heap);
 		arc->heap.startAddress = 0;
 

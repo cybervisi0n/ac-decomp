@@ -4,6 +4,9 @@
 #include "math.h"
 #include <dolphin/types.h>
 #include "macros.h"
+#ifdef LIBPORPOISE_PORT
+#include <stddef.h>
+#endif
 
 #define VER_GAFE01_00 0
 #define VER_GAFU01_00 1
@@ -20,7 +23,7 @@
 #define FRAMERATE_SELECT(f60, f50) (f60)
 #endif
 
-#ifndef LIBPORPOISE_BUILD_WIN64
+#ifndef LIBPORPOISE_PORT
 #ifndef _SIZE_T_DEF
 #define _SIZE_T_DEF
 typedef unsigned long size_t;

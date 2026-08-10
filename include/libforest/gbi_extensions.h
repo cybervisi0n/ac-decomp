@@ -745,7 +745,7 @@ do { \
 #define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
 {{ \
     _SHIFTL(G_SETTIMG, 0, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
-        _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (u64)img \
+        _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (u32)img \
 }}
 #endif
 

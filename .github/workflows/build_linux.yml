@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_linux:
+  build_linux32:
     permissions:
       contents: write
     runs-on: ubuntu-24.04
@@ -28,4 +28,4 @@ jobs:
         run: ./drun.sh echo done
 
       - name: Build (Linux)
-        run: ./drun.sh ./scripts/ci_build_linux.sh
+        run: ./drun.sh ./scripts/ci_build_linux32.sh

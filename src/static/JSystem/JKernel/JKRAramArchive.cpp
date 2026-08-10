@@ -10,8 +10,7 @@
 #include "JSystem/JUtility/JUTAssertion.h"
 #ifndef GAMECUBE
 #include <new>
-// TODO: this does not exist on windows
-#include <byteswap.h>
+#include <simulator/byteswap.h>
 #endif
 
 JKRAramArchive::JKRAramArchive() : JKRArchive() {

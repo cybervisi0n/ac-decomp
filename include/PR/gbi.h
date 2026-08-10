@@ -1485,11 +1485,7 @@ typedef struct {
 	int		cmd:8;
 	unsigned int	par:8;
 	unsigned int	len:16;
-#ifdef GAMECUBE
 	unsigned int	addr;
-#else
-	u64 addr;
-#endif
 } 
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -1676,11 +1672,7 @@ typedef struct {
  */
 typedef struct {
 	unsigned int w0;
-#ifdef GAMECUBE
 	unsigned int w1;
-#else
-	u64 w1;
-#endif
 } 
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -1752,7 +1744,7 @@ typedef union {
 	Gfx *_g = (Gfx *)(pkt);						\
 									\
 	_g->words.w0 = _SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24);	\
-	_g->words.w1 = (u64)(s);				\
+	_g->words.w1 = (u32)(s);				\
 }
 #endif
 
@@ -1782,7 +1774,7 @@ typedef union {
  */
 #define	gsDma0p(c, s, l)						\
 {{									\
-	_SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24), (u64)(s)	\
+	_SHIFTL((c), 0, 8) | _SHIFTL((l), 8, 24), (u32)(s)	\
 }}
 #endif
 
@@ -1822,7 +1814,7 @@ typedef union {
 									\
 	_g->words.w0 = (_SHIFTL((c), 0, 8) | _SHIFTL((p), 8, 8) |	\
 			_SHIFTL((l), 16, 16));				\
-	_g->dma.addr = (u64)(s);				\
+	_g->dma.addr = (u32)(s);				\
 }
 #endif
 
@@ -1858,7 +1850,7 @@ typedef union {
 {{									\
 	(_SHIFTL((c), 0, 8) | _SHIFTL((p), 8, 8) | 			\
 	 _SHIFTL((l), 16, 16)), \
-	 ((u64)(s)), \
+	 ((u32)(s)), \
 }}
 #endif
 
@@ -1900,7 +1892,7 @@ typedef union {
 	Gfx *_g = (Gfx *)(pkt);						\
 	_g->words.w0 = (_SHIFTL((c),0,8)|_SHIFTL(((len)-1)/8,11,5)|	\
 			_SHIFTL((ofs)/8,16,8)|_SHIFTL((idx),24,8));	\
-	_g->words.w1 = (u64)(adrs);				\
+	_g->words.w1 = (u32)(adrs);				\
 }
 #endif
 #ifdef GAMECUBE
@@ -1939,7 +1931,7 @@ typedef union {
 {{									\
 	(_SHIFTL((c),0,8)|_SHIFTL(((len)-1)/8,11,5)|			\
 	 _SHIFTL((ofs)/8,16,8)|_SHIFTL((idx),24,8)),			\
-        (u64)(adrs)						\
+        (u32)(adrs)						\
 }}
 #endif
 
@@ -2006,7 +1998,7 @@ typedef union {
 	Gfx *_g = (Gfx *)(pkt);						\
 	_g->words.w0 =							\
 	  _SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),25,7);	\
-	_g->words.w1 = (u64)(v);				\
+	_g->words.w1 = (u32)(v);				\
 }
 #endif
 #ifdef GAMECUBE
@@ -2045,7 +2037,7 @@ typedef union {
 # define	gsSPVertex(v, n, v0)					\
 {{									\
 	(_SHIFTL(G_VTX,0,8)|_SHIFTL((n),12,8)|_SHIFTL((v0)+(n),25,7)),	\
-        (u64)(v)						\
+        (u32)(v)						\
 }}
 #endif
 #elif	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
@@ -2396,7 +2388,7 @@ typedef union {
 									\
 	_g->words.w0 = (_SHIFTL((c), 0, 8)  | _SHIFTL((p0), 8, 16) |	\
 			_SHIFTL((p1), 24, 8));				\
-	_g->words.w1 = (u64) (dat);				\
+	_g->words.w1 = (u32) (dat);				\
 }
 #endif
 
@@ -2430,7 +2422,7 @@ typedef union {
 #define	gsImmp21(c, p0, p1, dat)					\
 {{									\
 	_SHIFTL((c), 0, 8) | _SHIFTL((p0), 8, 16) | _SHIFTL((p1), 24, 8),\
-        (u64) (dat)						\
+        (u32) (dat)						\
 }}
 #endif
 
@@ -3760,7 +3752,7 @@ typedef union {
 {{									\
 	_SHIFTL(cmd, 0, 8) | _SHIFTL(fmt, 11, 3) |			\
 	_SHIFTL(siz, 14, 2) | _SHIFTL((width)-1, 20, 12),		\
-	(u64)(i) \
+	(u32)(i) \
 }}
 #endif
 

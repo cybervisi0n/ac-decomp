@@ -69,6 +69,9 @@ static s32 DVDReadMutex(DVDFileInfo* fileInfo, void* addr, s32 len, s32 offs, ch
         }
         error_callback(arg4, (u8*)addr);
     }
+    #ifdef PCPORT
+    return 0;
+    #endif
 }
 
 extern void DVDT_ExtendPath(char* dst, char* ext) {

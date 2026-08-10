@@ -14,7 +14,7 @@ env:
   GITHUB_ACTIONS: "true"
 
 jobs:
-  build_win:
+  build_win32:
     permissions:
       contents: write
     runs-on: windows-latest
@@ -26,6 +26,6 @@ jobs:
         run: .\Install_MSys2.ps1
         shell: powershell
 
-      - name: Build (win64)
-        run: .\Launch_Msys2.ps1 "./scripts/ci_build_win.sh"
+      - name: Build (win32)
+        run: .\Launch_Msys2_mingw32.ps1 "./scripts/ci_build_win32.sh"
         shell: powershell

@@ -26,7 +26,7 @@ typedef u64 Z_OSTime;
 int bcmp(void* v1, void* v2, u32 size);
 void bcopy(void* src, void* dst, size_t n);
 #endif
-#ifdef LIBPORPOISE_BUILD_WIN64
+#ifdef LIBPORPOISE_BUILD_WIN
 #define bcmp(_v1,_v2,_size) memcmp(_v1, _v2,_size)
 #define bcopy(_src,_dest,_n) memcpy(_dest,_src,_n)
 #endif

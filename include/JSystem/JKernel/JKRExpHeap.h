@@ -43,11 +43,7 @@ class JKRExpHeap : public JKRHeap {
             return mGroupID;
         }
         static CMemBlock* getBlock(void* data) {
-            #ifdef GAMECUBE
             return (CMemBlock*)((u32)data + -0x10);
-            #else
-            return (CMemBlock*)((u64)data + -0x10);
-            #endif
         }
 
         u16 mUsageHeader;    // _00

@@ -23,7 +23,9 @@ shared_args = [
 if(build_target == 'gc') 
 shared_args += ['-DGAMECUBE']
 else
-shared_args += ['-DPCPORT']
+shared_args += [
+    '-DPCPORT'
+    ]
 endif
 
 project_c_args = shared_args + [
@@ -65,6 +67,12 @@ if(build_target == 'gc')
     animalcrossing_link_args += [
         '-lcf',
         eppc_lcf
+    ]
+endif
+
+if(build_target == 'linux32')
+    animalcrossing_link_args += [
+        '-m32'
     ]
 endif
 
