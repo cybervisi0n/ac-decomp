@@ -730,7 +730,7 @@ do { \
 //TODO
 #define gsDPLoadTLUT_Dolphin(name, count, unk, addr) \
 {{ \
-    _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14) \
+    _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14), (unsigned int)addr \
 }}
 #endif
 

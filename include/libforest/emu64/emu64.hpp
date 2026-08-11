@@ -628,11 +628,7 @@ class emu64 : public emu64_print {
     void print_combine(u64 combine);
     void print_combine_tev(u64 combine_tev);
     void print_guMtxXFM1F_dol2(MtxP mtx, GXProjectionType type, float x, float y, float z);
-    #ifdef GAMECUBE
     u32 seg2k0(u32 seg);
-    #else
-    u64 seg2k0(u64 seg);
-    #endif
     void setup_texture_tile(int tile);
     void setup_1tri_2tri_1quad(unsigned int vtx_idx);
     void draw_1tri_2tri_1quad(unsigned int n_verts, ...);

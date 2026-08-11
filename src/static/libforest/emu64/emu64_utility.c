@@ -8,11 +8,7 @@
 #include <math.h>
 #endif
 
-#ifdef GAMECUBE
 u32 emu64::seg2k0(u32 segadr)
-#else
-u64 emu64::seg2k0(u64 segaddr)
-#endif
 {
     #ifdef GAMECUBE
     u32 k0;
@@ -38,7 +34,7 @@ u64 emu64::seg2k0(u64 segaddr)
 
     return k0;
     #else
-    return segaddr;
+    return segadr;
     #endif
 }
 

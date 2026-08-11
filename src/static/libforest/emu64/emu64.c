@@ -5102,6 +5102,7 @@ void emu64::dl_G_MOVEWORD() {
             u32 segment = moveword->offset / 4;
             EMU64_WARNF("gsSPSegmentA(%d, 0x%08x),", segment, moveword->data);
             this->segments[segment] = (0x80000000 + (moveword->data & 0x0FFFFFFF));
+            #ifdef GAMECUBE
             if (segment >= EMU64_NUM_SEGMENTS ||
                 (moveword->data != 0 && (moveword->data < 0x80000000 || moveword->data > 0x83000000))) {
                 sprintf(s1, "gsSPSegmentA no=%d", segment);
@@ -5119,6 +5120,7 @@ void emu64::dl_G_MOVEWORD() {
                 this->segment_set = true;
                 OSReport(VT_COL(RED, WHITE) "%s\n%s\n%s\n" VT_RST, s1, s2, s3);
             }
+            #endif
         } break;
 
         case G_MW_CLIP: {
