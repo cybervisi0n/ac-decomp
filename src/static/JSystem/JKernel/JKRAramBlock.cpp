@@ -1,4 +1,7 @@
 #include "JSystem/JKernel/JKRAram.h"
+#ifdef PCPORT
+#include <new>
+#endif
 
 JKRAramBlock::JKRAramBlock(u32 address, u32 size, u32 freeSize, u8 groupID, bool tempMemory)
     : mLink(this), mAddress(address), mSize(size), mFreeSize(freeSize), mGroupID(groupID), mIsTempMemory(tempMemory) {

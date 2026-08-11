@@ -1,6 +1,9 @@
 #include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JSystem.h"
 #include "dolphin/os.h" /* TODO: OSReport is actually in libforest */
+#ifdef PCPORT
+#include <new>
+#endif
 
 JSUList<JKRAramBlock> JKRAramHeap::sAramList;
 
