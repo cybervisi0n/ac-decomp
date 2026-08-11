@@ -29,6 +29,9 @@
 #include "dolphin/os/OSAlarm.h"
 #include "dvderr.h"
 #include "libforest/osreport.h"
+#ifdef PCPORT
+#include <simulator/byteswap.h>
+#endif
 
 static OSModuleHeader* moduleA;
 static void* StringTable;  // swapped with fakemain_check
@@ -200,6 +203,9 @@ OSModuleHeader* LoadLink(const char* module_name) {
   OSReport("length=%08x\n", length);
   JC__JKRDetachResource(module);
   if (result) {
+    #ifdef PCPORT
+    module->bssSize = bswap_32(module->bssSize);
+    #endif
     bss = soundArenaAlloc(module->bssSize);
 
     /* This case will never happen because soundArenaAlloc() was stubbed to always return nullptr. */

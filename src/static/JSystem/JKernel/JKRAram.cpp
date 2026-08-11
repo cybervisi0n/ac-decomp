@@ -50,7 +50,7 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
     //TODO: missign apis, memory stuff
     u32 aramSize = ARGetSize();
     #else
-    u32 aramSize = 1024 * 1024; //just hardcoded 1MB for now
+    u32 aramSize = 16 * 1024 * 1024; //just hardcoded 16MB for now
     #endif
     mAudioMemorySize = bufSize;
     if (graphSize == 0xffffffff) {

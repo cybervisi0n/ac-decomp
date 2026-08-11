@@ -486,8 +486,9 @@ extern void play_init(GAME* game) {
     mMmd_MakeMuseumDisplayData();
     Actor_info_ct(game, &play->actor_info, play->player_data);
     #ifdef GAMECUBE
-    //TODO
     play->draw_chk_proc = none_proc1;
+    #else
+    play->draw_chk_proc = (void*)none_proc1;
     #endif
     mMsg_ct(game);
     mEv_2nd_init(&play->event);

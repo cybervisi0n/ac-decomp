@@ -22,7 +22,7 @@ extern void zelda_GetFreeArena(size_t* max, size_t* free, size_t* alloc) {
   #ifdef GAMECUBE
   __osGetFreeArena(&zelda_arena,max,free,alloc);
   #else
-  //TODO
+  __osGetFreeArena(&zelda_arena,(void*)max,(void*)free,(void*)alloc);
   #endif
 }
 

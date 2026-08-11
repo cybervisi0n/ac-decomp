@@ -370,6 +370,9 @@ extern void* JC__JKRMountArchive(const char* path, int mount_mode, void* heap, i
 }
 
 extern CSDIFileEntry* JC__JKRGetResourceEntry_byName(u32 root_name, const char* res_name, void* archive) {
+    #ifdef PCPORT
+    return
+    #endif
     JKRGetResourceEntry_byName(root_name, res_name, reinterpret_cast<JKRArchive*>(archive));
 }
 

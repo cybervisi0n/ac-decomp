@@ -27,7 +27,11 @@ JKRAramBlock* JKRDvdAramRipper::loadToAram(JKRDvdFile* dvdFile, u32 p1, JKRExpan
     syncAram(command, 0);
 
     if (p1) {
+        #ifdef GAMECUBE
         delete command;
+        #else
+        //TODO: we were getting a random debug break here
+        #endif
         return (JKRAramBlock*)-1;
     }
 
@@ -40,6 +44,10 @@ JKRADCommand* JKRDvdAramRipper::loadToAram_Async(JKRDvdFile* dvdFile, u32 p1, JK
                                                  JKRADCommand::LoadCallback cb, u32 p4, u32 p5) {
     #ifdef GAMECUBE
     JKRADCommand* command = new (JKRGetSystemHeap(), -4) JKRADCommand();
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRADCommand), 0, JKRGetSystemHeap());
+    JKRADCommand* command = new (memory) JKRADCommand();
+    #endif
     command->mDvdFile = dvdFile;
     command->_1C = p1;
     command->mBlock = nullptr;
@@ -55,10 +63,6 @@ JKRADCommand* JKRDvdAramRipper::loadToAram_Async(JKRDvdFile* dvdFile, u32 p1, JK
     }
 
     return command;
-    #else
-    //TODO
-    return nullptr;
-    #endif
 }
 
 JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
@@ -69,12 +73,16 @@ JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
 
     s32 uncompressedSize;
 
-    #ifdef GAMECUBE
     if (dvdFile->mAramThread) {
         isCmdTrdNull = false;
     } else {
         dvdFile->mAramThread = OSGetCurrentThread();
+        #ifdef GAMECUBE
         JSUFileInputStream* stream = new (JKRGetSystemHeap(), -4) JSUFileInputStream(dvdFile);
+        #else
+        void * memory = JKRHeap::alloc(sizeof(JSUFileInputStream), -4, JKRGetSystemHeap());
+        JSUFileInputStream* stream = new (memory) JSUFileInputStream(dvdFile);
+        #endif
         dvdFile->mInputStream = stream;
         u32 fileSize = dvdFile->getFileSize();
         if (command->_18 && fileSize > command->_18) {
@@ -162,10 +170,6 @@ JKRADCommand* JKRDvdAramRipper::callCommand_Async(JKRADCommand* command) {
 
     OSUnlockMutex(&dvdFile->mAramMutex);
     return isCmdTrdNull == true ? command : nullptr;
-    #else
-    //TODO
-    return nullptr;
-    #endif
 }
 
 bool JKRDvdAramRipper::syncAram(JKRADCommand* command, int p1) {

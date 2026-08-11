@@ -24,8 +24,9 @@ extern void GetFreeArena(size_t* max, size_t* free, size_t* alloc)
 #endif
 {
     #ifdef GAMECUBE
-    //TODO
     __osGetFreeArena(&malloc_arena, max, free, alloc);
+    #else
+    __osGetFreeArena(&malloc_arena, (u32*)max, (u32*)free, (u32*)alloc);
     #endif
 }
 #ifdef GAMECUBE
@@ -34,10 +35,7 @@ extern void MallocInit(void* start, u32 size)
 extern void MallocInit(void* start, size_t size) 
 #endif
 {
-    #ifdef GAMECUBE
-    //TODO
     __osMallocInit(&malloc_arena, start, size);
-    #endif
 }
 
 extern void MallocCleanup(void) {

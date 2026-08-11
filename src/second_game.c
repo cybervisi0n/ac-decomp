@@ -17,6 +17,8 @@ static u8 contpad_ok;
 static u8 frame_count;
 
 static void second_game_main(GAME* game) {
+  #ifdef GAMECUBE
+  //TODO
   if (sound_ok == 0) {
     sound_ok = 1;
     Na_RestartPrepare();
@@ -29,6 +31,9 @@ static void second_game_main(GAME* game) {
   if (sound_ok == 2) {
     Na_Restart();
   }
+  #else
+  sound_ok = 2;
+  #endif
 
   if (padmgr_isConnectedController(PAD0)) {
     contpad_ok = TRUE;
