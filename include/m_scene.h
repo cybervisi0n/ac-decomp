@@ -190,6 +190,7 @@ typedef union scene_word_u {
         mSc_SCENE_DATA_TYPE_DOOR_DATA_PTR, n_doors, 0, 0, (u32)door_data_list_p, \
     }
 
+#ifdef GAMECUBE
 #define mSc_DATA_FIELDCT(item_type, bg_num, bg_disp_size, room_type, draw_type)                  \
     {                                                                                            \
         mSc_SCENE_DATA_TYPE_FIELD_CT,                                                            \
@@ -198,6 +199,16 @@ typedef union scene_word_u {
         0,                                                                                       \
         ((((u32)bg_disp_size & 0xFFFF) << 16) | ((room_type & 0xFF) << 8) | (draw_type & 0xFF)), \
     }
+#else
+#define mSc_DATA_FIELDCT(item_type, bg_num, bg_disp_size, room_type, draw_type)                  \
+    {                                                                                            \
+        mSc_SCENE_DATA_TYPE_FIELD_CT,                                                            \
+        item_type,                                                                               \
+        bg_num,                                                                                  \
+        0,                                                                                       \
+        ((((u32)bg_disp_size & 0xFFFF)) | ((room_type & 0xFF) << 16) | ((draw_type & 0xFF) << 24)), \
+    }
+#endif
 
 #define mSc_DATA_MY_ROOM_CT()                       \
     {                                               \

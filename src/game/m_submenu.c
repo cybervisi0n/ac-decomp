@@ -134,6 +134,7 @@ static int mSM_ovlptr_dllcnv_sub(void* proc, mSM_dlftbl_c* dlftbl, Submenu* subm
 }
 
 extern void* mSM_ovlptr_dllcnv(void* proc, Submenu* submenu, int dlf_idx) {
+    #ifdef GAMECUBE
     if (SubmenuArea_visit != NULL) {
         #ifdef GAMECUBE
         return; // ??
@@ -143,6 +144,7 @@ extern void* mSM_ovlptr_dllcnv(void* proc, Submenu* submenu, int dlf_idx) {
     } else if (mSM_ovlptr_dllcnv_sub(proc, SubmenuArea_dlftbl, submenu, dlf_idx) == FALSE) {
         return NULL;
     }
+    #endif
 
     return proc;
 }

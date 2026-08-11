@@ -193,7 +193,10 @@ bool JKRDvdAramRipper::syncAram(JKRADCommand* command, int p1) {
         delete command->mStreamCommand;
     }
 
+    #ifdef GAMECUBE
+    //TODO: Replace global delete
     delete dvdFile->mInputStream;
+    #endif
     dvdFile->mAramThread = nullptr;
     OSUnlockMutex(&dvdFile->mAramMutex);
     return true;
