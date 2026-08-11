@@ -47,11 +47,7 @@ static void PTconvert(void** pointer, u32 base_address)
  */
 CtrlGroup_* Wave_Test(u8* data)
 {
-	#ifdef PCPORT
-    u64 base_addr = (u64)data;
-	#else
     u32 base_addr = (u32)data;
-	#endif
 	CtrlGroup_* group;
 	SCNE_* scene;
 	Ctrl_* cst;
@@ -104,8 +100,17 @@ CtrlGroup_* Wave_Test(u8* data)
 		PTconvert((void**)&scene->cdf, base_addr);
 		PTconvert((void**)&scene->cex, base_addr);
 		PTconvert((void**)&scene->cst, base_addr);
+		#ifdef PCPORT
+		scene->magic = bswap_32(scene->magic);
+		scene->_04 = bswap_32(scene->_04);
+		scene->_08 = bswap_32(scene->_08);
+		#endif
 
 		cdf = scene->cdf;
+		#ifdef PCPORT
+		cdf->magic = bswap_32(cdf->magic);
+		cdf->count = bswap_32(cdf->count);
+		#endif
 		if (cdf && cdf->magic == 'C-DF') {
 			for (j = 0; j < cdf->count; j++) {
 				PTconvert((void**)&cdf->waveIDs[j], base_addr);
@@ -115,6 +120,10 @@ CtrlGroup_* Wave_Test(u8* data)
 		}
 
 		cex = scene->cex;
+		#ifdef PCPORT
+		cex->magic = bswap_32(cex->magic);
+		cex->count = bswap_32(cex->count);
+		#endif
 		if (cex && cex->magic == 'C-EX') {
 			for (j = 0; j < cex->count; j++) {
 				PTconvert((void**)&cex->waveIDs[j], base_addr);
@@ -124,6 +133,10 @@ CtrlGroup_* Wave_Test(u8* data)
 		}
 
 		cst = scene->cst;
+		#ifdef PCPORT
+		cst->magic = bswap_32(cst->magic);
+		cst->count = bswap_32(cst->count);
+		#endif
 		if (cst && cst->magic == 'C-ST') {
 			for (j = 0; j < cst->count; j++) {
 				PTconvert((void**)&cst->waveIDs[j], base_addr);
