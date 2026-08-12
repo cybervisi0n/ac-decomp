@@ -2610,14 +2610,52 @@ typedef union {
  * by 10, this is an optimization for the microcode.
  */
 #if	(defined(F3DLP_GBI)||defined(F3DEX_GBI))
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] v2
+ * 8-15 [8] v1
+ * 16-23 [8] v0
+ */
 #  define __gsSP1Triangle_w1(v0, v1, v2)			\
      (_SHIFTL((v0)*2,16,8)|_SHIFTL((v1)*2,8,8)|_SHIFTL((v2)*2,0,8))
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] v0
+ * 8-15 [8] v1
+ * 16-23 [8] v2
+ */
+#  define __gsSP1Triangle_w1(v0, v1, v2)			\
+     (_SHIFTL((v0)*2,0,8)|_SHIFTL((v1)*2,8,8)|_SHIFTL((v2)*2,16,8))
+#endif
 #  define __gsSP1Triangle_w1f(v0, v1, v2, flag)			\
      (((flag) == 0) ? __gsSP1Triangle_w1(v0, v1, v2):		\
       ((flag) == 1) ? __gsSP1Triangle_w1(v1, v2, v0):		\
 	              __gsSP1Triangle_w1(v2, v0, v1))
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-7 [8] wd
+ * 8-15 [8] v1
+ * 16-23 [8] v0
+ */
 #  define __gsSPLine3D_w1(v0, v1, wd)				\
      (_SHIFTL((v0)*2,16,8)|_SHIFT((v1)*2,8,8)|_SHIFT((wd),0,8))
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] v0
+ * 8-15 [8] v1
+ * 16-23 [8] wd
+ */
+#  define __gsSPLine3D_w1(v0, v1, wd)				\
+     (_SHIFTL((v0)*2,0,8)|_SHIFT((v1)*2,8,8)|_SHIFT((wd),16,8))
+#endif
 #  define __gsSPLine3D_w1f(v0, v1, wd, flag)			\
      (((flag) == 0) ? __gsSPLine3D_w1(v0, v1, wd):		\
 	              __gsSPLine3D_w1(v1, v0, wd))
