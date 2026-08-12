@@ -3826,6 +3826,7 @@ typedef union {
 					       G_ACMUX_##Ad1));		\
 }
 
+#ifdef GAMECUBE
 #define	gsDPSetCombineLERP(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,		\
 		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
 {{									\
@@ -3839,6 +3840,22 @@ typedef union {
 			       G_ACMUX_##Ac1, G_CCMUX_##d1,		\
 			       G_ACMUX_##Ab1, G_ACMUX_##Ad1))		\
 }}
+#else
+//TODO: endian likely wrong
+#define	gsDPSetCombineLERP(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,		\
+		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
+{{									\
+	_SHIFTL(G_SETCOMBINE, 0, 8) |					\
+	_SHIFTL(GCCc0w0(G_CCMUX_##a0, G_CCMUX_##c0,			\
+		       G_ACMUX_##Aa0, G_ACMUX_##Ac0) |			\
+	       GCCc1w0(G_CCMUX_##a1, G_CCMUX_##c1), 8, 24),		\
+	(unsigned int)(GCCc0w1(G_CCMUX_##b0, G_CCMUX_##d0,		\
+			       G_ACMUX_##Ab0, G_ACMUX_##Ad0) |		\
+		       GCCc1w1(G_CCMUX_##b1, G_ACMUX_##Aa1,		\
+			       G_ACMUX_##Ac1, G_CCMUX_##d1,		\
+			       G_ACMUX_##Ab1, G_ACMUX_##Ad1))		\
+}}
+#endif
 
 /*
  * SetCombineMode macros are NOT redunant. It allow the C preprocessor
@@ -3883,14 +3900,28 @@ typedef union {
 }}
 #endif
 
+#ifdef GAMECUBE
 #define	DPRGBColor(pkt, cmd, r, g, b, a)				\
             gDPSetColor(pkt, cmd,					\
 			(_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | 	\
 			 _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8)))
+#else
+#define	DPRGBColor(pkt, cmd, r, g, b, a)				\
+            gDPSetColor(pkt, cmd,					\
+			(_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | 	\
+			 _SHIFTL(b, 16, 8) | _SHIFTL(a, 24, 8)))
+#endif
+#ifdef GAMECUBE
 #define	sDPRGBColor(cmd, r, g, b, a)					\
 	    gsDPSetColor(cmd,						\
 			 (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | 	\
 			  _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8)))
+#else
+#define	sDPRGBColor(cmd, r, g, b, a)					\
+	    gsDPSetColor(cmd,						\
+			 (_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | 	\
+			  _SHIFTL(b, 16, 8) | _SHIFTL(a, 24, 8)))
+#endif
 
 #define	gDPSetEnvColor(pkt, r, g, b, a)					\
             DPRGBColor(pkt, G_SETENVCOLOR, r,g,b,a)
@@ -5074,6 +5105,7 @@ typedef union {
 
 #endif /* _HW_VERSION_1 */ 
 
+#ifdef GAMECUBE
 #define gDPSetScissor(pkt, mode, ulx, uly, lrx, lry)			\
 {									\
 	Gfx *_g = (Gfx *)pkt;						\
@@ -5085,8 +5117,23 @@ typedef union {
 		       _SHIFTL((int)((float)(lrx)*4.0F), 12, 12) |	\
                        _SHIFTL((int)((float)(lry)*4.0F), 0, 12);	\
 }
+#else
+//TODO
+#define gDPSetScissor(pkt, mode, ulx, uly, lrx, lry)			\
+{									\
+	Gfx *_g = (Gfx *)pkt;						\
+									\
+	_g->words.w0 = _SHIFTL(G_SETSCISSOR, 0, 8) |			\
+		       _SHIFTL((int)((float)(ulx)*4.0F), 12, 12) |	\
+                       _SHIFTL((int)((float)(uly)*4.0F), 12, 12);	\
+	_g->words.w1 = _SHIFTL(mode, 0, 2) |				\
+		       _SHIFTL((int)((float)(lrx)*4.0F), 12, 12) |	\
+                       _SHIFTL((int)((float)(lry)*4.0F), 12, 12);	\
+}
+#endif
 
 
+#ifdef GAMECUBE
 #define gDPSetScissorFrac(pkt, mode, ulx, uly, lrx, lry)		\
 {									\
 	Gfx *_g = (Gfx *)pkt;						\
@@ -5098,7 +5145,22 @@ typedef union {
 		       _SHIFTL((int)((lrx)), 12, 12) | 			\
                        _SHIFTL((int)((lry)), 0, 12);			\
 }
+#else
+//TODO
+#define gDPSetScissorFrac(pkt, mode, ulx, uly, lrx, lry)		\
+{									\
+	Gfx *_g = (Gfx *)pkt;						\
+									\
+	_g->words.w0 = _SHIFTL(G_SETSCISSOR, 0, 8) |			\
+		       _SHIFTL((int)((ulx)), 12, 12) |			\
+                       _SHIFTL((int)((uly)), 12, 12);			\
+	_g->words.w1 = _SHIFTL(mode, 0, 2) |				\
+		       _SHIFTL((int)((lrx)), 12, 12) | 			\
+                       _SHIFTL((int)((lry)), 12, 12);			\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsDPSetScissor(mode, ulx, uly, lrx, lry)			\
 {{									\
 	_SHIFTL(G_SETSCISSOR, 24, 8) |					\
@@ -5108,6 +5170,18 @@ typedef union {
 	_SHIFTL((int)((float)(lrx)*4.0F), 12, 12) |			\
 	_SHIFTL((int)((float)(lry)*4.0F), 0, 12)			\
 }}
+#else
+//TODO
+#define gsDPSetScissor(mode, ulx, uly, lrx, lry)			\
+{{									\
+	_SHIFTL(G_SETSCISSOR, 0, 8) |					\
+	_SHIFTL((int)((float)(ulx)*4.0F), 12, 12) |			\
+	_SHIFTL((int)((float)(uly)*4.0F), 12, 12),			\
+	_SHIFTL(mode, 0, 2) |						\
+	_SHIFTL((int)((float)(lrx)*4.0F), 12, 12) |			\
+	_SHIFTL((int)((float)(lry)*4.0F), 12, 12)			\
+}}
+#endif
 
 #define gsDPSetScissorFrac(mode, ulx, uly, lrx, lry)			\
 {{									\
@@ -5208,11 +5282,19 @@ typedef union {
 	_g->words.w1 = 0;						\
 }
 
+#ifdef GAMECUBE
 #define gsDPNoParam(cmd)						\
 {{									\
 	_SHIFTL(cmd, 24, 8), 0						\
 }}
+#else
+#define gsDPNoParam(cmd)						\
+{{									\
+	_SHIFTL(cmd, 0, 8), 0						\
+}}
+#endif
 
+#ifdef GAMECUBE
 #define gDPParam(pkt, cmd, param)					\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -5220,11 +5302,27 @@ typedef union {
 	_g->words.w0 = _SHIFTL(cmd, 24, 8);				\
 	_g->words.w1 = (param);						\
 }
+#else
+#define gDPParam(pkt, cmd, param)					\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(cmd, 0, 8);				\
+	_g->words.w1 = (param);						\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsDPParam(cmd, param)						\
 {{									\
 	_SHIFTL(cmd, 24, 8), (param)					\
 }}
+#else
+#define gsDPParam(cmd, param)						\
+{{									\
+	_SHIFTL(cmd, 0, 8), (param)					\
+}}
+#endif
 
 /* Notice that textured rectangles are 128-bit commands, therefore
  * gsDPTextureRectangle() should not be used in display lists 

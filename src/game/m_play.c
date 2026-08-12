@@ -676,6 +676,8 @@ static int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2) {
     
     OPEN_DISP(graph1);
 
+    // TODO: something in here is making a bad display list
+
     if ((GETREG(HREG, 80) != 10) || (GETREG(HREG, 92) != 0)) {
         newdisp = NOW_POLY_OPA_DISP;
         polydisp = gfxopen(newdisp);
