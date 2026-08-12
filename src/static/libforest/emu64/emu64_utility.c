@@ -8,9 +8,90 @@
 #include <math.h>
 #endif
 
+#ifdef PCPORT
+#define PC_GBI_ODD_PTR_TOKEN_BASE 0x02F00000u
+#define PC_GBI_ODD_PTR_TOKEN_COUNT 8192u
+
+static uintptr_t s_odd_ptr_tokens[PC_GBI_ODD_PTR_TOKEN_COUNT];
+static unsigned int s_odd_ptr_token_next = 0;
+static int s_warned_odd_ptr = 0;
+
+// This code taken from flyngmt/ACGC-PC-Port
+unsigned int pc_gbi_pack_runtime_ptr(uintptr_t addr, int is_ptr, const char* expr, const char* file, int line) {
+    unsigned int slot;
+
+    if (!is_ptr) {
+        return (unsigned int)addr;
+    }
+
+    if ((addr & 1u) == 0) {
+        return (unsigned int)(addr | 1u);
+    }
+
+    slot = s_odd_ptr_token_next++ & (PC_GBI_ODD_PTR_TOKEN_COUNT - 1u);
+    s_odd_ptr_tokens[slot] = addr;
+
+    if (!s_warned_odd_ptr) {
+        fprintf(stderr,
+                "[GBI] odd pointer alignment: %s at %s:%d = 0x%08x; using fallback token table\n",
+                expr, file, line, (unsigned int)addr);
+        s_warned_odd_ptr = 1;
+    }
+
+    return PC_GBI_ODD_PTR_TOKEN_BASE + slot * 2u;
+}
+
+uintptr_t pc_gbi_unpack_runtime_ptr(unsigned int packed) {
+    unsigned int token = packed - PC_GBI_ODD_PTR_TOKEN_BASE;
+
+    if (token < PC_GBI_ODD_PTR_TOKEN_COUNT * 2u && (token & 1u) == 0) {
+        return s_odd_ptr_tokens[token / 2u];
+    }
+
+    return 0;
+}
+
+u32 emu64::seg2k0(u32 segadr) {
+    uintptr_t odd_ptr = pc_gbi_unpack_runtime_ptr(segadr);
+    if (odd_ptr != 0) {
+        return (u32)odd_ptr;
+    }
+
+    /* Runtime GBI macros tag direct PC pointers in bit 0. Segment references
+       keep the low bit clear so they still resolve through the segment table. */
+    if ((segadr & 1) != 0) {
+        return segadr & ~1u;
+    }
+
+    /* Addresses above the N64 segment range (upper nibble != 0) or below
+       the minimum segment address are definitely raw PC pointers. */
+    if ((segadr >> 28) != 0 || segadr < 0x03000000) {
+        return segadr;
+    }
+
+    /* Check if address falls within the executable image (BSS/data/code). */
+    //TODO:
+    //if (segadr >= pc_image_base && segadr < pc_image_end) {
+    //    return segadr;
+    //}
+
+    u32 seg = (segadr >> 24) & 0xF;
+    u32 offset = segadr & 0xFFFFFF;
+
+    u32 base = this->segments[seg] & ~1u;
+
+    if (base == 0) {
+        return segadr;
+    }
+
+    /* Normal segment resolution path */
+    u32 resolved = base + offset;
+    this->resolved_addresses++;
+    return resolved;
+}
+#else
 u32 emu64::seg2k0(u32 segadr)
 {
-    #ifdef GAMECUBE
     u32 k0;
 
     if ((segadr >> 28) == 0) {
@@ -33,10 +114,8 @@ u32 emu64::seg2k0(u32 segadr)
     }
 
     return k0;
-    #else
-    return segadr;
-    #endif
 }
+#endif
 
 /* @unused void guMtxXFMWF(MtxP, float, float, float, float, float, float*, float*, float*, float*) */
 
@@ -178,9 +257,19 @@ void N64Mtx_to_DOLMtx(const UltraMtx* n64, MtxP gc) {
     int i;
 
     for (i = 0; i < 4; i++) {
+#ifdef PCPORT
+        /* On little-endian, s16 pairs within each int32 are swapped.
+           guMtxF2L packs first value in high 16 bits of each int32.
+           s16[0] on BE reads high bits (correct), but on LE reads low bits (wrong).
+           So swap indices 0<->1 and 2<->3 within each group of 4. */
+        gc[0][i] = fastcast_float(&fixed[1]) + fastcast_float(&frac[1]) * (1.0f / 65536.0f);
+        gc[1][i] = fastcast_float(&fixed[0]) + fastcast_float(&frac[0]) * (1.0f / 65536.0f);
+        gc[2][i] = fastcast_float(&fixed[3]) + fastcast_float(&frac[3]) * (1.0f / 65536.0f);
+#else
         gc[0][i] = fastcast_float(&fixed[0]) + fastcast_float(&frac[0]) * (1.0f / 65536.0f);
         gc[1][i] = fastcast_float(&fixed[1]) + fastcast_float(&frac[1]) * (1.0f / 65536.0f);
         gc[2][i] = fastcast_float(&fixed[2]) + fastcast_float(&frac[2]) * (1.0f / 65536.0f);
+#endif
 
         fixed += 4;
         frac += 4;

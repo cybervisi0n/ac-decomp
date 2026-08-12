@@ -1435,12 +1435,17 @@ int emu64::combine_tev() {
             GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
         }
     }
+
+    #ifdef PCPORT
+    return 0;
+    #endif
 }
 
 #define NUM_COMBINER_HIGHLOW_ERRS 10
 
 /* Combine Manual Macros */
 
+#ifdef GAMECUBE
 #define gsDPSetCombineLERPInline(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0, a1, b1, c1, d1, Aa1, Ab1, Ac1, Ad1)               \
     (((u64)_SHIFTL(G_SETCOMBINE, 24, 8) |                                                                              \
       _SHIFTL(GCCc0w0(G_CCMUX_##a0, G_CCMUX_##c0, G_ACMUX_##Aa0, G_ACMUX_##Ac0) | GCCc1w0(G_CCMUX_##a1, G_CCMUX_##c1), \
@@ -1448,6 +1453,15 @@ int emu64::combine_tev() {
      << 32) |                                                                                                          \
         ((u64)(GCCc0w1(G_CCMUX_##b0, G_CCMUX_##d0, G_ACMUX_##Ab0, G_ACMUX_##Ad0) |                                     \
                GCCc1w1(G_CCMUX_##b1, G_ACMUX_##Aa1, G_ACMUX_##Ac1, G_CCMUX_##d1, G_ACMUX_##Ab1, G_ACMUX_##Ad1)))
+#else
+#define gsDPSetCombineLERPInline(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0, a1, b1, c1, d1, Aa1, Ab1, Ac1, Ad1)               \
+    (((u64)_SHIFTL(G_SETCOMBINE, 0, 8) |                                                                              \
+      _SHIFTL(GCCc0w0(G_CCMUX_##a0, G_CCMUX_##c0, G_ACMUX_##Aa0, G_ACMUX_##Ac0) | GCCc1w0(G_CCMUX_##a1, G_CCMUX_##c1), \
+              8, 24))                                                                                                  \
+     ) |                                                                                                          \
+        (((u64)(GCCc0w1(G_CCMUX_##b0, G_CCMUX_##d0, G_ACMUX_##Ab0, G_ACMUX_##Ad0) |                                     \
+               GCCc1w1(G_CCMUX_##b1, G_ACMUX_##Aa1, G_ACMUX_##Ac1, G_CCMUX_##d1, G_ACMUX_##Ab1, G_ACMUX_##Ad1))) << 32)
+#endif
 #define COMBINE_CONSTEXPR(mode0, mode1) (gsDPSetCombineLERPInline(mode0, mode1))
 
 void emu64::combine_manual() {
@@ -3375,7 +3389,7 @@ void emu64::dl_G_DL(void) {
             #ifdef GAMECUBE
             this->gfx_p = (Gfx*)((u32)this->work_ptr - sizeof(Gfx));
             #else
-                        this->gfx_p = (Gfx*)((u64)this->work_ptr - sizeof(Gfx));
+            this->gfx_p = (Gfx*)((u64)this->work_ptr - sizeof(Gfx));
             #endif
             break;
         default:
@@ -5101,8 +5115,10 @@ void emu64::dl_G_MOVEWORD() {
         case G_MW_SEGMENT: {
             u32 segment = moveword->offset / 4;
             EMU64_WARNF("gsSPSegmentA(%d, 0x%08x),", segment, moveword->data);
+            #ifdef PCPORT
+            this->segments[segment] = moveword->data;
+            #else
             this->segments[segment] = (0x80000000 + (moveword->data & 0x0FFFFFFF));
-            #ifdef GAMECUBE
             if (segment >= EMU64_NUM_SEGMENTS ||
                 (moveword->data != 0 && (moveword->data < 0x80000000 || moveword->data > 0x83000000))) {
                 sprintf(s1, "gsSPSegmentA no=%d", segment);

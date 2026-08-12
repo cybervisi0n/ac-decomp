@@ -463,7 +463,11 @@ static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {
 #endif
 
 static void aAL_tm_draw(GRAPH* graph) {
-  static const Gfx init_disp[] = {
+  static
+  #ifdef GAMECUBE
+  const
+  #endif
+  Gfx init_disp[] = {
     gsSPLoadGeometryMode(G_CULL_BACK),
     gsDPSetOtherMode(G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2),
     gsDPSetCombineMode(G_CC_TM, G_CC_TM),
@@ -490,7 +494,11 @@ static void aAL_tm_draw(GRAPH* graph) {
 }
 
 static void aAL_back_draw(GRAPH* graph, ANIMAL_LOGO_ACTOR* actor) {
-  static const Gfx init_disp[] = {
+  static
+  #ifdef GAMECUBE
+  const
+  #endif
+  Gfx init_disp[] = {
     gsSPTexture(0, 0, 0, 0, G_ON),
     gsSPLoadGeometryMode(G_CULL_BACK),
     gsDPSetOtherMode(G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2),
@@ -607,7 +615,11 @@ static void aAL_skl_draw(GAME* game, cKF_SkeletonInfo_R_c* skl_keyframe) {
 }
 
 static void aAL_title_draw(GAME* game, ANIMAL_LOGO_ACTOR* actor) {
-  static const Gfx init_disp[] = {
+  static
+  #ifdef GAMECUBE
+  const
+  #endif
+  Gfx init_disp[] = {
     gsDPSetOtherMode(G_AD_NOTPATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2),
     gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
     gsSPLoadGeometryMode(G_CULL_BACK),

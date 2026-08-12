@@ -3756,12 +3756,11 @@ typedef union {
 	_g->words.w1 = (unsigned int)(data);				\
 }
 #else
-//TODO: the endian on this one will be wrong besides the cmd
 #define	gSPSetOtherMode(pkt, cmd, sft, len, data)			\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
 	_g->words.w0 = (_SHIFTL(cmd,0,8)|_SHIFTL(32-(sft)-(len),8,8)|	\
-			_SHIFTL((len)-1,0,8));				\
+			_SHIFTL((len)-1,24,8));				\
 	_g->words.w1 = (unsigned int)(data);				\
 }
 #endif
@@ -3773,10 +3772,9 @@ typedef union {
 	(unsigned int)(data)						\
 }}
 #else
-//TODO: the endian on this one will be wrong besides the cmd
 #define	gsSPSetOtherMode(cmd, sft, len, data)				\
 {{									\
-	_SHIFTL(cmd,0,8)|_SHIFTL(32-(sft)-(len),8,8)|_SHIFTL((len)-1,0,8), \
+	_SHIFTL(cmd,0,8)|_SHIFTL(32-(sft)-(len),8,8)|_SHIFTL((len)-1,24,8), \
 	(unsigned int)(data)						\
 }}
 #endif
@@ -3975,23 +3973,121 @@ typedef union {
 }}
 #endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 9-11 [3] mA0
+ * 12-14 [3] saA0
+ * 15-19 [5] mRGB0
+ * 20-23 [4] saRGB0
+ */
 #define	GCCc0w0(saRGB0, mRGB0, saA0, mA0)				\
 		(_SHIFTL((saRGB0), 20, 4) | _SHIFTL((mRGB0), 15, 5) | 	\
 		 _SHIFTL((saA0), 12, 3) | _SHIFTL((mA0), 9, 3))
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 8-11 [4] saRGB0
+ * 12-16 [5] mRGB0
+ * 17-19 [3] saA0
+ * 20-22 [3] mA0
+ */
+#define	GCCc0w0(saRGB0, mRGB0, saA0, mA0)				\
+		(_SHIFTL((saRGB0), 8, 4) | _SHIFTL((mRGB0), 12, 5) | 	\
+		 _SHIFTL((saA0), 17, 3) | _SHIFTL((mA0), 20, 3))
+#endif
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-4 [5] mRGB1
+ * 5-8 [4] saRGB1
+ */
 #define	GCCc1w0(saRGB1, mRGB1)						\
 		(_SHIFTL((saRGB1), 5, 4) | _SHIFTL((mRGB1), 0, 5))
-
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 23-26 [4] saRGB1
+ * 27-31 [5] mRGB1
+ */
+#define	GCCc1w0(saRGB1, mRGB1)						\
+		(_SHIFTL((saRGB1), 23, 4) | _SHIFTL((mRGB1), 27, 5))
+#endif
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 9-11 [3] aA0
+ * 12-14 [3] sbA0
+ * 15-17 [3] aRGB0
+ * 18-27 [10] zero
+ * 28-31 [4] sbRGB0
+ */
 #define GCCc0w1(sbRGB0, aRGB0, sbA0, aA0)				\
                 (_SHIFTL((sbRGB0), 28, 4) | _SHIFTL((aRGB0), 15, 3) |	\
 		 _SHIFTL((sbA0), 12, 3) | _SHIFTL((aA0), 9, 3))
-
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-3 [4] sbRGB0
+ * 4-13 [10] zero
+ * 14-16 [3] aRGB0
+ * 17-19 [3] sbA0
+ * 20-22 [3] aA0
+ */
+#define GCCc0w1(sbRGB0, aRGB0, sbA0, aA0)				\
+                (_SHIFTL((sbRGB0), 0, 4) | _SHIFTL((aRGB0), 14, 3) |	\
+		 _SHIFTL((sbA0), 17, 3) | _SHIFTL((aA0), 20, 3))
+#endif
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-2 [3] aA1
+ * 3-5 [3] sbA1
+ * 6-8 [3] aRGB1
+ * 9-17 [9] zero
+ * 18-20 [3] mA1
+ * 21-23 [3] saA1
+ * 24-27 [4] sbRGB1
+ */
 #define	GCCc1w1(sbRGB1, saA1, mA1, aRGB1, sbA1, aA1)			\
 		(_SHIFTL((sbRGB1), 24, 4) | _SHIFTL((saA1), 21, 3) |	\
 		 _SHIFTL((mA1), 18, 3) | _SHIFTL((aRGB1), 6, 3) |	\
 		 _SHIFTL((sbA1), 3, 3) | _SHIFTL((aA1), 0, 3))
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 4-7 [4] sbRGB1
+ * 8-10 [3] saA1
+ * 11-13 [3] mA1
+ * 14-22 [9] zero
+ * 23-25 [3] aRGB1
+ * 26-28 [3] sbA1
+ * 29-31 [3] aA1
+ */
+#define	GCCc1w1(sbRGB1, saA1, mA1, aRGB1, sbA1, aA1)			\
+		(_SHIFTL((sbRGB1), 4, 4) | _SHIFTL((saA1), 8, 3) |	\
+		 _SHIFTL((mA1), 11, 3) | _SHIFTL((aRGB1), 23, 3) |	\
+		 _SHIFTL((sbA1), 26, 3) | _SHIFTL((aA1), 29, 3))
+#endif
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-23 [24] combiner contents
+ * 24-31 [8] G_SETCOMBINE
+ * Word 1:
+ * combiner contents
+ */
 #define	gDPSetCombineLERP(pkt, a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,	\
 		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
 {									\
@@ -4014,6 +4110,14 @@ typedef union {
 					       G_ACMUX_##Ad1));		\
 }
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_SETCOMBINE
+ * 8-31 [24] combiner contents
+ * Word 1:
+ * combiner contents
+ */
 #define	gDPSetCombineLERP(pkt, a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,	\
 		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
 {									\

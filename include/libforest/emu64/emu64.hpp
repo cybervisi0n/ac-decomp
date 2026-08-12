@@ -154,6 +154,9 @@ float fastcast_float(register unsigned char* s) {
 }
 
 float fastcast_float(register unsigned short* s) {
+#ifdef PCPORT
+    return (float)(*s);
+#endif
     register float f;
 
 #ifdef __MWERKS__ // clang-format off
@@ -166,6 +169,9 @@ float fastcast_float(register unsigned short* s) {
 }
 
 float fastcast_float(register signed char* s) {
+#ifdef PCPORT
+    return (float)(*s);
+#endif
     register float f;
 
 #ifdef __MWERKS__ // clang-format off
@@ -178,6 +184,9 @@ float fastcast_float(register signed char* s) {
 }
 
 float fastcast_float(register short* s) {
+#ifdef PCPORT
+    return (float)(*s);
+#endif
     register float f;
 
 #ifdef __MWERKS__ // clang-format off
