@@ -361,11 +361,7 @@ typedef struct {
     unsigned int cmd:8;
     unsigned int index:8;
     unsigned int offset:16;
-    #ifdef GAMECUBE
     unsigned int data;
-    #else
-    u64 data;
-    #endif
 }
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -377,12 +373,7 @@ typedef struct {
     unsigned int length:8;
     unsigned int offset:8;
     unsigned int index:8;
-
-    #ifdef GAMECUBE
     unsigned int data;
-    #else
-    u64 data;
-    #endif
 }
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -437,11 +428,7 @@ typedef struct Gmtx {
     unsigned int pad: 8;
     unsigned int type: 8;
 
-    #ifdef GAMECUBE
     unsigned int addr;
-    #else
-    u64 addr;
-    #endif
 } 
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -455,11 +442,7 @@ typedef struct Gvtx {
     unsigned int pad1: 4;
     unsigned int vn:8;
 
-    #ifdef GAMECUBE
     unsigned int addr;
-    #else
-    u64 addr;
-    #endif
 }
 #ifndef GAMECUBE
 __attribute__((packed))
@@ -714,12 +697,21 @@ do { \
 #define gsDPNoOpTag3(tag, extra, param) gsDPNoOpTag2(tag, param, extra)
 
 #define G_TLUT_DOLPHIN 2
+#ifdef GAMECUBE
 #define gDPLoadTLUT_Dolphin(pkt, name, count, unk, addr) \
 do { \
     Gfx* _g = (Gfx*)(pkt); \
     _g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14); \
     _g->words.w1 = (unsigned int)addr; \
 } while (0)
+#else
+#define gDPLoadTLUT_Dolphin(pkt, name, count, unk, addr) \
+do { \
+    Gfx* _g = (Gfx*)(pkt); \
+    _g->words.w0 = _SHIFTL(G_LOADTLUT, 0, 8) | _SHIFTL(G_TLUT_DOLPHIN, 8, 2) | _SHIFTL(name, 10, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 18, 14); \
+    _g->words.w1 = (unsigned int)addr; \
+} while (0)
+#endif
 
 #ifdef GAMECUBE
 #define gsDPLoadTLUT_Dolphin(name, count, unk, addr) \
@@ -749,13 +741,23 @@ do { \
 }}
 #endif
 
+#ifdef GAMECUBE
 #define gsDPSetTile_Dolphin(d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
 {{ \
     _SHIFTL(G_SETTILE_DOLPHIN, 24, 8) | _SHIFTL(d_fmt, 20, 4) | _SHIFTL(tile, 16, 3) | \
         _SHIFTL(tlut_name, 12, 4) | _SHIFTL(wrap_s, 10, 2) | _SHIFTL(wrap_t, 8, 2) | \
         _SHIFTL(shift_s, 4, 4) | _SHIFTL(shift_t, 0, 4), 0 \
 }}
+#else
+#define gsDPSetTile_Dolphin(d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
+{{ \
+    _SHIFTL(G_SETTILE_DOLPHIN, 0, 8) | _SHIFTL(d_fmt, 8, 4) | _SHIFTL(tile, 12, 3) | \
+        _SHIFTL(tlut_name, 16, 4) | _SHIFTL(wrap_s, 20, 2) | _SHIFTL(wrap_t, 22, 2) | \
+        _SHIFTL(shift_s, 24, 4) | _SHIFTL(shift_t, 28, 4), 0 \
+}}
+#endif
 
+#ifdef GAMECUBE
 #define gDPSetTextureImage_Dolphin(pkt, fmt, siz, h, w, img) \
 {{ \
     Gfx* _gfx = (Gfx*)(pkt); \
@@ -763,7 +765,17 @@ do { \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10); \
     _gfx->words.w1 = (unsigned int)img; \
 }}
+#else
+#define gDPSetTextureImage_Dolphin(pkt, fmt, siz, h, w, img) \
+{{ \
+    Gfx* _gfx = (Gfx*)(pkt); \
+    _gfx->words.w0 = _SHIFTL(G_SETTIMG, 0, 8) | _SHIFTL(fmt, 8, 3) | _SHIFTL(siz, 11, 2) | _SHIFTL(1, 13, 1) | \
+        _SHIFTL((h/4)-1, 14, 8) | _SHIFTL((w-1), 22, 10); \
+    _gfx->words.w1 = (unsigned int)img; \
+}}
+#endif
 
+#ifdef GAMECUBE
 #define gDPSetTile_Dolphin(pkt, d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
 {{ \
     Gfx* _gfx = (Gfx*)(pkt); \
@@ -772,19 +784,46 @@ do { \
         _SHIFTL(shift_s, 4, 4) | _SHIFTL(shift_t, 0, 4); \
     /*_gfx->words.w1 = 0;*/ /* bug? they don't set the second word */ \
 }}
+#else
+#define gDPSetTile_Dolphin(pkt, d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
+{{ \
+    Gfx* _gfx = (Gfx*)(pkt); \
+    _gfx->words.w0 = _SHIFTL(G_SETTILE_DOLPHIN, 0, 8) | _SHIFTL(d_fmt, 8, 4) | _SHIFTL(tile, 12, 3) | \
+        _SHIFTL(tlut_name, 16, 4) | _SHIFTL(wrap_s, 18, 2) | _SHIFTL(wrap_t, 20, 2) | \
+        _SHIFTL(shift_s, 22, 4) | _SHIFTL(shift_t, 26, 4); \
+    /*_gfx->words.w1 = 0;*/ /* bug? they don't set the second word */ \
+}}
+#endif
 
+#ifdef GAMECUBE
 #define gDPSetTileSize_Dolphin(pkt, tile, s, t, width, height)		\
 do { \
     Gfx* _gfx = (Gfx*)(pkt); \
     _gfx->words.w0 = _SHIFTL(G_SETTILESIZE, 24, 8) | _SHIFTL(s, 10, 14) | _SHIFTL(width - 1, 0, 10); \
     _gfx->words.w1 = _SHIFTL(1, 31, 1) | _SHIFTL(tile, 24, 3) | _SHIFTL(t, 10, 14) | _SHIFTL(height - 1, 0, 10); \
 } while (0)
+#else
+#define gDPSetTileSize_Dolphin(pkt, tile, s, t, width, height)		\
+do { \
+    Gfx* _gfx = (Gfx*)(pkt); \
+    _gfx->words.w0 = _SHIFTL(G_SETTILESIZE, 0, 8) | _SHIFTL(s, 8, 14) | _SHIFTL(width - 1, 22, 10); \
+    _gfx->words.w1 = _SHIFTL(1, 0, 1) | _SHIFTL(tile, 5, 3) | _SHIFTL(t, 8, 14) | _SHIFTL(height - 1, 22, 10); \
+} while (0)
+#endif
 
+#ifdef GAMECUBE
 #define gsDPSetTileSize_Dolphin(tile, s, t, width, height)		\
 {{									\
 	_SHIFTL(G_SETTILESIZE, 24, 8) | _SHIFTL(s, 10, 14) | _SHIFTL(width - 1, 0, 10),	\
 	_SHIFTL(1, 31, 1) | _SHIFTL(tile, 24, 3) | _SHIFTL(t, 10, 14) | _SHIFTL(height - 1, 0, 10)\
 }}
+#else
+#define gsDPSetTileSize_Dolphin(tile, s, t, width, height)		\
+{{									\
+	_SHIFTL(G_SETTILESIZE, 0, 8) | _SHIFTL(s, 8, 14) | _SHIFTL(width - 1, 22, 10),	\
+	_SHIFTL(1, 0, 1) | _SHIFTL(tile, 5, 3) | _SHIFTL(t, 8, 14) | _SHIFTL(height - 1, 22, 10)\
+}}
+#endif
 
 #define G_DOLPHIN_TLUT_DEFAULT_MODE 15 // used almost always? CI palettes are forced to GX_TF_RGB5A3
 #define gsDPLoadTextureBlock_4b_Dolphin(timg, fmt, w, h, pal, ws, wt, ss, st) \
@@ -833,19 +872,37 @@ do { \
     gDPSetTile_Dolphin(pkt, G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st); \
 } while (0)
 
+#ifdef GAMECUBE
 #define gsSPNTriangles_Independ(n) \
 {{ \
     _SHIFTL(G_TRIN_INDEPEND, 24, 8) | _SHIFTL(n-1, 17, 7), 0 \
 }}
+#else
+#define gsSPNTriangles_Independ(n) \
+{{ \
+    _SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7), 0 \
+}}
+#endif
 
 /* 5 bits per vertex id (32) */
+#ifdef GAMECUBE
 #define gsSPNTriangleData1(v0, v1, v2, flag) (_SHIFTL(v2, 10, 5) | _SHIFTL(v1, 5, 5) | _SHIFTL(v0, 0, 5))
+#else
+#define gsSPNTriangleData1(v0, v1, v2, flag) (_SHIFTL(v2, 0, 5) | _SHIFTL(v1, 5, 5) | _SHIFTL(v0, 10, 5))
+#endif
 
 /* 7 bits per vertex id (128) */
+#ifdef GAMECUBE
 #define gsSPNTriangleData2(v0, v1, v2, flag) \
 {{ \
     (unsigned long long)(_SHIFTL(v2, 14, 7) | _SHIFTL(v1, 7, 7) | _SHIFTL(v0, 0, 7)) \
 }}
+#else
+#define gsSPNTriangleData2(v0, v1, v2, flag) \
+{{ \
+    (unsigned long long)(_SHIFTL(v2, 0, 7) | _SHIFTL(v1, 7, 7) | _SHIFTL(v0, 14, 7)) \
+}}
+#endif
 
 #define G_VTX_MODE_5bit 0
 #define G_VTX_MODE_7bit 1
@@ -857,14 +914,22 @@ do { \
   _g->words.w1 = (u32)(((gsSPNTriangleData1(v3, v4, v5) & 7) << 19) | (gsSPNTriangleData1(v0, v1, v2) << 4) | G_VTX_MODE_5bit); \
 }}
 
+#ifdef GAMECUBE
 #define gSPNTrianglesInit_5b(pkt, n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
   Gfx* _g = (Gfx*)(pkt); \
   _g->words.w0 = (u32)(_SHIFTL(G_TRIN_INDEPEND, 24, 8) | _SHIFTL(n-1, 17, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 2, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13), 0, 2)); \
   _g->words.w1 = (u32)(_SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1)); \
 }}
+#else
+#define gSPNTrianglesInit_5b(pkt, n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
+{{ \
+  Gfx* _g = (Gfx*)(pkt); \
+  _g->words.w0 = (u32)(_SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 17, 13), 0, 2)); \
+  _g->words.w1 = (u32)(_SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 0, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 13, 15) | _SHIFTL(G_VTX_MODE_5bit, 31, 1)); \
+}}
+#endif
 
-// TODO: convert
 #define gSPNTriangles_7b(v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
     (unsigned long long)((gsSPNTriangleData2(v6, v7, v8) << 43) | (gsSPNTriangleData2(v3, v4, v5) << 22) | \
@@ -883,11 +948,19 @@ do { \
     _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
 
+#ifdef GAMECUBE
 #define gsSPNTrianglesInit_5b(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
     _SHIFTL(G_TRIN_INDEPEND, 24, 8) | _SHIFTL(n-1, 17, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 2, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
     _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
+#else
+#define gsSPNTrianglesInit_5b(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
+{{ \
+    _SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
+    _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
+}}
+#endif
 
 #define gsSPNTriangles_7b(v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
@@ -907,31 +980,65 @@ do { \
     _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
 
+#ifdef GAMECUBE
 #define gDPSetTexEdgeAlpha(pkt, alpha) \
 do { \
   Gfx* _g = (Gfx*)(pkt); \
   _g->words.w0 = (u32)(_SHIFTL(G_SETTEXEDGEALPHA, 24, 8)); \
   _g->words.w1 = (u32)(_SHIFTL(alpha, 0, 8)); \
 } while(0)
+#else
+#define gDPSetTexEdgeAlpha(pkt, alpha) \
+do { \
+  Gfx* _g = (Gfx*)(pkt); \
+  _g->words.w0 = (u32)(_SHIFTL(G_SETTEXEDGEALPHA, 0, 8)); \
+  _g->words.w1 = (u32)(_SHIFTL(alpha, 8, 8)); \
+} while(0)
+#endif
 
+#ifdef GAMECUBE
 #define gsDPSetTexEdgeAlpha(alpha) \
 {{ \
   (u32)(_SHIFTL(G_SETTEXEDGEALPHA, 24, 8)), \
   (u32)(_SHIFTL(alpha, 0, 8)) \
 }}
+#else
+#define gsDPSetTexEdgeAlpha(alpha) \
+{{ \
+  (u32)(_SHIFTL(G_SETTEXEDGEALPHA, 0, 8)), \
+  (u32)(_SHIFTL(alpha, 8, 8)) \
+}}
+#endif
 
+#ifdef GAMECUBE
 #define gDPSetTextureAdjustMode(pkt, mode) \
 do { \
   Gfx* _g = (Gfx*)(pkt); \
   _g->words.w0 = (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 16, 8) | _SHIFTL(mode, 0, 16)); \
   _g->words.w1 = (u32)0; \
 } while(0)
+#else
+#define gDPSetTextureAdjustMode(pkt, mode) \
+do { \
+  Gfx* _g = (Gfx*)(pkt); \
+  _g->words.w0 = (u32)(_SHIFTL(G_SPECIAL_1, 0, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 8, 8) | _SHIFTL(mode, 16, 16)); \
+  _g->words.w1 = (u32)0; \
+} while(0)
+#endif
 
+#ifdef GAMECUBE
 #define gsDPSetTextureAdjustMode(mode) \
 {{ \
   (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 16, 8) | _SHIFTL(mode, 0, 16)), \
   (u32)0 \
 }}
+#else
+#define gsDPSetTextureAdjustMode(mode) \
+{{ \
+  (u32)(_SHIFTL(G_SPECIAL_1, 0, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 8, 8) | _SHIFTL(mode, 16, 16)), \
+  (u32)0 \
+}}
+#endif
 
 //Helpful macro for defining values of a Matrix
 

@@ -2759,6 +2759,7 @@ typedef union {
 /***
  ***  1 Triangle
  ***/	
+#ifdef GAMECUBE
 #define gSP1Triangle(pkt, v0, v1, v2, flag)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2766,15 +2767,33 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_TRI1, 24, 8);				\
 	_g->words.w1 = __gsSP1Triangle_w1f(v0, v1, v2, flag);		\
 }
+#else
+#define gSP1Triangle(pkt, v0, v1, v2, flag)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_TRI1, 0, 8);				\
+	_g->words.w1 = __gsSP1Triangle_w1f(v0, v1, v2, flag);		\
+}
+#endif
+#ifdef GAMECUBE
 #define gsSP1Triangle(v0, v1, v2, flag)					\
 {{									\
 	_SHIFTL(G_TRI1, 24, 8),						\
 	__gsSP1Triangle_w1f(v0, v1, v2, flag)				\
 }}
+#else
+#define gsSP1Triangle(v0, v1, v2, flag)					\
+{{									\
+	_SHIFTL(G_TRI1, 0, 8),						\
+	__gsSP1Triangle_w1f(v0, v1, v2, flag)				\
+}}
+#endif
 
 /***
  ***  Line
  ***/
+#ifdef GAMECUBE
 #define gSPLine3D(pkt, v0, v1, flag)					\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2782,11 +2801,28 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_LINE3D, 24, 8);			\
 	_g->words.w1 = __gsSPLine3D_w1f(v0, v1, 0, flag);		\
 }
+#else
+#define gSPLine3D(pkt, v0, v1, flag)					\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_LINE3D, 0, 8);			\
+	_g->words.w1 = __gsSPLine3D_w1f(v0, v1, 0, flag);		\
+}
+#endif
+#ifdef GAMECUBE
 #define gsSPLine3D(v0, v1, flag)					\
 {{									\
 	_SHIFTL(G_LINE3D, 24, 8),					\
 	__gsSPLine3D_w1f(v0, v1, 0, flag)				\
 }}
+#else
+#define gsSPLine3D(v0, v1, flag)					\
+{{									\
+	_SHIFTL(G_LINE3D, 0, 8),					\
+	__gsSPLine3D_w1f(v0, v1, 0, flag)				\
+}}
+#endif
 
 /***
  ***  LineW
@@ -2834,6 +2870,7 @@ typedef union {
 /***
  ***  2 Triangles
  ***/
+#ifdef GAMECUBE
 #define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2842,17 +2879,37 @@ typedef union {
 			__gsSP1Triangle_w1f(v00, v01, v02, flag0));	\
         _g->words.w1 =  __gsSP1Triangle_w1f(v10, v11, v12, flag1); 	\
 }
+#else
+#define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_TRI2, 0, 8)|				\
+			__gsSP1Triangle_w1f(v00, v01, v02, flag0));	\
+        _g->words.w1 =  __gsSP1Triangle_w1f(v10, v11, v12, flag1); 	\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsSP2Triangles(v00, v01, v02, flag0, v10, v11, v12, flag1)	\
 {{									\
 	(_SHIFTL(G_TRI2, 24, 8)|					\
 	 __gsSP1Triangle_w1f(v00, v01, v02, flag0)),			\
 	 __gsSP1Triangle_w1f(v10, v11, v12, flag1)			\
 }}
+#else
+#define gsSP2Triangles(v00, v01, v02, flag0, v10, v11, v12, flag1)	\
+{{									\
+	(_SHIFTL(G_TRI2, 0, 8)|					\
+	 __gsSP1Triangle_w1f(v00, v01, v02, flag0)),			\
+	 __gsSP1Triangle_w1f(v10, v11, v12, flag1)			\
+}}
+#endif
 
 #endif	/* F3DEX_GBI/F3DLP_GBI */
 
 #if	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
+#ifdef GAMECUBE
 #define gSPCullDisplayList(pkt,vstart,vend)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2861,12 +2918,30 @@ typedef union {
 			_SHIFTL((vstart)*2, 0, 16);			\
 	_g->words.w1 = _SHIFTL((vend)*2, 0, 16);			\
 }
+#else
+#define gSPCullDisplayList(pkt,vstart,vend)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_CULLDL, 0, 8) | 			\
+			_SHIFTL((vstart)*2, 16, 16);			\
+	_g->words.w1 = _SHIFTL((vend)*2, 0, 16);			\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsSPCullDisplayList(vstart,vend)				\
 {{									\
 	_SHIFTL(G_CULLDL, 24, 8) | _SHIFTL((vstart)*2, 0, 16),		\
 	_SHIFTL((vend)*2, 0, 16)					\
 }}
+#else
+#define gsSPCullDisplayList(vstart,vend)				\
+{{									\
+	_SHIFTL(G_CULLDL, 0, 8) | _SHIFTL((vstart)*2, 16, 16),		\
+	_SHIFTL((vend)*2, 16, 16)					\
+}}
+#endif
 
 #else
 #define gSPCullDisplayList(pkt,vstart,vend)				\
@@ -2978,6 +3053,7 @@ typedef union {
  * num   = new value (32 bit)
  */
 #if	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
+#ifdef GAMECUBE
 # define gSPModifyVertex(pkt, vtx, where, val)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -2985,12 +3061,30 @@ typedef union {
 		        _SHIFTL((where),16,8)|_SHIFTL((vtx)*2,0,16));	\
 	_g->words.w1 = (unsigned int)(val);				\
 }
+#else
+# define gSPModifyVertex(pkt, vtx, where, val)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 = (_SHIFTL(G_MODIFYVTX,0,8)|			\
+		        _SHIFTL((where),8,8)|_SHIFTL((vtx)*2,16,16));	\
+	_g->words.w1 = (unsigned int)(val);				\
+}
+#endif
+#ifdef GAMECUBE
 # define gsSPModifyVertex(vtx, where, val)				\
 {{									\
 	_SHIFTL(G_MODIFYVTX,24,8)|					\
 	_SHIFTL((where),16,8)|_SHIFTL((vtx)*2,0,16),			\
 	(unsigned int)(val)						\
 }}
+#else
+# define gsSPModifyVertex(vtx, where, val)				\
+{{									\
+	_SHIFTL(G_MODIFYVTX,0,8)|					\
+	_SHIFTL((where),8,8)|_SHIFTL((vtx)*2,16,16),			\
+	(unsigned int)(val)						\
+}}
+#endif
 #else
 # define gSPModifyVertex(pkt, vtx, where, val)				\
 	 gMoveWd(pkt, G_MW_POINTS, (vtx)*40+(where), val)
@@ -3389,23 +3483,49 @@ typedef union {
  * max is where fog is thickest (usually 1000)
  * 
  */
+#ifdef GAMECUBE
 #define gSPFogFactor(pkt, fm, fo)				\
         gMoveWd(pkt, G_MW_FOG, G_MWO_FOG, 			\
 		(_SHIFTL(fm,16,16) | _SHIFTL(fo,0,16)))
+#else
+#define gSPFogFactor(pkt, fm, fo)				\
+        gMoveWd(pkt, G_MW_FOG, G_MWO_FOG, 			\
+		(_SHIFTL(fm,0,16) | _SHIFTL(fo,16,16)))
+#endif
 
+#ifdef GAMECUBE
 #define gsSPFogFactor(fm, fo)					\
         gsMoveWd(G_MW_FOG, G_MWO_FOG, 				\
 		(_SHIFTL(fm,16,16) | _SHIFTL(fo,0,16)))
+#else
+#define gsSPFogFactor(fm, fo)					\
+        gsMoveWd(G_MW_FOG, G_MWO_FOG, 				\
+		(_SHIFTL(fm,0,16) | _SHIFTL(fo,16,16)))
+#endif
 
+#ifdef GAMECUBE
 #define gSPFogPosition(pkt, min, max)				\
 	gMoveWd(pkt, G_MW_FOG, G_MWO_FOG, 			\
 		(_SHIFTL((128000/((max)-(min))),16,16) |		\
 		_SHIFTL(((500-(min))*256/((max)-(min))),0,16)))
+#else
+#define gSPFogPosition(pkt, min, max)				\
+	gMoveWd(pkt, G_MW_FOG, G_MWO_FOG, 			\
+		(_SHIFTL((128000/((max)-(min))),0,16) |		\
+		_SHIFTL(((500-(min))*256/((max)-(min))),16,16)))
+#endif
 
+#ifdef GAMECUBE
 #define gsSPFogPosition(min, max)				\
 	gsMoveWd(G_MW_FOG, G_MWO_FOG, 				\
 		(_SHIFTL((128000/((max)-(min))),16,16) |		\
 		_SHIFTL(((500-(min))*256/((max)-(min))),0,16)))
+#else
+#define gsSPFogPosition(min, max)				\
+	gsMoveWd(G_MW_FOG, G_MWO_FOG, 				\
+		(_SHIFTL((128000/((max)-(min))),0,16) |		\
+		_SHIFTL(((500-(min))*256/((max)-(min))),16,16)))
+#endif
 
 #ifdef	F3DEX_GBI_2
 /*
@@ -3768,6 +3888,7 @@ typedef union {
 	gsSPSetOtherMode(G_SETOTHERMODE_L, G_MDSFT_RENDERMODE, 29, 	\
 			 (c0) | (c1))
 
+#ifdef GAMECUBE
 #define	gSetImage(pkt, cmd, fmt, siz, width, i)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -3776,6 +3897,16 @@ typedef union {
 		       _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12);	\
 	_g->words.w1 = (unsigned int)(i);				\
 }
+#else
+#define	gSetImage(pkt, cmd, fmt, siz, width, i)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(cmd, 0, 8) | _SHIFTL(fmt, 8, 3) |	\
+		       _SHIFTL(siz, 11, 2) | _SHIFTL((width)-1, 20, 12);	\
+	_g->words.w1 = (unsigned int)(i);				\
+}
+#endif
 
 #ifdef GAMECUBE
 #define	gsSetImage(cmd, fmt, siz, width, i)				\
@@ -3812,6 +3943,7 @@ typedef union {
  * RDP macros
  */
 
+#ifdef GAMECUBE
 #define	gDPSetCombine(pkt, muxs0, muxs1)				\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -3819,12 +3951,29 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_SETCOMBINE, 24, 8) | _SHIFTL(muxs0, 0, 24);\
 	_g->words.w1 = (unsigned int)(muxs1);				\
 }
+#else
+#define	gDPSetCombine(pkt, muxs0, muxs1)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_SETCOMBINE, 0, 8) | _SHIFTL(muxs0, 8, 24);\
+	_g->words.w1 = (unsigned int)(muxs1);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPSetCombine(muxs0, muxs1)					\
 {{									\
 	_SHIFTL(G_SETCOMBINE, 24, 8) | _SHIFTL(muxs0, 0, 24),		\
 	(unsigned int)(muxs1)						\
 }}
+#else
+#define	gsDPSetCombine(muxs0, muxs1)					\
+{{									\
+	_SHIFTL(G_SETCOMBINE, 0, 8) | _SHIFTL(muxs0, 8, 24),		\
+	(unsigned int)(muxs1)						\
+}}
+#endif
 
 #define	GCCc0w0(saRGB0, mRGB0, saA0, mA0)				\
 		(_SHIFTL((saRGB0), 20, 4) | _SHIFTL((mRGB0), 15, 5) | 	\
@@ -3842,6 +3991,7 @@ typedef union {
 		 _SHIFTL((mA1), 18, 3) | _SHIFTL((aRGB1), 6, 3) |	\
 		 _SHIFTL((sbA1), 3, 3) | _SHIFTL((aA1), 0, 3))
 
+#ifdef GAMECUBE
 #define	gDPSetCombineLERP(pkt, a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,	\
 		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
 {									\
@@ -3863,6 +4013,29 @@ typedef union {
 					       G_ACMUX_##Ab1, 		\
 					       G_ACMUX_##Ad1));		\
 }
+#else
+#define	gDPSetCombineLERP(pkt, a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,	\
+		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 =	_SHIFTL(G_SETCOMBINE, 0, 8) |			\
+			_SHIFTL(GCCc0w0(G_CCMUX_##a0, G_CCMUX_##c0,	\
+				       G_ACMUX_##Aa0, G_ACMUX_##Ac0) |	\
+			       GCCc1w0(G_CCMUX_##a1, G_CCMUX_##c1), 	\
+			       8, 24);					\
+	_g->words.w1 =	(unsigned int)(GCCc0w1(G_CCMUX_##b0, 		\
+					       G_CCMUX_##d0,		\
+					       G_ACMUX_##Ab0, 		\
+					       G_ACMUX_##Ad0) |		\
+				       GCCc1w1(G_CCMUX_##b1, 		\
+					       G_ACMUX_##Aa1,		\
+					       G_ACMUX_##Ac1, 		\
+					       G_CCMUX_##d1,		\
+					       G_ACMUX_##Ab1, 		\
+					       G_ACMUX_##Ad1));		\
+}
+#endif
 
 #ifdef GAMECUBE
 #define	gsDPSetCombineLERP(a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,		\
@@ -3978,12 +4151,24 @@ typedef union {
 #define	gsDPSetFillColor(d)						\
             gsDPSetColor(G_SETFILLCOLOR, (d))
 
+#ifdef GAMECUBE
 #define	gDPSetPrimDepth(pkt, z, dz)					\
 		gDPSetColor(pkt, G_SETPRIMDEPTH, 			\
 			    _SHIFTL(z, 16, 16) | _SHIFTL(dz, 0, 16))
+#else
+#define	gDPSetPrimDepth(pkt, z, dz)					\
+		gDPSetColor(pkt, G_SETPRIMDEPTH, 			\
+			    _SHIFTL(z, 0, 16) | _SHIFTL(dz, 16, 16))
+#endif
+#ifdef GAMECUBE
 #define	gsDPSetPrimDepth(z, dz)						\
 		gsDPSetColor(G_SETPRIMDEPTH, _SHIFTL(z, 16, 16) | 	\
 			     _SHIFTL(dz, 0, 16))
+#else
+#define	gsDPSetPrimDepth(z, dz)						\
+		gsDPSetColor(G_SETPRIMDEPTH, _SHIFTL(z, 0, 16) | 	\
+			     _SHIFTL(dz, 16, 16))
+#endif
 
 #ifdef GAMECUBE
 #define	gDPSetPrimColor(pkt, m, l, r, g, b, a)				\
@@ -4145,6 +4330,7 @@ typedef union {
 		(((1 << G_TX_DXT_FRAC) + TXL2WORDS_4b(width) - 1) / \
 					TXL2WORDS_4b(width))
 
+#ifdef GAMECUBE
 #define gDPLoadTileGeneric(pkt, c, tile, uls, ult, lrs, lrt)		\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -4154,12 +4340,31 @@ typedef union {
 	_g->words.w1 = _SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) |	\
 		      _SHIFTL(lrt, 0, 12);				\
 }
+#else
+#define gDPLoadTileGeneric(pkt, c, tile, uls, ult, lrs, lrt)		\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(c, 0, 8) | _SHIFTL(uls, 8, 12) |	\
+		      _SHIFTL(ult, 20, 12);				\
+	_g->words.w1 = _SHIFTL(tile, 0, 3) | _SHIFTL(lrs, 12, 12) |	\
+		      _SHIFTL(lrt, 12, 12);				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsDPLoadTileGeneric(c, tile, uls, ult, lrs, lrt)		\
 {{									\
 	_SHIFTL(c, 24, 8) | _SHIFTL(uls, 12, 12) | _SHIFTL(ult, 0, 12),	\
 	_SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) | _SHIFTL(lrt, 0, 12)\
 }}
+#else
+#define gsDPLoadTileGeneric(c, tile, uls, ult, lrs, lrt)		\
+{{									\
+	_SHIFTL(c, 0, 8) | _SHIFTL(uls, 8, 12) | _SHIFTL(ult, 20, 12),	\
+	_SHIFTL(tile, 0, 3) | _SHIFTL(lrs, 12, 12) | _SHIFTL(lrt, 12, 12)\
+}}
+#endif
 
 #define	gDPSetTileSize(pkt, t, uls, ult, lrs, lrt)			\
 		gDPLoadTileGeneric(pkt, G_SETTILESIZE, t, uls, ult, lrs, lrt)
@@ -4170,6 +4375,7 @@ typedef union {
 #define	gsDPLoadTile(t, uls, ult, lrs, lrt)				\
 		gsDPLoadTileGeneric(G_LOADTILE, t, uls, ult, lrs, lrt)
 
+#ifdef GAMECUBE
 #define	gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt,	\
 		maskt, shiftt, cms, masks, shifts)			\
 {									\
@@ -4183,7 +4389,23 @@ typedef union {
 		       _SHIFTL(shiftt, 10, 4) |_SHIFTL(cms, 8, 2) |	\
 		       _SHIFTL(masks, 4, 4) | _SHIFTL(shifts, 0, 4);	\
 }
+#else
+#define	gDPSetTile(pkt, fmt, siz, line, tmem, tile, palette, cmt,	\
+		maskt, shiftt, cms, masks, shifts)			\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_SETTILE, 0, 8) | _SHIFTL(fmt, 8, 3) |\
+		       _SHIFTL(siz, 11, 2) | _SHIFTL(line, 13, 9) |	\
+		       _SHIFTL(tmem, 22, 9);				\
+	_g->words.w1 = _SHIFTL(tile, 0, 3) | _SHIFTL(palette, 8, 4) |	\
+		       _SHIFTL(cmt, 12, 2) | _SHIFTL(maskt, 14, 4) |	\
+		       _SHIFTL(shiftt, 18, 4) |_SHIFTL(cms, 22, 2) |	\
+		       _SHIFTL(masks, 24, 4) | _SHIFTL(shifts, 28, 4);	\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPSetTile(fmt, siz, line, tmem, tile, palette, cmt,		\
 		maskt, shiftt, cms, masks, shifts)			\
 {{									\
@@ -4194,6 +4416,18 @@ typedef union {
 	 _SHIFTL(shiftt, 10, 4) | _SHIFTL(cms, 8, 2) | 			\
 	 _SHIFTL(masks, 4, 4) | _SHIFTL(shifts, 0, 4))			\
 }}
+#else
+#define	gsDPSetTile(fmt, siz, line, tmem, tile, palette, cmt,		\
+		maskt, shiftt, cms, masks, shifts)			\
+{{									\
+	(_SHIFTL(G_SETTILE, 0, 8) | _SHIFTL(fmt, 8, 3) | 		\
+	 _SHIFTL(siz, 11, 2) | _SHIFTL(line, 13, 9) | _SHIFTL(tmem, 22, 9)),\
+        (_SHIFTL(tile, 0, 3) | _SHIFTL(palette, 8, 4) | 		\
+	 _SHIFTL(cmt, 12, 2) | _SHIFTL(maskt, 14, 4) | 			\
+	 _SHIFTL(shiftt, 18, 4) | _SHIFTL(cms, 22, 2) | 			\
+	 _SHIFTL(masks, 24, 4) | _SHIFTL(shifts, 28, 4))			\
+}}
+#endif
 
 /*
  *  For RCP 2.0, the maximum number of texels that can be loaded
@@ -4205,6 +4439,7 @@ typedef union {
  *  the g*DPLoadBlock macros directly, you will need to handle this
  *  tile manipulation yourself.  RJM.
  */
+#ifdef GAMECUBE
 #define gDPLoadBlock(pkt, tile, uls, ult, lrs, dxt)			\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -4215,7 +4450,20 @@ typedef union {
 			_SHIFTL((MIN(lrs,G_TX_LDBLK_MAX_TXL)), 12, 12) |\
 			_SHIFTL(dxt, 0, 12));				\
 }
+#else
+#define gDPLoadBlock(pkt, tile, uls, ult, lrs, dxt)			\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_LOADBLOCK, 0, 8) | 			\
+			_SHIFTL(uls, 8, 12) | _SHIFTL(ult, 20, 12));	\
+	_g->words.w1 = (_SHIFTL(tile, 0, 3) |				\
+			_SHIFTL((MIN(lrs,G_TX_LDBLK_MAX_TXL)), 8, 12) |\
+			_SHIFTL(dxt, 20, 12));				\
+}
+#endif
 
+#ifdef GAMECUBE
 #define gsDPLoadBlock(tile, uls, ult, lrs, dxt)				\
 {{									\
 	(_SHIFTL(G_LOADBLOCK, 24, 8) | _SHIFTL(uls, 12, 12) | 		\
@@ -4224,7 +4472,18 @@ typedef union {
 	 _SHIFTL((MIN(lrs,G_TX_LDBLK_MAX_TXL)), 12, 12) |		\
 	 _SHIFTL(dxt, 0, 12))						\
 }}
+#else
+#define gsDPLoadBlock(tile, uls, ult, lrs, dxt)				\
+{{									\
+	(_SHIFTL(G_LOADBLOCK, 0, 8) | _SHIFTL(uls, 8, 12) | 		\
+	 _SHIFTL(ult, 20, 12)),						\
+	(_SHIFTL(tile, 0, 3) | 					\
+	 _SHIFTL((MIN(lrs,G_TX_LDBLK_MAX_TXL)), 8, 12) |		\
+	 _SHIFTL(dxt, 20, 12))						\
+}}
+#endif
 
+#ifdef GAMECUBE
 #define	gDPLoadTLUTCmd(pkt, tile, count)				\
 {									\
 	Gfx *_g = (Gfx *)pkt;						\
@@ -4232,12 +4491,29 @@ typedef union {
 	_g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8);			\
 	_g->words.w1 = _SHIFTL((tile), 24, 3) | _SHIFTL((count), 14, 10);\
 }
+#else
+#define	gDPLoadTLUTCmd(pkt, tile, count)				\
+{									\
+	Gfx *_g = (Gfx *)pkt;						\
+									\
+	_g->words.w0 = _SHIFTL(G_LOADTLUT, 0, 8);			\
+	_g->words.w1 = _SHIFTL((tile), 0, 3) | _SHIFTL((count), 14, 10);\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPLoadTLUTCmd(tile, count)					\
 {{									\
 	_SHIFTL(G_LOADTLUT, 24, 8),					\
 	_SHIFTL((tile), 24, 3) | _SHIFTL((count), 14, 10)		\
 }}
+#else
+#define	gsDPLoadTLUTCmd(tile, count)					\
+{{									\
+	_SHIFTL(G_LOADTLUT, 0, 8),					\
+	_SHIFTL((tile), 0, 3) | _SHIFTL((count), 14, 10)		\
+}}
+#endif
 
 #define	gDPLoadTextureBlock(pkt, timg, fmt, siz, width, height,		\
 		pal, cms, cmt, masks, maskt, shifts, shiftt)		\
@@ -5232,6 +5508,7 @@ typedef union {
 }}
 
 /* Fraction never used in fill */
+#ifdef GAMECUBE
 #define	gDPFillRectangle(pkt, ulx, uly, lrx, lry)			\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -5240,13 +5517,33 @@ typedef union {
 			_SHIFTL((lrx), 14, 10) | _SHIFTL((lry), 2, 10));\
 	_g->words.w1 = (_SHIFTL((ulx), 14, 10) | _SHIFTL((uly), 2, 10));\
 }
+#else
+//TODO: this shouldn't have a bad cmd but endian is wrong
+#define	gDPFillRectangle(pkt, ulx, uly, lrx, lry)			\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = (_SHIFTL(G_FILLRECT, 0, 8) | 			\
+			_SHIFTL((lrx), 14, 10) | _SHIFTL((lry), 14, 10));\
+	_g->words.w1 = (_SHIFTL((ulx), 14, 10) | _SHIFTL((uly), 2, 10));\
+}
+#endif
 
+#ifdef GAMECUBE
 #define	gsDPFillRectangle(ulx, uly, lrx, lry)				\
 {{									\
 	(_SHIFTL(G_FILLRECT, 24, 8) | _SHIFTL((lrx), 14, 10) | 		\
 	 _SHIFTL((lry), 2, 10)),					\
 	(_SHIFTL((ulx), 14, 10) | _SHIFTL((uly), 2, 10))		\
 }}
+#else
+#define	gsDPFillRectangle(ulx, uly, lrx, lry)				\
+{{									\
+	(_SHIFTL(G_FILLRECT, 0, 8) | _SHIFTL((lrx), 8, 10) | 		\
+	 _SHIFTL((lry), 18, 10)),					\
+	(_SHIFTL((ulx), 14, 10) | _SHIFTL((uly), 2, 10))		\
+}}
+#endif
 
 /* like gDPFillRectangle but accepts negative arguments */
 #define	gDPScisFillRectangle(pkt, ulx, uly, lrx, lry)			\
@@ -5312,6 +5609,7 @@ typedef union {
 	 _SHIFTL(sB, 0, 8))						\
 }}
 
+#ifdef GAMECUBE
 #define gDPNoParam(pkt, cmd)						\
 {									\
 	Gfx *_g = (Gfx *)(pkt);						\
@@ -5319,6 +5617,15 @@ typedef union {
 	_g->words.w0 = _SHIFTL(cmd, 24, 8);				\
 	_g->words.w1 = 0;						\
 }
+#else
+#define gDPNoParam(pkt, cmd)						\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(cmd, 0, 8);				\
+	_g->words.w1 = 0;						\
+}
+#endif
 
 #ifdef GAMECUBE
 #define gsDPNoParam(cmd)						\
@@ -5421,6 +5728,7 @@ typedef union {
     gsImmp1(G_RDPHALF_1, (_SHIFTL(s, 16, 16) | _SHIFTL(t, 0, 16))),	\
     gsImmp1(G_RDPHALF_2, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)))
 
+#ifdef GAMECUBE
 #define gSPTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy)\
 {									\
     Gfx *_g = (Gfx *)(pkt);						\
@@ -5432,8 +5740,22 @@ typedef union {
     gImmp1(pkt, G_RDPHALF_1, (_SHIFTL(s, 16, 16) | _SHIFTL(t, 0, 16)));	\
     gImmp1(pkt, G_RDPHALF_2, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));\
 }
+#else
+#define gSPTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy)\
+{									\
+    Gfx *_g = (Gfx *)(pkt);						\
+									\
+    _g->words.w0 = (_SHIFTL(G_TEXRECT, 0, 8) | _SHIFTL(xh, 8, 12) |	\
+		    _SHIFTL(yh, 20, 12));    				\
+    _g->words.w1 = (_SHIFTL(tile, 0, 3) | _SHIFTL(xl, 8, 12) |	\
+		    _SHIFTL(yl, 20, 12));				\
+    gImmp1(pkt, G_RDPHALF_1, (_SHIFTL(s, 16, 16) | _SHIFTL(t, 0, 16)));	\
+    gImmp1(pkt, G_RDPHALF_2, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));\
+}
+#endif
 
 /* like gSPTextureRectangle but accepts negative position arguments */
+#ifdef GAMECUBE
 #define gSPScisTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy) \
 {                                                                            \
     Gfx *_g = (Gfx *)(pkt);                                                  \
@@ -5460,6 +5782,34 @@ typedef union {
     gImmp1(pkt, G_RDPHALF_2, (_SHIFTL((dsdx), 16, 16) |                      \
                               _SHIFTL((dtdy), 0, 16)));                      \
 }
+#else
+#define gSPScisTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy) \
+{                                                                            \
+    Gfx *_g = (Gfx *)(pkt);                                                  \
+                                                                             \
+    _g->words.w0 = (_SHIFTL(G_TEXRECT, 0, 8) |                              \
+                    _SHIFTL(MAX((s16)(xh),0), 8, 12) |                      \
+                    _SHIFTL(MAX((s16)(yh),0), 20, 12));                       \
+    _g->words.w1 = (_SHIFTL((tile), 0, 3) |                                 \
+                    _SHIFTL(MAX((s16)(xl),0), 8, 12) |                      \
+                    _SHIFTL(MAX((s16)(yl),0), 20, 12));                       \
+    gImmp1(pkt, G_RDPHALF_1,                                                 \
+                (_SHIFTL(((s) -                                              \
+                          (((s16)(xl) < 0) ?                                 \
+                           (((s16)(dsdx) < 0) ?                              \
+                            (MAX((((s16)(xl)*(s16)(dsdx))>>7),0)) :          \
+			    (MIN((((s16)(xl)*(s16)(dsdx))>>7),0))) : 0)),    \
+			 0, 16) |                                           \
+                 _SHIFTL(((t) -                                              \
+                          (((yl) < 0) ?                                      \
+                           (((s16)(dtdy) < 0) ?                              \
+                            (MAX((((s16)(yl)*(s16)(dtdy))>>7),0)) :          \
+                            (MIN((((s16)(yl)*(s16)(dtdy))>>7),0))) : 0)),    \
+			 16, 16)));                                           \
+    gImmp1(pkt, G_RDPHALF_2, (_SHIFTL((dsdx), 0, 16) |                      \
+                              _SHIFTL((dtdy), 16, 16)));                      \
+}
+#endif
 
 #define gsSPTextureRectangleFlip(xl, yl, xh, yh, tile, s, t, dsdx, dtdy) \
     {{(_SHIFTL(G_TEXRECTFLIP, 24, 8) | _SHIFTL(xh, 12, 12) |		\

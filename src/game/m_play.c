@@ -676,8 +676,6 @@ static int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2) {
     
     OPEN_DISP(graph1);
 
-    // TODO: something in here is making a bad display list
-
     if ((GETREG(HREG, 80) != 10) || (GETREG(HREG, 92) != 0)) {
         newdisp = NOW_POLY_OPA_DISP;
         polydisp = gfxopen(newdisp);
@@ -741,6 +739,7 @@ static int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2) {
         return 1;
     }
 
+    //Notes: Something in Actor_info_draw_actor is causing the bad DL
     if ((GETREG(HREG, 80) != 10) || (GETREG(HREG, 85) != 0)) {
         Actor_info_draw_actor(play, &play->actor_info);
         Camera2_draw(play);
