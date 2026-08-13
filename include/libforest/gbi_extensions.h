@@ -915,6 +915,19 @@ do { \
 }}
 
 #ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-1 [2] _SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13)
+ * 2-16 [15] gsSPNTriangleData1(v6, v7, v8, 0)
+ * 17-23 [7] n-1
+ * 24-31 [8] G_TRIN_INDEPEND (cmd)
+ *
+ * Word 1:
+ * 0 [1] G_VTX_MODE_5bit
+ * 4-18 [15] gsSPNTriangleData1(v0, v1, v2, 0)
+ * 19-31 [13] gsSPNTriangleData1(v3, v4, v5, 0)
+ */
 #define gSPNTrianglesInit_5b(pkt, n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
   Gfx* _g = (Gfx*)(pkt); \
@@ -922,10 +935,23 @@ do { \
   _g->words.w1 = (u32)(_SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1)); \
 }}
 #else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-7 [8] G_TRIN_INDEPEND (cmd)
+ * 8-14 [7] n-1
+ * 15-29 [15] gsSPNTriangleData1(v6, v7, v8, 0)
+ * 30-31 [2]  _SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13)
+ *
+ * Word 1:
+ * 0-12 [13] gsSPNTriangleData1(v3, v4, v5, 0)
+ * 13-27 [15] gsSPNTriangleData1(v0, v1, v2, 0)
+ * 31 [1]  G_VTX_MODE_5bit
+ */
 #define gSPNTrianglesInit_5b(pkt, n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
   Gfx* _g = (Gfx*)(pkt); \
-  _g->words.w0 = (u32)(_SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 17, 13), 0, 2)); \
+  _g->words.w0 = (u32)(_SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13), 30, 2)); \
   _g->words.w1 = (u32)(_SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 0, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 13, 15) | _SHIFTL(G_VTX_MODE_5bit, 31, 1)); \
 }}
 #endif
@@ -942,11 +968,43 @@ do { \
         (gsSPNTriangleData2(v0, v1, v2) << 1)) | G_VTX_MODE_7bit \
 }}
 
+#ifdef GAMECUBE
+/*
+ * Big Endian
+ * Word 0:
+ * 0-1 [2] _SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2)
+ * 2-16 [15] gsSPNTriangleData1(v6, v7, v8, 0)
+ * 17-31 [15] gsSPNTriangleData1(v9, v10, v11, 0)
+ *
+ * Word 1:
+ * 0 [1] G_VTX_MODE_5bit
+ * 4-18 [15] gsSPNTriangleData1(v0, v1, v2, 0)
+ * 19-31 [13] gsSPNTriangleData1(v3, v4, v5, 0)
+ */
 #define gsSPNTriangles_5b(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) \
 {{ \
     _SHIFTL(gsSPNTriangleData1(v9, v10, v11, 0), 17, 15) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 2, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
     _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
+#else
+/*
+ * Little Endian
+ * Word 0:
+ * 0-14 [15] gsSPNTriangleData1(v9, v10, v11, 0)
+ * 15-29 [15] gsSPNTriangleData1(v6, v7, v8, 0)
+ * 30-31 [2] _SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2)
+ *
+ * Word 1:
+ * 0-12 [13] gsSPNTriangleData1(v3, v4, v5, 0)
+ * 13-27 [15] gsSPNTriangleData1(v0, v1, v2, 0)
+ * 31 [1]  G_VTX_MODE_5bit
+ */
+#define gsSPNTriangles_5b(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) \
+{{ \
+    _SHIFTL(gsSPNTriangleData1(v9, v10, v11, 0), 0, 15) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 30, 2), \
+    _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13), 0, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 13, 15) | _SHIFTL(G_VTX_MODE_5bit, 31, 1) \
+}}
+#endif
 
 #ifdef GAMECUBE
 #define gsSPNTrianglesInit_5b(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
@@ -957,8 +1015,8 @@ do { \
 #else
 #define gsSPNTrianglesInit_5b(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
 {{ \
-    _SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
-    _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
+    _SHIFTL(G_TRIN_INDEPEND, 0, 8) | _SHIFTL(n-1, 8, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 15, 15) | _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 30, 2), \
+    _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 2, 13), 0, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 13, 15) | _SHIFTL(G_VTX_MODE_5bit, 30, 1) \
 }}
 #endif
 

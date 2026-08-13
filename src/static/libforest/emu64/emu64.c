@@ -4569,7 +4569,14 @@ void emu64::dl_G_TRIN() {
     while (n_faces > 0) {
         g = (Gtrin*)this->gfx_p;
 
-        if ((((Gfx*)g)->words.w1 & POLY_BITMASK) == POLY_5b) {
+        if ((
+#ifdef PCPORT
+                (((Gfx*)g)->words.w1) >> 31
+#else
+                ((Gfx*)g)->words.w1
+#endif
+                & POLY_BITMASK)
+            == POLY_5b) {
             this->gfx_p++;
             /* 5 bits per vertex index, first pass = 3 faces, consecutive passes = 4 faces */
             this->set_position3(g->f0v0, g->f0v1, g->f0v2);
@@ -4581,7 +4588,11 @@ void emu64::dl_G_TRIN() {
                 break;
 
             // issue here with the combination of the two parts
+            #ifdef PCPORT
+            int v2 = ((g->f1v2_1) | g->f1v2_0 << 2);
+            #else
             int v2 = ((g->f1v2_1 << 3) | g->f1v2_0);
+            #endif
             this->set_position3(g->f1v0, g->f1v1, v2);
             this->polygons++;
             EMU64_LOGF("gsSPNTriangleData1(%d, %d, %d, 0),\n", g->f1v0, g->f1v1, v2);
