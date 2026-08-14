@@ -2901,7 +2901,7 @@ typedef union {
 #define gsSP2Triangles(v00, v01, v02, flag0, v10, v11, v12, flag1)	\
 {{									\
 	(_SHIFTL(G_TRI2, 0, 8)|					\
-	 __gsSP1Triangle_w1f(v00, v01, v02, flag0)),			\
+	 _SHIFTL(__gsSP1Triangle_w1f(v00, v01, v02, flag0), 8, 24)),			\
 	 __gsSP1Triangle_w1f(v10, v11, v12, flag1)			\
 }}
 #endif
