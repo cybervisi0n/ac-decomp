@@ -17,7 +17,7 @@ static unsigned int s_odd_ptr_token_next = 0;
 static int s_warned_odd_ptr = 0;
 
 // This code taken from flyngmt/ACGC-PC-Port
-unsigned int pc_gbi_pack_runtime_ptr(uintptr_t addr, int is_ptr, const char* expr, const char* file, int line) {
+u32 pc_gbi_pack_runtime_ptr(u32 addr, int is_ptr, const char* expr, const char* file, int line) {
     unsigned int slot;
 
     if (!is_ptr) {
@@ -41,7 +41,7 @@ unsigned int pc_gbi_pack_runtime_ptr(uintptr_t addr, int is_ptr, const char* exp
     return PC_GBI_ODD_PTR_TOKEN_BASE + slot * 2u;
 }
 
-uintptr_t pc_gbi_unpack_runtime_ptr(unsigned int packed) {
+u32 pc_gbi_unpack_runtime_ptr(unsigned int packed) {
     unsigned int token = packed - PC_GBI_ODD_PTR_TOKEN_BASE;
 
     if (token < PC_GBI_ODD_PTR_TOKEN_COUNT * 2u && (token & 1u) == 0) {
@@ -52,7 +52,7 @@ uintptr_t pc_gbi_unpack_runtime_ptr(unsigned int packed) {
 }
 
 u32 emu64::seg2k0(u32 segadr) {
-    uintptr_t odd_ptr = pc_gbi_unpack_runtime_ptr(segadr);
+    u32 odd_ptr = pc_gbi_unpack_runtime_ptr(segadr);
     if (odd_ptr != 0) {
         return (u32)odd_ptr;
     }

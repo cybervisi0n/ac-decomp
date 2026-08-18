@@ -36,7 +36,7 @@ _GBI_STATIC_ASSERT(sizeof(void*) == sizeof(unsigned int), "GBI pointer packing r
 #ifdef __cplusplus
 extern "C" {
 #endif
-unsigned int pc_gbi_pack_runtime_ptr(u32 addr, int is_ptr, const char* expr, const char* file, int line);
+u32 pc_gbi_pack_runtime_ptr(u32 addr, int is_ptr, const char* expr, const char* file, int line);
 u32 pc_gbi_unpack_runtime_ptr(unsigned int packed);
 #ifdef __cplusplus
 }
