@@ -600,6 +600,9 @@ class emu64 : public emu64_print {
                       unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht,
                       unsigned int line_siz);
     unsigned int tmem_swap(unsigned int ofs, unsigned int blk_siz) {
+        #ifdef PCPORT
+        if (blk_siz == 0) return ofs;
+        #endif
         u16 block = ofs / blk_siz;
         return ofs ^ ((block >> 1) & 4);
     }
