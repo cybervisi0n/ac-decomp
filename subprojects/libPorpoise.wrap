@@ -1,6 +1,6 @@
 [wrap-git]
 url = https://github.com/wowjinxy/libPorpoise.git
-revision = integration/gx-textures
+revision = master
 depth = 1
 directory = libPorpoise
 
