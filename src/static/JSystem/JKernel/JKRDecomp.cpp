@@ -73,6 +73,10 @@ JKRDecompCommand* JKRDecomp::prepareCommand(u8* srcBuffer, u8* dstBuffer, u32 sr
                                             DecompCallback* callback) {
     #ifdef GAMECUBE
     JKRDecompCommand* cmd = new (JKRGetSystemHeap(), -4) JKRDecompCommand();
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRDecompCommand), -4, JKRGetSystemHeap());
+    JKRDecompCommand* cmd = new (memory) JKRDecompCommand();
+    #endif
 
     cmd->mSrcBuffer = srcBuffer;
     cmd->mDstBuffer = dstBuffer;
@@ -81,9 +85,6 @@ JKRDecompCommand* JKRDecomp::prepareCommand(u8* srcBuffer, u8* dstBuffer, u32 sr
     cmd->mCallback = callback;
 
     return cmd;
-    #else
-    return nullptr;
-    #endif
 }
 
 BOOL JKRDecomp::sendCommand(JKRDecompCommand* cmd) {

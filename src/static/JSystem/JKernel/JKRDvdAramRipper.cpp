@@ -33,7 +33,7 @@ JKRAramBlock* JKRDvdAramRipper::loadToAram(JKRDvdFile* dvdFile, u32 p1, JKRExpan
         #ifdef GAMECUBE
         delete command;
         #else
-        //TODO: we were getting a random debug break here
+        JKRHeap::free(command, nullptr);
         #endif
         return (JKRAramBlock*)-1;
     }
@@ -190,12 +190,17 @@ bool JKRDvdAramRipper::syncAram(JKRADCommand* command, int p1) {
 
     sDvdAramAsyncList.remove(&command->mLink);
     if (command->mStreamCommand) {
+        #ifdef GAMECUBE
         delete command->mStreamCommand;
+        #else
+        JKRHeap::free(command->mStreamCommand, nullptr);
+        #endif
     }
 
     #ifdef GAMECUBE
-    //TODO: Replace global delete
     delete dvdFile->mInputStream;
+    #else
+    JKRHeap::free(dvdFile->mInputStream, nullptr);
     #endif
     dvdFile->mAramThread = nullptr;
     OSUnlockMutex(&dvdFile->mAramMutex);
@@ -207,8 +212,13 @@ JKRADCommand::JKRADCommand() : mLink(this) {
 }
 
 JKRADCommand::~JKRADCommand() {
+#ifdef GAMECUBE
     if (_44 == 1)
         delete mDvdFile;
+#else
+    if (_44 == 1)
+        JKRHeap::free(mDvdFile, nullptr);
+#endif
 }
 
 static OSMutex decompMutex;

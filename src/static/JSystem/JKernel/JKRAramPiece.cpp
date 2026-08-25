@@ -8,6 +8,9 @@
 #include "dolphin/os/OSCache.h"
 #include "dolphin/os/OSMessage.h"
 #include "types.h"
+#ifdef PCPORT
+#include <new>
+#endif
 
 JSUList<JKRAMCommand> JKRAramPiece::sAramPieceCommandList;
 OSMutex JKRAramPiece::mMutex;
@@ -15,8 +18,11 @@ OSMutex JKRAramPiece::mMutex;
 JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destination, u32 length,
                                            JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
     #ifdef GAMECUBE
-    //TODO
     JKRAMCommand* cmd = new (JKRGetSystemHeap(), -4) JKRAMCommand();
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRAMCommand), -4, JKRGetSystemHeap());
+    JKRAMCommand* cmd = new (memory) JKRAMCommand();
+    #endif
     cmd->mDirection = direction;
     cmd->mSource = source;
     cmd->mDestination = destination;
@@ -25,9 +31,6 @@ JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destin
     cmd->mCallback = callback;
 
     return cmd;
-    #else
-    return nullptr;
-    #endif
 }
 
 void JKRAramPiece::sendCommand(JKRAMCommand* cmd) {
@@ -49,7 +52,8 @@ JKRAMCommand* JKRAramPiece::orderAsync(int direction, u32 source, u32 destinatio
     #ifdef GAMECUBE
     JKRAramCommand* aramCmd = new (JKRGetSystemHeap(), -4) JKRAramCommand();
     #else
-    JKRAramCommand* aramCmd = nullptr;
+    void * memory = JKRHeap::alloc(sizeof(JKRAramCommand), -4, JKRGetSystemHeap());
+    JKRAramCommand* aramCmd = new (memory) JKRAramCommand();
     #endif
     JKRAMCommand* cmd = JKRAramPiece::prepareCommand(direction, source, destination, length, aramBlock, callback);
     aramCmd->setting(TRUE, cmd);
@@ -89,7 +93,11 @@ bool JKRAramPiece::orderSync(int direction, u32 source, u32 destination, u32 len
 
     JKRAMCommand* cmd = JKRAramPiece::orderAsync(direction, source, destination, length, aramBlock, nullptr);
     bool res = JKRAramPiece::sync(cmd, FALSE);
+    #ifdef GAMECUBE
     delete cmd;
+    #else
+    JKRHeap::free(cmd, nullptr);
+    #endif
 
     JKRAramPiece::unlock();
     return res;

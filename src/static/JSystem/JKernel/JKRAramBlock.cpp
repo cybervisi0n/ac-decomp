@@ -39,12 +39,12 @@ JKRAramBlock* JKRAramBlock::allocTail(u32 size, u8 groupID, JKRAramHeap* heap) {
     u32 address = this->mAddress + this->mSize + this->mFreeSize - size;
 
     #ifdef GAMECUBE
-    //TODO
     JKRAramBlock* block = new (heap->mHeap, nullptr) JKRAramBlock(address, size, 0, groupID, true);
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRAramBlock), 0, heap->mHeap);
+    JKRAramBlock* block = new (memory) JKRAramBlock(address, size, 0, groupID, true);
+    #endif
     this->mFreeSize -= size;
     this->mLink.mPtrList->insert(this->mLink.mNext, &block->mLink);
     return block;
-    #else
-    return nullptr;
-    #endif
 }

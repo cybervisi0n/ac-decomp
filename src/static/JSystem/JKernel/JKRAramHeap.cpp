@@ -15,7 +15,6 @@ JKRAramHeap::JKRAramHeap(u32 baseAddress, u32 size) : JKRDisposer() {
     this->mTailAddress = this->mHeadAddress + this->mSize;
     this->mGroupID = 0xFF;
     #ifdef GAMECUBE
-    //TODO
     JKRAramBlock* block = new (this->mHeap, nullptr) JKRAramBlock(this->mHeadAddress, 0, this->mSize, 0xFF, false);
     #else
     void * memory = JKRHeap::alloc(sizeof(JKRAramBlock), 0, this->mHeap);

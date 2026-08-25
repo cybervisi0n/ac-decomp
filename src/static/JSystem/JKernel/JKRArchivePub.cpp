@@ -7,6 +7,9 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTAssertion.h"
 #include "types.h"
+#ifdef PCPORT
+#include <new>
+#endif
 
 // TODO: this file should emit a vtable but it doesn't, luckily JKRArchivePri
 // does that and it doesn't cause any issues
@@ -46,7 +49,6 @@ JKRArchive* JKRArchive::check_mount_already(s32 entryNum) {
 }
 
 JKRArchive* JKRArchive::mount(const char* path, EMountMode mode, JKRHeap* heap, EMountDirection direction) {
-    #ifdef GAMECUBE
     int entryNum = DVDConvertPathToEntrynum((char*)path);
     if (entryNum < 0)
         return nullptr;
@@ -63,44 +65,59 @@ JKRArchive* JKRArchive::mount(const char* path, EMountMode mode, JKRHeap* heap, 
             if (entryNum == -1)
                 archive = nullptr;
             else
+                #ifdef GAMECUBE
                 archive = new (heap, alignment) JKRMemArchive(entryNum, direction);
+                #else
+                archive = new (JKRHeap::alloc(sizeof(JKRMemArchive), alignment, heap)) JKRMemArchive(entryNum, direction);
+                #endif
             break;
         case MOUNT_ARAM:
+            #ifdef GAMECUBE
             archive = new (heap, alignment) JKRAramArchive(entryNum, direction);
+            #else
+            archive = new (JKRHeap::alloc(sizeof(JKRAramArchive), alignment, heap)) JKRAramArchive(entryNum, direction);
+            #endif
             break;
         case MOUNT_DVD:
+            #ifdef GAMECUBE
             archive = new (heap, alignment) JKRDvdArchive(entryNum, direction);
+            #else
+            archive = new (JKRHeap::alloc(sizeof(JKRDvdArchive), alignment, heap)) JKRDvdArchive(entryNum, direction);
+            #endif
             break;
         case MOUNT_COMP:
+            #ifdef GAMECUBE
             archive = new (heap, alignment) JKRCompArchive(entryNum, direction);
+            #else
+            archive = new (JKRHeap::alloc(sizeof(JKRCompArchive), alignment, heap)) JKRCompArchive(entryNum, direction);
+            #endif
             break;
     }
     if (archive != nullptr && archive->getMountMode() == UNKNOWN_MOUNT_MODE) {
+        #ifdef GAMECUBE
         delete archive;
+        #else
+        JKRHeap::free(archive, nullptr);
+        #endif
         archive = nullptr;
     }
     return archive;
-    #else
-    //TODO
-    return nullptr;
-    #endif
 }
 
 JKRArchive* JKRArchive::mount(void* p1, JKRHeap* heap, EMountDirection mountDirection) {
-    #ifdef GAMECUBE
-    //TODO: Memory
     JKRArchive* archive = check_mount_already((s32)p1, heap);
     if (archive != nullptr) {
         return archive;
     }
+    #ifdef GAMECUBE
     return new (heap, (mountDirection == MOUNT_DIRECTION_HEAD) ? 4 : -4) JKRMemArchive(p1, 0xFFFF, MBF_0);
     #else
-    return nullptr;
+    void * memory = JKRHeap::alloc(sizeof(JKRMemArchive), (mountDirection == MOUNT_DIRECTION_HEAD) ? 4 : -4, heap);
+    return new (memory) JKRMemArchive(p1, 0xFFFF, MBF_0);
     #endif
 }
 
 JKRArchive* JKRArchive::mount(s32 entryNum, EMountMode mountMode, JKRHeap* heap, EMountDirection mountDirection) {
-    #ifdef GAMECUBE
     JKRArchive* archive = check_mount_already(entryNum, heap);
     if (archive) {
         return archive;
@@ -109,27 +126,44 @@ JKRArchive* JKRArchive::mount(s32 entryNum, EMountMode mountMode, JKRHeap* heap,
         JKRArchive* archive;
         switch (mountMode) {
             case MOUNT_MEM:
+                #ifdef GAMECUBE
                 archive = new (heap, i) JKRMemArchive(entryNum, mountDirection);
+                #else
+                archive = new (JKRHeap::alloc(sizeof(JKRMemArchive), i, heap)) JKRMemArchive(entryNum, mountDirection);
+                #endif
                 break;
             case MOUNT_ARAM:
+                #ifdef GAMECUBE
                 archive = new (heap, i) JKRAramArchive(entryNum, mountDirection);
+                #else
+                archive = new (JKRHeap::alloc(sizeof(JKRAramArchive), i, heap)) JKRAramArchive(entryNum, mountDirection);
+                #endif
                 break;
             case MOUNT_DVD:
+                #ifdef GAMECUBE
                 archive = new (heap, i) JKRDvdArchive(entryNum, mountDirection);
+                #else
+                archive = new (JKRHeap::alloc(sizeof(JKRDvdArchive), i, heap)) JKRDvdArchive(entryNum, mountDirection);
+                #endif
                 break;
             case MOUNT_COMP:
+                #ifdef GAMECUBE
                 archive = new (heap, i) JKRCompArchive(entryNum, mountDirection);
+                #else
+                archive = new (JKRHeap::alloc(sizeof(JKRCompArchive), i, heap)) JKRCompArchive(entryNum, mountDirection);
+                #endif
                 break;
         }
         if (archive != nullptr && archive->getMountMode() == UNKNOWN_MOUNT_MODE) {
+            #ifdef GAMECUBE
             delete archive;
+            #else
+            JKRHeap::free(archive, nullptr);
+            #endif
             archive = nullptr;
         }
         return archive;
     }
-    #else
-    return nullptr;
-    #endif
 }
 
 bool JKRArchive::becomeCurrent(const char* path) {
@@ -319,6 +353,8 @@ JKRFileFinder* JKRArchive::getFirstFile(const char* path) const {
         #ifdef GAMECUBE
         return new (JKRGetSystemHeap(), 0)
             JKRArcFinder(const_cast<JKRArchive*>(this), dirEntry->mFirstIdx, dirEntry->mNum);
+        #else
+        return new (JKRHeap::alloc(sizeof(JKRArcFinder), 0, JKRGetSystemHeap())) JKRArcFinder(const_cast<JKRArchive*>(this), dirEntry->mFirstIdx, dirEntry->mNum);
         #endif
     }
     return nullptr;

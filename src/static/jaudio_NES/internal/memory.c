@@ -1155,6 +1155,10 @@ int Nas_Init_Single(s32 a, s32 b) {
     }
     AG.emem_persistent_wave_heap.num_entries = 0;
     AG.emem_temporary_wave_heap.num_entries = 0;
+
+    #ifdef PCPORT
+    return 0;
+    #endif
 }
 
 /*

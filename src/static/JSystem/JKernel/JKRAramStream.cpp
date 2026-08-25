@@ -106,10 +106,7 @@ s32 JKRAramStream::writeToAram(JKRAramStreamCommand* command) {
 
             s32 readLength = command->mStream->read(buffer, length);
 
-            #ifdef GAMECUBE
-            //TODO Memory
             JKRAramPcs(0, (u32)buffer, destination, length, nullptr);
-            #endif
             dstSize -= length;
             writtenLength += length;
             destination += length;
@@ -134,8 +131,11 @@ s32 JKRAramStream::writeToAram(JKRAramStreamCommand* command) {
 JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream* stream, JKRAramBlock* addr, u32 size,
                                                               u32 offset) {
     #ifdef GAMECUBE
-    //TODO: removed global new
     JKRAramStreamCommand* command = new (JKRGetSystemHeap(), -4) JKRAramStreamCommand();
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRAramStreamCommand), -4, JKRGetSystemHeap());
+    JKRAramStreamCommand* command = new (memory) JKRAramStreamCommand();
+    #endif
     command->type = JKRAramStreamCommand::ECT_WRITE;
     command->mAddress = (u32)addr;
     command->mSize = size;
@@ -149,16 +149,16 @@ JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream
     OSInitMessageQueue(&command->mMessageQueue, &command->mMessage, 1);
     OSSendMessage(&sMessageQueue, command, OS_MESSAGE_BLOCK);
     return command;
-    #else
-    return nullptr;
-    #endif
 }
 
 JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream* stream, u32 addr, u32 size,
                                                               u32 offset) {
     #ifdef GAMECUBE
-    //TODO: Removed global new
     JKRAramStreamCommand* command = new (JKRGetSystemHeap(), -4) JKRAramStreamCommand();
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRAramStreamCommand), -4, JKRGetSystemHeap());
+    JKRAramStreamCommand* command = new (memory) JKRAramStreamCommand();
+    #endif
     command->type = JKRAramStreamCommand::ECT_WRITE;
     command->mAddress = addr;
     command->mSize = size;
@@ -172,9 +172,6 @@ JKRAramStreamCommand* JKRAramStream::write_StreamToAram_Async(JSUFileInputStream
     OSInitMessageQueue(&command->mMessageQueue, &command->mMessage, 1);
     OSSendMessage(&sMessageQueue, command, OS_MESSAGE_BLOCK);
     return command;
-    #else
-    return nullptr;
-    #endif
 }
 
 JKRAramStreamCommand* JKRAramStream::sync(JKRAramStreamCommand* command, BOOL isNonBlocking) {
@@ -207,11 +204,7 @@ void JKRAramStream::setTransBuffer(u8* buffer, u32 bufferSize, JKRHeap* heap) {
     transHeap = nullptr;
 
     if (buffer) {
-        #ifdef GAMECUBE
         transBuffer = (u8*)ALIGN_NEXT((u32)buffer, 0x20);
-        #else
-        transBuffer = (u8*)ALIGN_NEXT((u64)buffer, 0x20);
-        #endif
     }
 
     if (bufferSize) {

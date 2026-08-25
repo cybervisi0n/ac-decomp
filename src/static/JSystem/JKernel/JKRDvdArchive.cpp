@@ -7,6 +7,9 @@
 #include "JSystem/JKernel/JKRDvdRipper.h"
 #include "JSystem/JSystem.h"
 #include "JSystem/JUtility/JUTAssertion.h"
+#ifdef PCPORT
+#include <new>
+#endif
 
 JKRDvdArchive::JKRDvdArchive() : JKRArchive() {
 }
@@ -37,7 +40,11 @@ JKRDvdArchive::~JKRDvdArchive() {
         }
 
         if (mDvdFile) {
+            #ifdef GAMECUBE
             delete mDvdFile;
+            #else
+            JKRHeap::free(mDvdFile, nullptr);
+            #endif
         }
 
         sVolumeList.remove(&mFileLoaderLink);
@@ -57,8 +64,10 @@ bool JKRDvdArchive::open(long entryNum) {
     mStrTable = nullptr;
 
     #ifdef GAMECUBE
-    //TODO
     mDvdFile = new (JKRGetSystemHeap(), 0) JKRDvdFile(entryNum);
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRDvdFile), 0, JKRGetSystemHeap());
+    mDvdFile = new (memory) JKRDvdFile(entryNum);
     #endif
     if (mDvdFile == nullptr) {
         mMountMode = 0;

@@ -61,20 +61,11 @@ JKRAram::JKRAram(u32 bufSize, u32 graphSize, s32 priority) : JKRThread(0x4000, 0
         mUserMemorySize = (aramSize - (bufSize + graphSize) - aramBase);
     }
 
-    #ifdef GAMECUBE
     mAudioMemoryPtr = ARAlloc(mAudioMemorySize);
     mGraphMemoryPtr = ARAlloc(mGraphMemorySize);
-    #else
-    mAudioMemoryPtr = malloc(mAudioMemorySize);
-    mGraphMemoryPtr = malloc(mGraphMemorySize);
-    #endif
 
     if (mUserMemorySize != 0) { // ternary?
-        #ifdef GAMECUBE
         mUserMemoryPtr = ARAlloc(mUserMemorySize);
-        #else
-        mUserMemoryPtr = malloc(mUserMemorySize);
-        #endif
     } else {
         mUserMemoryPtr = nullptr;
     }
@@ -102,7 +93,11 @@ void* JKRAram::run() {
         OSReceiveMessage(&sMessageQueue, (OSMessage*)&message, OS_MESSAGE_BLOCK);
         result = message->mActive;
         command = (JKRAMCommand*)message->mArg;
+        #ifdef GAMECUBE
         delete message;
+        #else
+        JKRHeap::free(message, nullptr);
+        #endif
 
         switch (result) {
             case 1:
@@ -168,15 +163,16 @@ JKRAramBlock* JKRAram::mainRamToAram(u8* buf, u32 address, u32 alignedSize, JKRE
         void* allocatedMem = JKRAllocFromHeap(heap, fileSize, -32);
         if (allocatedMem == nullptr) {
             if (block != nullptr) {
+                #ifdef GAMECUBE
                 delete block;
+                #else
+                JKRHeap::free(block, nullptr);
+                #endif
             }
             block = nullptr;
         } else {
             JKRDecompress(buf, (u8*)allocatedMem, fileSize, 0);
-            #ifdef GAMECUBE
-            //TODO Memory
             JKRAramPcs(0, (u32)allocatedMem, address, alignedSize, block);
-            #endif
             JKRFreeToHeap(heap, allocatedMem);
             block = block == nullptr ? (JKRAramBlock*)-1 : block;
         }
@@ -190,10 +186,7 @@ JKRAramBlock* JKRAram::mainRamToAram(u8* buf, u32 address, u32 alignedSize, JKRE
             address = block->getAddress();
         }
 
-        #ifdef GAMECUBE
-        //TODO memory
         JKRAramPcs(0, (u32)buf, address, alignedSize, block);
-        #endif
         block = block == nullptr ? (JKRAramBlock*)-1 : block;
     }
     return block;
@@ -230,16 +223,9 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
     u32 expandSize;
     if (expandSwitch == EXPAND_SWITCH_DECOMPRESS) {
         u8 buffer[64];
-        #ifdef GAMECUBE
         u8* bufPtr = (u8*)ALIGN_NEXT((u32)buffer, 32);
         JKRAramPcs(1, address, (u32)bufPtr, sizeof(buffer) / 2,
                    nullptr); // probably change sizeof(buffer) / 2 to 32
-        #else
-        u8* bufPtr = (u8*)ALIGN_NEXT((u64)buffer, 32);
-        //TODO
-        //JKRAramPcs(1, address, (u64)bufPtr, sizeof(buffer) / 2,
-        //           nullptr);
-        #endif
         compression = JKRCheckCompressed(bufPtr);
         expandSize = JKRDecompExpandSize(bufPtr);
     }
@@ -267,10 +253,7 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
         if (szpSpace == nullptr) {
             return nullptr;
         } else {
-            #ifdef GAMECUBE
-            //TODO: Memory
             JKRAramPcs(1, address, (u32)szpSpace, srcSize, nullptr);
-            #endif
             if (p5 != 0 && p5 < expandSize)
                 expandSize = p5;
 
@@ -297,10 +280,7 @@ u8* JKRAram::aramToMainRam(u32 address, u8* buf, u32 srcSize, JKRExpandSwitch ex
             return nullptr;
         } else {
             changeGroupIdIfNeed(buf, id);
-            #ifdef GAMECUBE
-            //TODO
             JKRAramPcs(1, address, (u32)buf, srcSize, nullptr);
-            #endif
             if (pSize != nullptr) {
                 *pSize = srcSize;
             }
@@ -506,10 +486,7 @@ static u8* firstSrcData() {
     u32 maxSize = (szpEnd - szpBuf);
     u32 transSize = MIN(transLeft, maxSize);
 
-    #ifdef GAMECUBE
-    //TODO Memory
     JKRAramPcs(1, srcAddress + srcOffset, (u32)buf, ALIGN_NEXT(transSize, 32), nullptr);
-    #endif
 
     srcOffset += transSize;
     transLeft -= transSize;
@@ -531,10 +508,7 @@ u8* nextSrcData(u8* current) {
         transSize = transLeft;
     JUT_ASSERT(transSize > 0);
 
-    #ifdef GAMECUBE
-    //TODO Memory
     JKRAramPcs(1, (u32)(srcAddress + srcOffset), ((u32)dest + left), ALIGN_NEXT(transSize, 0x20), nullptr);
-    #endif
     srcOffset += transSize;
     transLeft -= transSize;
 

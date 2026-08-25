@@ -7,6 +7,10 @@
 #include "JSystem/JKernel/JKRDvdRipper.h"
 #include "JSystem/JSystem.h"
 #include "JSystem/JUtility/JUTAssertion.h"
+#ifdef PCPORT
+#include <new>
+#include <simulator/byteswap.h>
+#endif
 
 JKRCompArchive::JKRCompArchive(long entryNum, EMountDirection mountDirection) : JKRArchive(entryNum, MOUNT_COMP) {
     mMountDirection = mountDirection;
@@ -64,8 +68,10 @@ bool JKRCompArchive::open(long entryNum) {
     mStrTable = nullptr;
 
     #ifdef GAMECUBE
-    //TODO
     mDvdFile = new (JKRGetSystemHeap(), 0) JKRDvdFile(entryNum);
+    #else
+    void * memory = JKRHeap::alloc(sizeof(JKRDvdFile), 0, JKRGetSystemHeap());
+    mDvdFile = new (memory) JKRDvdFile(entryNum);
     #endif
     if (mDvdFile == nullptr) {
         mMountMode = 0;
@@ -80,6 +86,16 @@ bool JKRCompArchive::open(long entryNum) {
 
         JKRDvdToMainRam(entryNum, (u8*)arcHeader, EXPAND_SWITCH_DECOMPRESS, 32, nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 0,
                         &mCompression);
+
+        #ifdef PCPORT
+        arcHeader->signature = bswap_32(arcHeader->signature);
+        arcHeader->file_length = bswap_32(arcHeader->file_length);
+        arcHeader->header_length = bswap_32(arcHeader->header_length);
+        arcHeader->file_data_offset = bswap_32(arcHeader->file_data_offset);
+        arcHeader->file_data_length = bswap_32(arcHeader->file_data_length);
+        arcHeader->_14 = bswap_32(arcHeader->_14);
+        arcHeader->_18 = bswap_32(arcHeader->_18);
+        #endif
 
         mSizeOfMemPart = arcHeader->_14;
         mSizeOfAramPart = arcHeader->_18;
@@ -100,6 +116,15 @@ bool JKRCompArchive::open(long entryNum) {
                                     JKRDvdRipper::ALLOC_DIR_TOP, 0x20, nullptr);
                     _60 = (u32)mArcInfoBlock + arcHeader->file_data_offset;
 
+                    #ifdef PCPORT
+                    mArcInfoBlock->num_nodes = bswap_32(mArcInfoBlock->num_nodes);
+                    mArcInfoBlock->node_offset = bswap_32(mArcInfoBlock->node_offset);
+                    mArcInfoBlock->num_file_entries = bswap_32(mArcInfoBlock->num_file_entries);
+                    mArcInfoBlock->file_entry_offset = bswap_32(mArcInfoBlock->file_entry_offset);
+                    mArcInfoBlock->string_table_length = bswap_32(mArcInfoBlock->string_table_length);
+                    mArcInfoBlock->string_table_offset = bswap_32(mArcInfoBlock->string_table_offset);
+                    #endif
+
                     if (mSizeOfAramPart != 0) {
                         mAramPart = JKRAllocFromAram(mSizeOfAramPart, JKRAramHeap::Head);
                         if (mAramPart == nullptr) {
@@ -115,6 +140,25 @@ bool JKRCompArchive::open(long entryNum) {
                     mFileEntries = (SDIFileEntry*)((u32)mArcInfoBlock + mArcInfoBlock->file_entry_offset);
                     mStrTable = (const char*)((u32)mArcInfoBlock + mArcInfoBlock->string_table_offset);
                     _68 = arcHeader->header_length + arcHeader->file_data_offset;
+
+                    #ifdef PCPORT
+                    for(int i = 0; i < mArcInfoBlock->num_nodes; i++) {
+                        auto& dirEntry = mDirectories[i];
+                        dirEntry.mType = bswap_32(dirEntry.mType);
+                        dirEntry.mOffset = bswap_32(dirEntry.mOffset);
+                        dirEntry._08 = bswap_16(dirEntry._08);
+                        dirEntry.mNum = bswap_16(dirEntry.mNum);
+                        dirEntry.mFirstIdx = bswap_32(dirEntry.mFirstIdx);
+                    }
+                    for(int i=0; i < mArcInfoBlock->num_file_entries; i++) {
+                        auto& fileEntry = mFileEntries[i];
+                        fileEntry.mFileID = bswap_16(fileEntry.mFileID);
+                        fileEntry.mHash = bswap_16(fileEntry.mHash);
+                        fileEntry.mFlag = bswap_32(fileEntry.mFlag);
+                        fileEntry.mDataOffset = bswap_32(fileEntry.mDataOffset);
+                        fileEntry.mSize = bswap_32(fileEntry.mSize);
+                    }
+                    #endif
                 }
                 break;
 

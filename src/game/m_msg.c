@@ -9,6 +9,9 @@
 #include "m_bgm.h"
 #include "libforest/emu64/emu64_wrapper.h"
 #include "sys_matrix.h"
+#ifdef PCPORT
+#include <simulator/byteswap.h>
+#endif
 
 static u32 Msg_table_rom_start = 0;
 static u32 Msg_rom_start = 0;
