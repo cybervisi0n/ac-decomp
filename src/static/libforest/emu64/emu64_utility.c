@@ -6,6 +6,7 @@
 #include "MSL_C/w_math.h"
 #else
 #include <math.h>
+#include <simulator/sim_memory.h>
 #endif
 
 #ifdef PCPORT
@@ -70,10 +71,9 @@ u32 emu64::seg2k0(u32 segadr) {
     }
 
     /* Check if address falls within the executable image (BSS/data/code). */
-    //TODO:
-    //if (segadr >= pc_image_base && segadr < pc_image_end) {
-    //    return segadr;
-    //}
+    if (segadr >= SIM_Memory_GetExeStart() && segadr < SIM_Memory_GetExeEnd()) {
+        //return segadr;
+    }
 
     u32 seg = (segadr >> 24) & 0xF;
     u32 offset = segadr & 0xFFFFFF;

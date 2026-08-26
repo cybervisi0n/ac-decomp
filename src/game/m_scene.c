@@ -468,9 +468,30 @@ static void set_item_info(GAME_PLAY* play, Scene_Word_Data_FieldCt_c* field_ct) 
 }
 
 static void Scene_Proc_Field_ct(GAME_PLAY* play, Scene_Word_u* scene_data) {
+#ifdef PCPORT
+    /* mSc_DATA_FIELDCT packs (bg_disp_size<<16 | room_type<<8 | draw_type) into misc.param3.
+       On GC (big-endian), reading through field_ct struct gives correct values.
+       On LE x86, the byte order is wrong. Extract from param3 directly. */
+    u32 packed = scene_data->misc.param3;
+    u16 bg_disp_size = (packed >> 16) & 0xFFFF;
+    u8 room_type = (packed >> 8) & 0xFF;
+    u8 draw_type = packed & 0xFF;
+    u8 bg_num = scene_data->misc.param1;
+    Scene_Word_Data_FieldCt_c fixed_ct;
+    fixed_ct.type = scene_data->misc.type;
+    fixed_ct.item_type = scene_data->misc.param0;
+    fixed_ct.bg_num = bg_num;
+    fixed_ct.bg_disp_size = bg_disp_size;
+    fixed_ct.room_type = room_type;
+    fixed_ct.draw_type = draw_type;
+    mFM_SetFieldInitData(bg_num, bg_disp_size);
+    set_item_info(play, &fixed_ct);
+    Common_Set(field_draw_type, draw_type);
+#else
     mFM_SetFieldInitData(scene_data->field_ct.bg_num, scene_data->field_ct.bg_disp_size);
     set_item_info(play, &scene_data->field_ct);
     Common_Set(field_draw_type, scene_data->field_ct.draw_type);
+#endif
     Common_Set(game_started, FALSE);
     Common_Set(in_initial_block, TRUE);
     Common_Set(sunlight_flag, TRUE);

@@ -13,6 +13,21 @@
 #include "m_bg_tex.h"
 #include "m_house.h"
 #include "m_bgm.h"
+#ifdef PCPORT
+#include "simulator/byteswap.h"
+/* Byte-swap all u16 fields in FG data loaded from big-endian ARAM. */
+static void mFM_ByteSwapFGData(mFM_fg_data_c* data, int count) {
+    int ei, zi, xi;
+    for (ei = 0; ei < count; ei++) {
+        data[ei].fg_id = bswap_16(data[ei].fg_id);
+        for (zi = 0; zi < UT_Z_NUM; zi++) {
+            for (xi = 0; xi < UT_X_NUM; xi++) {
+                data[ei].items[zi][xi] = bswap_16(data[ei].items[zi][xi]);
+            }
+        }
+    }
+}
+#endif
 
 // clang-format off
 static mActor_name_t l_fg_outer_fill[UT_Z_NUM * UT_X_NUM] = {
@@ -509,6 +524,11 @@ static int mFM_SetBlockInfo(mFM_fdinfo_c* field_info, mFM_combination_c* combi_t
         fg_data_entries = size / sizeof(mFM_fg_data_c);
 
         _JW_GetResourceAram(JW_GetAramAddress(file_id), (u8*)fg_data, align_size);
+
+#ifdef PCPORT
+        mFM_ByteSwapFGData(fg_data, fg_data_entries);
+#endif
+
         combi_info_p = data_combi_table;
         sorted_bg_data = (mFM_bg_data_c**)zelda_malloc(mFM_BG_ID_MAX * sizeof(mFM_bg_data_c**));
 
@@ -1469,6 +1489,10 @@ extern void mFM_InitFgCombiSaveData(GAME* game) {
     fg_data_num = fg_datasize / sizeof(mFM_fg_data_c);
     _JW_GetResourceAram(JW_GetAramAddress(RESOURCE_FGDATA), (u8*)fg_data_p, fg_datasize_align);
 
+#ifdef PCPORT
+    mFM_ByteSwapFGData(fg_data_p, fg_data_num);
+#endif
+
     if (game != NULL) {
         sorted_fg_data_list = (mFM_fg_data_c**)gamealloc_malloc(game_alloc_p, mFM_FG_NUM * sizeof(mFM_fg_data_c*));
     } else {
@@ -1802,6 +1826,10 @@ extern void mFM_SetIslandNpcRoomData(GAME* game, int malloc_flag) {
     if (fgnpc_data_p != NULL) {
         fgnpc_data_num = fgnpc_size / sizeof(mFM_fg_data_c);
         _JW_GetResourceAram(JW_GetAramAddress(RESOURCE_FGNPCDATA), (u8*)fgnpc_data_p, fgnpc_size_align);
+
+#ifdef PCPORT
+        mFM_ByteSwapFGData(fgnpc_data_p, fgnpc_data_num);
+#endif
 
         if (malloc_flag == TRUE) {
             sorted_fgnpc_data_list = (mFM_fg_data_c**)zelda_malloc(mFM_FG_NPC_NUM * sizeof(mFM_fg_data_c*));
