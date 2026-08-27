@@ -76,6 +76,12 @@ if(build_target == 'linux32')
     ]
 endif
 
+if(build_target == 'win32')
+    animalcrossing_link_args += [
+        '-Wl,--image-base,0x10000000'
+    ]
+endif
+
 if(get_option('address_sanitizer') == true)
     animalcrossing_link_args += [
         '-fsanitize=address'

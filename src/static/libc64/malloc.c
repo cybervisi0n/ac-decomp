@@ -13,6 +13,16 @@ extern void free(void* ptr) {
 }
 #endif
 
+#ifdef PCPORT
+void* animalcrossing_malloc(size_t size) {
+    return __osMalloc(&malloc_arena, size);
+}
+
+void animalcrossing_free(void* ptr) {
+    __osFree(&malloc_arena, ptr);
+}
+#endif
+
 extern void DisplayArena(void) {
     __osDisplayArena(&malloc_arena);
 }
