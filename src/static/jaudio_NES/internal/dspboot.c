@@ -3,6 +3,9 @@
 #include "dolphin/dsp.h"
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
+#ifdef LIBPORPOISE_PORT
+#include "simulator/sim_memory.h"
+#endif
 
 u16 jdsp[] ATTRIBUTE_ALIGN(32) = {
     0x029F, 0x0010, 0x0000, 0x0000, 0x02FF, 0x0000, 0x02FF, 0x0000, 0x02FF, 0x0000, 0x02FF, 0x0000, 0x02FF, 0x0000,
@@ -363,10 +366,18 @@ extern void DSPInit2 (DSPTaskInfo2* task){
 void DspBoot(){
     DSPTaskInfo2 task;
 
+    #ifdef PCPORT
+    task.iram_mmem_addr = (void*)SIM_Memory_CreateMemoryHandle(jdsp);
+    #else
     task.iram_mmem_addr = jdsp;
+    #endif
     task.iram_length = sizeof(jdsp);
     task.iram_addr = 0;
+    #ifdef PCPORT
+    task.dram_mmem_addr = (void*)SIM_Memory_CreateMemoryHandle(jdsp);
+    #else
     task.dram_mmem_addr = jdsp;
+    #endif
     task.dram_length = 0x100;
     task.dram_addr = 0;
 

@@ -91,10 +91,7 @@ static void __DspSync(__OSInterrupt interrupt, OSContext* context) {
 
 static void __DspReg(void) {
     BOOL enable = OSDisableInterrupts();
-    #ifdef GAMECUBE
-    //TODO
-    __OSSetInterruptHandler(OS_INTR_DSP_DSP, &__DspSync);
-    #endif
+    __OSSetInterruptHandler(__OS_INTERRUPT_DSP_DSP, &__DspSync);
     OSRestoreInterrupts(enable);
 }
 
@@ -114,17 +111,23 @@ static void* audioproc(void* param) {
     AIRegisterDMACallback(&AudioSync);
     AIStartDMA();
 
-    #ifdef GAMECUBE
-    //TODO
     while (TRUE) {
         OSMessage msg;
 
         OSReceiveMessage(&audioproc_mq, &msg, OS_MESSAGE_BLOCK);
         switch ((int)msg) {
+            #ifdef PCPORT
+            case 0:
+            #else
             case (int)AUDIOPROC_MESSAGE_UPDATE_DAC:
+            #endif
                 Jac_UpdateDAC();
                 break;
+            #ifdef PCPORT
+            case 1:
+            #else
             case (int)AUDIOPROC_MESSAGE_DSP_SYNC:
+            #endif
                 if (intcount == 0) {
                     return;
                 }
@@ -140,15 +143,22 @@ static void* audioproc(void* param) {
                 }
 
                 break;
+            #ifdef PCPORT
+            case 2:
+            #else
             case (int)AUDIOPROC_MESSAGE_NEOS_SYNC:
+            #endif
                 CpuFrameEnd();
                 break;
+            #ifdef PCPORT
+            case 3:
+            #else
             case (int)AUDIOPROC_MESSAGE_3:
+            #endif
                 OSExitThread(NULL);
                 break;
         }
     }
-    #endif
 }
 
 static BOOL priority_set = FALSE;

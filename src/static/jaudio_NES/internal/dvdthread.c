@@ -430,9 +430,6 @@ static char dvd_file[32][64];
 static u32 dvd_entrynum[32];
 
 extern s32 Jac_RegisterFastOpen(char* file) {
-#ifndef GAMECUBE
-    return -1;
-#endif
     int num;
     if (strlen(file) > 63) {
         return -1;

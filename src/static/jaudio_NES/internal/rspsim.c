@@ -90,8 +90,6 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
         init = FALSE;
     }
 
-    #ifdef GAMECUBE
-    //TODO
     for (i = 0; i < allTasks; i++) {
         cmdLo = pTaskCmds[1];
         cmdHi = pTaskCmds[0];
@@ -200,9 +198,15 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
             }
 
             case A_CMD_CLEARBUFF: // A_CLEARBUFF
+                #ifdef PCPORT
+                {
+                #endif
                 u16 addr = cmdHi & 0xFFFF;
                 u16 size = cmdLo & 0xFFFF;
                 Jac_bzero(&DMEM[addr], size);
+                #ifdef PCPORT
+                }
+                #endif
                 break;
 
             case A_CMD_RESAMPLE: { // A_RESAMPLE
@@ -673,9 +677,6 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
         }
     }
     return allTasks;
-    #else
-    return 0;
-    #endif
 }
 
 static void Jac_Resample16(
