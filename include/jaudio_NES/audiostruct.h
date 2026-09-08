@@ -42,10 +42,17 @@ typedef struct group_ group;
 typedef struct AudioPort_ {
     union {
         struct {
+#ifdef PCPORT
+            /* 0x00 */ u8 arg2;
+            /* 0x01 */ u8 arg1;
+            /* 0x02 */ u8 arg0;
+            /* 0x03 */ u8 opcode;
+#else
             /* 0x00 */ u8 opcode;
             /* 0x01 */ u8 arg0;
             /* 0x02 */ u8 arg1;
             /* 0x03 */ u8 arg2;
+#endif
         } command;
         /* 0x00 */ u32 raw_cmd;
     };
@@ -108,12 +115,21 @@ typedef struct adpcmbook_ {
 } adpcmbook;
 
 typedef struct smzwavetable_ {
+#ifdef PCPORT
+    /* 0x00 */ u32 size : 24;
+    /* 0x00 */ u32 is_relocated : 1;
+    /* 0x00 */ u32 bit26 : 1;
+    /* 0x00 */ u32 medium : 2;
+    /* 0x00 */ u32 codec : 3;
+    /* 0x00 */ u32 bit31 : 1;
+#else
     /* 0x00 */ u32 bit31 : 1;
     /* 0x00 */ u32 codec : 3;
     /* 0x00 */ u32 medium : 2;
     /* 0x00 */ u32 bit26 : 1;
     /* 0x00 */ u32 is_relocated : 1;
     /* 0x00 */ u32 size : 24;
+#endif
     /* 0x04 */ u8* sample;
     /* 0x08 */ adpcmloop* loop;
     /* 0x0C */ adpcmbook* book;
@@ -139,12 +155,21 @@ typedef struct phase_ {
     //     /* 0x00 */ u8 asU8;
     // };
 
+#ifdef PCPORT
+    /* 0x00 */ u8 strong_reverb_left : 1;
+    /* 0x00 */ u8 strong_reverb_right : 1;
+    /* 0x00 */ u8 strong_left : 1;
+    /* 0x00 */ u8 strong_right : 1;
+    /* 0x00 */ u8 type : 2;
+    /* 0x00 */ u8 _unused : 2;
+#else
     /* 0x00 */ u8 _unused : 2;
     /* 0x00 */ u8 type : 2;
     /* 0x00 */ u8 strong_right : 1;
     /* 0x00 */ u8 strong_left : 1;
     /* 0x00 */ u8 strong_reverb_right : 1;
     /* 0x00 */ u8 strong_reverb_left : 1;
+#endif
 } phase;
 
 /* sizeof(sweep) == 0x0C */

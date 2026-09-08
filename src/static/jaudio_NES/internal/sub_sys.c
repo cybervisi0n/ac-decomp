@@ -233,13 +233,21 @@ extern void Nap_SetS32(u32 cmd, s32 param) {
 }
 
 extern void Nap_SetS8(u32 cmd, s8 param) {
+#ifdef PCPORT
+    u32 mod_param = (u8)param;
+#else
     u32 mod_param = (param << 24);
+#endif
 
     Nap_PortSet(cmd, (s32*)&mod_param);
 }
 
 extern void Nap_SetU16(u32 cmd, u16 param) {
+#ifdef PCPORT
+    u32 mod_param = param;
+#else
     u32 mod_param = (param << 16);
+#endif
 
     Nap_PortSet(cmd, (s32*)&mod_param);
 }
