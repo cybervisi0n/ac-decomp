@@ -1110,6 +1110,11 @@ static s32 __SetNote(note* n, s32 cmd) {
 
     if (subtrack->gate_time_random_variance != 0) {
         /* @BUG - should be gate_time_random_variance (longstanding bug) */
+        #ifdef PCPORT
+        if(subtrack->velocity_random_variance == 0) {
+            subtrack->velocity_random_variance = 1;
+        }
+        #endif
         int_delta = (n->gate_delay * (AG.audio_random_seed % subtrack->velocity_random_variance)) / 100;
         if (AG.audio_random_seed & 0x4000) {
             int_delta = -int_delta;
