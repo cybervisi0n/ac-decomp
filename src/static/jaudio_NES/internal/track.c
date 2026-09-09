@@ -741,6 +741,9 @@ static s32 __Command_Seq(note* n) {
                 break;
             case NOTE_CMD_SET_ADSR_ENVELOPE_DECAY_IDX:
                 n->adsr_env.envelope = (envdat*)(grp->seq_data + (Nas_ReadWordData(m) & 0xFFFF));
+#ifdef PCPORT
+                pc_swap_envdat_seq(n->adsr_env.envelope);
+#endif
                 // fallthrough 0xCB -> 0xCF
             case NOTE_CMD_SET_ADSR_DECAY_IDX:
                 n->adsr_env.decay_idx = Nas_ReadByteData(m);
@@ -1352,6 +1355,9 @@ static void Nas_SubSeq(sub* subtrack) {
                             case SUBTRACK_CMD_SET_ENVELOPE: // set envelope
                                 cmdArgU16 = (u16)cmdArgs[0];
                                 subtrack->adsr_env.envelope = (envdat*)&grp->seq_data[cmdArgU16];
+#ifdef PCPORT
+                                pc_swap_envdat_seq(subtrack->adsr_env.envelope);
+#endif
                                 break;
                             case SUBTRACK_CMD_SET_DECAY_IDX: // set decay index
                                 cmdArgU8 = (u8)cmdArgs[0];

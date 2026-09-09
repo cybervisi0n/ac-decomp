@@ -85,6 +85,53 @@ static void pc_reset_envdat_visited_all(void) {
 
 
 /**
+ * Swap envdat array entries. Special delay values (from audiocommon.h):
+ *   ADSR_DISABLE  =  0  (array terminator)
+ *   ADSR_HANG     = -1  (hang forever, no entries after)
+ *   ADSR_GOTO     = -2  (jump to index in value field, no entries after)
+ *   ADSR_RESTART  = -3  (loop to start, no entries after)
+ *   ADSR_SPECIAL4 = -4  (reads value, increments idx, CONTINUES to next entry)
+ * Must continue past SPECIAL4 since it has sequential entries following it.
+ */
+static void pc_swap_envdat_entries(envdat* env) {
+    for (s32 i = 0; ; i++) {
+        env[i].delay = bswap_16(env[i].delay);
+        env[i].value = bswap_16(env[i].value);
+        /* ADSR_DISABLE (0) is the true array terminator */
+        if (env[i].delay == 0) break;
+        /* HANG (-1), GOTO (-2), RESTART (-3) are logical endpoints */
+        if (env[i].delay == -1 || env[i].delay == -2 || env[i].delay == -3) break;
+        /* SPECIAL4 (-4) continues to next entry — don't break */
+        if (i > 64) break; /* safety limit */
+    }
+}
+
+/* Swap envdat array from bank data (called during bank relocation) */
+void pc_swap_envdat(envdat* env) {
+    /* Check if already swapped */
+    for (u32 v = 0; v < pc_envdat_bank_visited_count; v++) {
+        if (pc_envdat_bank_visited[v] == env) return;
+    }
+    if (pc_envdat_bank_visited_count < PC_ENVDAT_VISITED_MAX) {
+        pc_envdat_bank_visited[pc_envdat_bank_visited_count++] = env;
+    }
+    pc_swap_envdat_entries(env);
+}
+
+/* Swap envdat array from sequence data (called when script sets envelope pointer) */
+void pc_swap_envdat_seq(envdat* env) {
+    /* Check if already swapped */
+    for (u32 v = 0; v < pc_envdat_seq_visited_count; v++) {
+        if (pc_envdat_seq_visited[v] == env) return;
+    }
+    if (pc_envdat_seq_visited_count < PC_ENVDAT_VISITED_MAX) {
+        pc_envdat_seq_visited[pc_envdat_seq_visited_count++] = env;
+    }
+    pc_swap_envdat_entries(env);
+}
+
+
+/**
  * Byte-swap a smzwavetable's fields. The first u32 is a bitfield
  * (bit31, codec, medium, bit26, is_relocated, size) that must be
  * swapped as a whole u32 so the bits shift to LE layout.
@@ -1029,6 +1076,9 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
             __WaveTouch(&percvt->tuned_sample, (u32)ctrl_p, wave_media);
             inst_ofs = (u32)percvt->envelope;
             percvt->envelope = (envdat*)OFS2RAM(ctrl_p, inst_ofs);
+#ifdef PCPORT
+            pc_swap_envdat(percvt->envelope);
+#endif
             percvt->is_relocated = TRUE;
         }
     }
@@ -1082,6 +1132,9 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
 
                 inst_ofs = (u32)inst->envelope;
                 inst->envelope = (envdat*)OFS2RAM(ctrl_p, inst_ofs);
+#ifdef PCPORT
+                pc_swap_envdat(inst->envelope);
+#endif
 
                 inst->is_relocated = TRUE;
             }

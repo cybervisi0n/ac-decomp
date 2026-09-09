@@ -60,6 +60,12 @@ extern void EmemReload(void);
 extern void Nas_BgCopyInit(void);
 extern void MK_Init(void);
 extern void Nas_WaveDmaNew(s32 n_channels);
+#ifdef PCPORT
+struct envdat_;
+void pc_swap_envdat(struct envdat_* env);
+void pc_swap_envdat_seq(struct envdat_* env);
+void pc_reset_envdat_visited(void);
+#endif
 
 extern Na_SyncProc NA_SYNC_PROC;
 extern BOOL AUDIO_SYSTEM_READY;
