@@ -189,9 +189,15 @@ extern void Nas_UpdateChannel(void) {
         playback_chan = &chan->playback_ch;
 
         if (playback_chan->current_parent_note != NA_NO_NOTE) {
+            #ifdef PCPORT
+            if ((u32)playback_chan->current_parent_note == NULL) {
+                continue;
+            }
+            #else
             if ((u32)playback_chan->current_parent_note < 0x7FFFFFFF) {
                 continue;
             }
+            #endif
 
             if (chan != playback_chan->current_parent_note->channel && playback_chan->status == 0) {
                 playback_chan->adsr_envp.state.flags.release = TRUE;
@@ -408,9 +414,15 @@ extern perctable* PercToPp(s32 prog, s32 drum) {
         return NULL;
     }
 
+    #ifdef PCPORT
+    if ((u32)AG.voice_info[prog].percussion == NULL) {
+        return NULL;
+    }
+    #else
     if ((u32)AG.voice_info[prog].percussion < OS_BASE_CACHED) {
         return NULL;
     }
+    #endif
 
     vtbl = AG.voice_info[prog].percussion[drum];
     if (vtbl == NULL) {
@@ -438,9 +450,15 @@ extern percvoicetable* VpercToVep(s32 prog, s32 sfx) {
         return NULL;
     }
 
+    #ifdef PCPORT
+    if ((u32)AG.voice_info[prog].effects == NULL) {
+        return NULL;
+    }
+    #else
     if ((u32)AG.voice_info[prog].effects < OS_BASE_CACHED) {
         return NULL;
     }
+    #endif
 
     vtbl = &AG.voice_info[prog].effects[sfx];
     if (vtbl == NULL) {
