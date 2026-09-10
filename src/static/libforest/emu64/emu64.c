@@ -2309,13 +2309,7 @@ void emu64::alpha_compare() {
 
     GXCompare comp1 = gequal ? GX_GEQUAL : GX_ALWAYS;
     GXCompare comp0 = ac_threshold ? GX_GEQUAL : GX_ALWAYS;
-#ifdef PCPORT
-    /* On LE, EmuColor.raw is shift-packed (R<<24|G<<16|B<<8|A) but the
-       union's rgba struct has byte-swapped fields. Extract alpha via mask. */
-    u8 blend_alpha = this->blend_color.raw & 0xFF;
-#else
     u8 blend_alpha = this->blend_color.rgba.a;
-#endif
     GXSetAlphaCompare(comp0, blend_alpha, GX_AOP_AND, comp1, tex_edge_alpha);
     GXSetZCompLoc(ac_threshold == 0 && !gequal);
 }

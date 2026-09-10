@@ -3337,6 +3337,7 @@ typedef union {
 	_SHIFTL(c, 24, 8), (unsigned int)(d)				\
 }}
 
+#ifdef GAMECUBE
 #define	DPRGBColor(pkt, cmd, r, g, b, a)				\
             gDPSetColor(pkt, cmd,					\
 			(_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | 	\
@@ -3345,6 +3346,16 @@ typedef union {
 	    gsDPSetColor(cmd,						\
 			 (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | 	\
 			  _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8)))
+#else
+#define	DPRGBColor(pkt, cmd, r, g, b, a)				\
+            gDPSetColor(pkt, cmd,					\
+			(_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | 	\
+			 _SHIFTL(b, 16, 8) | _SHIFTL(a, 24, 8)))
+#define	sDPRGBColor(cmd, r, g, b, a)					\
+	    gsDPSetColor(cmd,						\
+			 (_SHIFTL(r, 0, 8) | _SHIFTL(g, 8, 8) | 	\
+			  _SHIFTL(b, 16, 8) | _SHIFTL(a, 24, 8)))
+#endif
 
 #define	gDPSetEnvColor(pkt, r, g, b, a)					\
             DPRGBColor(pkt, G_SETENVCOLOR, r,g,b,a)
