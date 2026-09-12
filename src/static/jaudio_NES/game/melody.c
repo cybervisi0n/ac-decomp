@@ -4,6 +4,9 @@
 #include "jaudio_NES/sub_sys.h"
 #include "jaudio_NES/system.h"
 #include "jaudio_NES/audiowork.h"
+#ifdef PCPORT
+#include <simulator/byteswap.h>
+#endif
 
 static s32 current_sub_track = 0;
 u32 na_melody_id_hist[2];
@@ -641,6 +644,9 @@ static void Na_MelodyStart(u16 voice, s16 subTrack, const u8* pData) {
     u8* dst;
     s16 seq_idx = 248;
     u16 size = ((u16*)AG.groups[0].seq_data)[2];
+#ifdef PCPORT
+    size = bswap_16(size); /* seq_data is BE from ARAM */
+#endif
 
     switch (subTrack) {
         case 6:
@@ -671,7 +677,14 @@ static void Na_MelodyStart(u16 voice, s16 subTrack, const u8* pData) {
 
     u16* dst16 = (u16*)(dst + 4);
     for (int i = 0; i < 19; i++) {
+#ifdef PCPORT
+        /* Track offsets in melody data are BE u16. Swap, adjust, swap back. */
+        u16 val = bswap_16(dst16[i]);
+        val += size;
+        dst16[i] = bswap_16(val);
+#else
         dst16[i] += size;
+#endif
     }
 
     Nap_SetS32(NA_MAKE_COMMAND(0x10, 0x00, subTrack, 0x00), (u64)pData);
