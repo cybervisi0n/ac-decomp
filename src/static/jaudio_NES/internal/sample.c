@@ -78,6 +78,10 @@ extern void Jac_bzero(void* dest, s32 size) {
     u32* udest;
     u8* bdest = (u8*)dest;
     u8 alignedbitsDst = reinterpret_cast<u32>(bdest) & 0x3;
+    #ifdef PCPORT
+    memset(dest, 0, size);
+    return;
+    #endif
     if (alignedbitsDst == 0) {
         if ((size & 0x1f) == 0) {
             DCZeroRange(dest, size);

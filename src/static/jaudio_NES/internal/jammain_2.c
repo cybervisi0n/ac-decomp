@@ -1397,6 +1397,15 @@ static void OSf32tos8(register f32* in, volatile register s8* out)
 {
 	#ifdef GAMECUBE
     *out = __OSf32tos8(*in);
+	#else
+    if (*in > 127.0f) {
+		*out = 127;
+	}
+    if (*in < -128.0f) {
+		*out = -128;
+	} else {
+		*out = (s8)(*in);
+	}
 	#endif
 }
 

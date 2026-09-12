@@ -17,6 +17,10 @@ typedef struct UltraOSMesgQueue_s {
     /* 0x0C */ int first;
     /* 0x10 */ int msgCount;
     /* 0x14 */ OSMesg* msg;
+    #ifdef PCPORT
+    void * sdlMutex;
+    void * sdlSemaphore;
+    #endif
 } OSMesgQueue; // size = 0x18
 
 extern void osCreateMesgQueue(OSMessageQueue* mq, OSMessage msg, int flags);

@@ -382,6 +382,10 @@ void* Nas_WaveDmaCallBack(u32 device_addr, u32 size, s32 arg2, u8* waveload_idx,
     Nas_StartDma(&AG.cur_adio_frame_dma_io_mesg_buf[AG.current_frame_dma_count++], 0 /* OS_MESG_PRI_NORMAL */,
                  0 /* OS_READ */, waveloadDevAddr, waveload->ram_addr, transfer, &AG.cur_audio_frame_dma_queue, medium,
                  (s8*)"SUPERDMA");
+    #ifdef PCPORT
+    void * tmp;
+    Z_osRecvMesg(AG.cur_adio_frame_dma_io_mesg_buf[AG.current_frame_dma_count-1].hdr.retQueue, &tmp, OS_MESG_BLOCK);
+    #endif
     *waveload_idx = waveloadIndex;
     return (device_addr - waveloadDevAddr) + waveload->ram_addr;
 }
@@ -1456,6 +1460,11 @@ void Nas_InitAudio(u64* heap_p, s32 heap_size) {
     AG.current_frame_dma_count = 0;
     AG.num_waveloads = 0;
 
+#ifdef PCPORT
+    /* Fresh process-wide swap tracking state at audio boot. */
+    pc_reset_envdat_visited_all();
+#endif
+
     AG.audio_heap_p = heap_p;
     AG.audio_heap_size = heap_size;
     OSReport("AUDIOHEAP SET ADDR %xh (SIZE %xh) \n", (u32)heap_p, heap_size);
@@ -1528,6 +1537,9 @@ s32 VoiceLoad(s32 bank_id, u32 inst_id, s8* done_p) {
 
     if (wavetable == NULL) {
         *done_p = 0;
+#ifdef PCPORT
+        printf("[VoiceLoad] FAIL: wavetable NULL bank=%d inst=%u\n", bank_id, inst_id);
+#endif
         return -1;
     }
 
@@ -1535,6 +1547,11 @@ s32 VoiceLoad(s32 bank_id, u32 inst_id, s8* done_p) {
         *done_p = 2;
         return 0;
     }
+
+#ifdef PCPORT
+    printf("[VoiceLoad] NEED DMA: bank=%d inst=%u medium=%d size=%u\n",
+        bank_id, inst_id, wavetable->medium, wavetable->size);
+#endif
 
     cache = &AG.lps_cache[AG.slow_load_pos];
     if (cache->status == 3) {
@@ -1547,6 +1564,10 @@ s32 VoiceLoad(s32 bank_id, u32 inst_id, s8* done_p) {
         (u8*)Nas_Alloc_Single(wavetable->size, bank_id, wavetable->sample, wavetable->medium, CACHE_TEMPORARY);
 
     if (cache->current_ram_addr == NULL) {
+#ifdef PCPORT
+        printf("[VoiceLoad] ALLOC FAIL: bank=%d inst=%u size=%u medium=%d\n",
+            bank_id, inst_id, wavetable->size, wavetable->medium);
+#endif
         if (wavetable->medium == MEDIUM_DISK || wavetable->codec == CODEC_S16_INMEMORY) {
             *done_p = 0;
         } else {
@@ -2060,6 +2081,12 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
     
     // u8 __stack_pad[12];
     // s32* i_p = &i; // this feels wrong but w/e
+
+#ifdef PCPORT
+    /* Only bank relocation data is guaranteed fresh here.
+     * Sequence envelopes may still be live and already swapped. */
+    pc_reset_envdat_bank_visited();
+#endif
 
     
     if (AG.num_requested_samples != 0) {
