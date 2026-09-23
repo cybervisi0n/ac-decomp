@@ -24,7 +24,8 @@ if(build_target == 'gc')
 shared_args += ['-DGAMECUBE']
 else
 shared_args += [
-    '-DPCPORT'
+    '-DPCPORT',
+    '-w'
     ]
 endif
 
