@@ -29,7 +29,9 @@ void diagnoseGpHang();
 inline void JFWDrawDoneAlarm() {
     OSAlarm alarm;
     OSCreateAlarm(&alarm);
+    #ifdef GAMECUBE
     OSSetAlarm(&alarm, (OS_TIMER_CLOCK), JFWGXAbortAlarmHandler);
+    #endif
     GXDrawDone();
     OSCancelAlarm(&alarm);
 }
